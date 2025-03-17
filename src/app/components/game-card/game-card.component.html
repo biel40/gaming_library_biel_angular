@@ -1,9 +1,12 @@
 <div class="card">
-    <img [src]="game.image" alt="{{ game.title }}" class="card-img">
+    <img [src]="game.image_url" alt="{{ game.name }}" class="card-img">
     
     <div class="card-body">
-      <h2 class="card-title">{{ game.title }}</h2>
+      <h2 class="card-title">{{ game.name }}</h2>
       <p class="card-description">{{ game.description }}</p>
+      <p class="card-genre">Género: {{ game.genre }}</p>
+      <p class="card-platform">Plataforma: {{ game.platform }}</p>
+      <p class="card-release-date">Fecha de lanzamiento: {{ game.releaseDate | date: 'dd/MM/yyyy' }}</p>
       <button type="button" routerLink="/dashboard" class="btn">
         Ver Detalles
       </button>

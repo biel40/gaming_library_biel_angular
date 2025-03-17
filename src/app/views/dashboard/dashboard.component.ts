@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { Game } from '../../models/game.interface';
+import { Component, inject } from '@angular/core';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
+import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -13,15 +13,14 @@ import { GameCardComponent } from '../../components/game-card/game-card.componen
 })
 export class DashboardComponent {
 
-    public games: Game[] = [
-        {
-            id: 1,
-            title: 'Final Fantasy X',
-            description: 'Juego de rol de acción y aventura',
-            image: 'assets/images/ffx.jpg'
-        }
-    ];
+    private _supabaseService: SupabaseService = inject(SupabaseService);
+
+    public games: Videogame[] = [];
 
     constructor() { }
+
+    async ngOnInit() {
+        this.games = await this._supabaseService.getVideogames();
+    }
 
 }  
