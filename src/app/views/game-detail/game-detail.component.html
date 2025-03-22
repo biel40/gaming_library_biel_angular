@@ -6,19 +6,20 @@
     </button>
   </div>
 
-  <div *ngIf="loading" class="loading-container">
-    <div class="loading-spinner"></div>
-    <p>Cargando detalles del juego...</p>
-  </div>
-  
-  <div *ngIf="!loading && error" class="error-container">
-    <span class="material-icons error-icon">error_outline</span>
-    <h2>¡Oops!</h2>
-    <p>{{ error }}</p>
-    <button routerLink="/dashboard" class="btn">Volver a la biblioteca</button>
-  </div>
-  
-  <div *ngIf="game && !loading && !error" class="game-detail">
+  @if (loading) {
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Cargando detalles del juego...</p>
+    </div>
+  } @else if (!loading && error) {
+    <div class="error-container">
+      <span class="material-icons error-icon">error_outline</span>
+      <h2>¡Oops!</h2>
+      <p>{{ error }}</p>
+      <button routerLink="/dashboard" class="btn">Volver a la biblioteca</button>
+    </div>
+  } @else if (game && !loading && !error) {
+    <div class="game-detail">
     <div class="game-header">
       <div class="game-header-content">
         <h1>{{ game.name }}</h1>
@@ -45,18 +46,24 @@
         <div class="game-section">
           <h2>Detalles</h2>
           <div class="game-details">
-            <div class="detail-item">
-              <span class="detail-label">Género:</span>
-              <span class="detail-value">{{ game.genre }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Plataforma:</span>
-              <span class="detail-value">{{ game.platform }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="detail-label">Fecha de lanzamiento:</span>
-              <span class="detail-value">{{ game.releaseDate | date: 'dd MMMM, yyyy' }}</span>
-            </div>
+            @if (game.genre) {
+              <div class="detail-item">
+                <span class="detail-label">Género:</span>
+                <span class="detail-value">{{ game.genre }}</span>
+              </div>
+            }
+            @if (game.platform) {
+              <div class="detail-item">
+                <span class="detail-label">Plataforma:</span>
+                <span class="detail-value">{{ game.platform }}</span>
+              </div>
+            }
+            @if (game.releaseDate) {
+              <div class="detail-item">
+                <span class="detail-label">Fecha de lanzamiento:</span>
+                <span class="detail-value">{{ game.releaseDate | date: 'dd MMMM, yyyy' }}</span>
+              </div>
+            }
           </div>
         </div>
         
@@ -72,5 +79,6 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  }
 </div>
