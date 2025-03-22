@@ -30,6 +30,19 @@
         </div>
     </div>
 
+    <!-- Favorites Section -->
+    <section class="favorites" *ngIf="favoriteGames.length > 0">
+        <div class="section-header">
+            <h2>Mis Favoritos</h2>
+        </div>
+
+        <div class="game-grid favorites-grid">
+            @for (game of favoriteGames; track $index) {
+                <app-game-card [game]="game"></app-game-card>
+            }
+        </div>
+    </section>
+
     <!-- All Games Grid -->
     <section class="all-games">
         <div class="section-header">

@@ -27,6 +27,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     // Game data
     public games: Videogame[] = [];
     public filteredGames: Videogame[] = [];
+    public favoriteGames: Videogame[] = [];
     public uniqueGenres: string[] = [];
     private genreMap: Map<string, string> = new Map<string, string>();
 
@@ -45,6 +46,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     async ngOnInit() {
         this.games = await this._supabaseService.getVideogames();
         this.filteredGames = [...this.games];
+        this.updateFavoriteGames();
         this.extractUniqueGenres();
     }
 
@@ -84,6 +86,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             return matchesSearch && matchesGenre;
         });
 
+        this.updateFavoriteGames();
         this.calculateItemsPerPage();
         this.currentPage = 0;
     }
@@ -104,6 +107,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.searchTerm = '';
         this.activeGenre = 'All';
         this.filteredGames = [...this.games];
+        this.updateFavoriteGames();
         this.calculateItemsPerPage();
     }
 
@@ -157,5 +161,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             left: scrollAmount,
             behavior: 'smooth'
         });
+    }
+    
+    /**
+     * Update the favoriteGames array based on current games
+     */
+    private updateFavoriteGames() {
+        this.favoriteGames = this.filteredGames.filter(game => game.favorite);
     }
 }  

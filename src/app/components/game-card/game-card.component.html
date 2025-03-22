@@ -1,4 +1,7 @@
 <div class="card" [routerLink]="['/game', game.id]">
+    <button type="button" class="favorite-button" (click)="toggleFavorite($event)" title="{{game.favorite ? 'Remove from favorites' : 'Add to favorites'}}">
+      <span class="material-icons">{{game.favorite ? 'star' : 'star_border'}}</span>
+    </button>
     <img [src]="game.image_url" alt="{{ game.name }}" class="card-img">
     
     <div class="card-body">

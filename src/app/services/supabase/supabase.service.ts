@@ -25,6 +25,7 @@ export interface Videogame {
   genre?: string
   releaseDate?: Date
   platform?: string
+  favorite?: boolean
 }
 
 @Injectable({
@@ -153,7 +154,8 @@ export class SupabaseService {
       genre: item.genre,
       releaseDate: new Date(item.release_date),
       image_url: item.image_url,
-      platform: item.platform
+      platform: item.platform,
+      favorite: this.isFavorite(item.id)
     }));
 
     return videogames;
@@ -181,6 +183,42 @@ export class SupabaseService {
       platform: data.platform
     };
 
+    // Check if game is favorite
+    videogame.favorite = this.isFavorite(videogame.id || '');
+    
     return videogame;
+  }
+
+
+
+  // Store favorites in localStorage since we don't want to modify the database
+  private getFavoritesFromStorage(): string[] {
+    const favorites = localStorage.getItem('favorite-games');
+    return favorites ? JSON.parse(favorites) : [];
+  }
+
+  public toggleFavorite(game: Videogame): boolean {
+    if (!game.id) return false;
+    
+    const favorites = this.getFavoritesFromStorage();
+    const index = favorites.indexOf(game.id);
+    
+    // Toggle favorite status
+    if (index >= 0) {
+      favorites.splice(index, 1);
+      game.favorite = false;
+    } else {
+      favorites.push(game.id);
+      game.favorite = true;
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('favorite-games', JSON.stringify(favorites));
+    return game.favorite;
+  }
+
+  public isFavorite(gameId: string): boolean {
+    const favorites = this.getFavoritesFromStorage();
+    return favorites.includes(gameId);
   }
 }

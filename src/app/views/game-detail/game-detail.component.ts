@@ -52,4 +52,13 @@ export class GameDetailComponent implements OnInit {
       this.loading = false;
     }
   }
+
+  /**
+   * Toggle the favorite status of the current game
+   */
+  toggleFavorite(): void {
+    if (this.game) {
+      this.supabaseService.toggleFavorite(this.game);
+    }
+  }
 }

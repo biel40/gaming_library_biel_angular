@@ -22,7 +22,12 @@
     <div class="game-detail">
     <div class="game-header">
       <div class="game-header-content">
-        <h1>{{ game.name }}</h1>
+        <div class="game-title-container">
+          <h1>{{ game.name }}</h1>
+          <button type="button" class="favorite-button" (click)="toggleFavorite()" title="{{game.favorite ? 'Remove from favorites' : 'Add to favorites'}}">
+            <span class="material-icons">{{game.favorite ? 'star' : 'star_border'}}</span>
+          </button>
+        </div>
         <div class="game-metadata">
           <span class="game-genre">{{ game.genre }}</span>
           <span class="game-platform">{{ game.platform }}</span>
