@@ -30,41 +30,6 @@
         </div>
     </div>
 
-    <!-- Featured Games Carousel -->
-    @if (filteredGames.length > 0) {
-    <section class="featured-section" >
-        <h2>Juegos Destacados</h2>
-        
-        <div class="carousel-container">
-            <button class="carousel-control left" (click)="scrollCarousel('left')">
-                <span class="material-icons">chevron_left</span>
-            </button>
-            
-            <div class="carousel" #carousel>
-                @for (game of filteredGames; track $index) {
-                    <div class="carousel-item">
-                        <app-game-card [game]="game"></app-game-card>
-                    </div>
-                }
-            </div>
-            
-            <button class="carousel-control right" (click)="scrollCarousel('right')">
-                <span class="material-icons">chevron_right</span>
-            </button>
-        </div>
-
-        <!-- Pagination dots -->
-        <div class="carousel-dots">
-            @for (dot of carouselDots; track $index) {
-                <div 
-                    class="dot" 
-                    [class.active]="currentPage === $index"
-                    (click)="goToPage($index)"
-                ></div>
-            }
-        </div>
-    </section>
-    }
     <!-- All Games Grid -->
     <section class="all-games">
         <div class="section-header">

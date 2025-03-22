@@ -36,8 +36,9 @@
   flex-direction: column;
   gap: 0.75rem;
   margin-bottom: 1.25rem;
-  width: 75%;
+  width: 40%;
   
+  // Small phones
   @media (min-width: 320px) {
     gap: 0.85rem;
   }

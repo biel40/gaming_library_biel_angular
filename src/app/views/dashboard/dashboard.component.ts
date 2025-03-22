@@ -22,6 +22,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     private _supabaseService: SupabaseService = inject(SupabaseService);
 
+    public title: string = 'My Game Library';
+
     // Game data
     public games: Videogame[] = [];
     public filteredGames: Videogame[] = [];
