@@ -38,8 +38,6 @@ export class GameDetailComponent implements OnInit {
 
   private async loadGameDetails(gameId: string): Promise<void> {
     try {
-      // Get all games and find the specific one
-      debugger;
       const game = await this.supabaseService.getVideogameDetails(gameId);
 
       this.game = game;

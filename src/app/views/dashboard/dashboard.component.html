@@ -31,7 +31,8 @@
     </div>
 
     <!-- Featured Games Carousel -->
-    <section class="featured-section" *ngIf="filteredGames.length > 0">
+    @if (filteredGames.length > 0) {
+    <section class="featured-section" >
         <h2>Juegos Destacados</h2>
         
         <div class="carousel-container">
@@ -63,7 +64,7 @@
             }
         </div>
     </section>
-
+    }
     <!-- All Games Grid -->
     <section class="all-games">
         <div class="section-header">
@@ -79,21 +80,26 @@
         </div>
 
         <!-- Empty state -->
-        <div class="empty-state" *ngIf="filteredGames.length === 0">
+        @if (filteredGames.length === 0) {
+        <div class="empty-state">
             <span class="material-icons">videogame_asset</span>
             <p>No se encontraron juegos que coincidan con tu búsqueda</p>
             <button class="btn" (click)="resetFilters()">Reiniciar filtros</button>
         </div>
+        }
 
         <!-- Grid view -->
-        <div class="game-grid" *ngIf="viewMode === 'grid' && filteredGames.length > 0">
+        @if (viewMode === 'grid' && filteredGames.length > 0) {
+        <div class="game-grid">
             @for (game of filteredGames; track $index) {
                 <app-game-card [game]="game"></app-game-card>
             }
         </div>
+        }
 
         <!-- List view -->
-        <div class="game-list" *ngIf="viewMode === 'list' && filteredGames.length > 0">
+        @if (viewMode === 'list' && filteredGames.length > 0) {
+        <div class="game-list">
             @for (game of filteredGames; track $index) {
                 <div class="list-item">
                     <div class="list-img">
@@ -112,5 +118,6 @@
                 </div>
             }
         </div>
+        }
     </section>
 </div>
