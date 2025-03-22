@@ -26,6 +26,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     public games: Videogame[] = [];
     public filteredGames: Videogame[] = [];
     public uniqueGenres: string[] = [];
+    private genreMap: Map<string, string> = new Map<string, string>();
 
     // UI state
     public searchTerm: string = '';
@@ -56,17 +57,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         const carouselWidth = this.carouselElement?.nativeElement.offsetWidth || 0;
         const itemWidth = 352; // 320px card width + 32px margins
 
-        // Calculate how many items fit per page
         this.itemsPerPage = Math.floor(carouselWidth / itemWidth) || 3;
         
-        // Calculate total number of pages for pagination dots
         const totalPages = Math.ceil(this.filteredGames.length / this.itemsPerPage);
         this.carouselDots = Array(totalPages).fill(0).map((_, i) => i);
     }
 
     /**
      * Filter games by search term and genre
-     */
+    */
     public filterGames() {
         this.filteredGames = this.games.filter(game => {
             // Apply search filter
@@ -78,27 +77,27 @@ export class DashboardComponent implements OnInit, AfterViewInit {
             // Apply genre filter
             const matchesGenre = this.activeGenre === 'All' ? 
                 true : 
-                game.genre === this.activeGenre;
+                game.genre?.trim().toLowerCase() === this.activeGenre;
                 
             return matchesSearch && matchesGenre;
         });
 
-        // Recalculate carousel pages
         this.calculateItemsPerPage();
         this.currentPage = 0;
     }
 
     /**
      * Filter games by genre
-     */
+    */
     public filterByGenre(genre: string) {
-        this.activeGenre = genre;
+        // Use normalized genre for filtering
+        this.activeGenre = genre === 'All' ? 'All' : genre.trim().toLowerCase();
         this.filterGames();
     }
 
     /**
      * Reset all filters
-     */
+    */
     public resetFilters() {
         this.searchTerm = '';
         this.activeGenre = 'All';
@@ -108,15 +107,30 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     /**
      * Extract unique genres from games for filter chips
-     */
+    */
     private extractUniqueGenres() {
         const genres = new Set<string>();
+        this.genreMap.clear();
+        
         this.games.forEach(game => {
             if (game.genre) {
-                genres.add(game.genre);
+                // Normalize genre text (trim whitespace and convert to lowercase)
+                const normalizedGenre = game.genre.trim().toLowerCase();
+                
+                if (!this.genreMap.has(normalizedGenre)) {
+                    this.genreMap.set(normalizedGenre, game.genre);
+                }
+
+                if (genres.has(normalizedGenre)) {
+                    return;
+                }
+                
+                genres.add(normalizedGenre);
             }
         });
-        this.uniqueGenres = Array.from(genres);
+        
+        // Transform normalized genres to display versions
+        this.uniqueGenres = Array.from(genres).map(genre => this.genreMap.get(genre) || genre);
     }
 
     /**
