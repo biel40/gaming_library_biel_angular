@@ -158,4 +158,29 @@ export class SupabaseService {
 
     return videogames;
   }
+
+  public async getVideogameDetails(id: string): Promise<Videogame | null> {
+    const { data, error } = await this._supabaseClient
+      .from('videogames')
+      .select()
+      .eq('id', id)
+      .single();
+
+    if (!data) {
+      return null;
+    }
+
+    // Always map the data to a Model
+    const videogame: Videogame = {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      genre: data.genre,
+      releaseDate: new Date(data.release_date),
+      image_url: data.image_url,
+      platform: data.platform
+    };
+
+    return videogame;
+  }
 }

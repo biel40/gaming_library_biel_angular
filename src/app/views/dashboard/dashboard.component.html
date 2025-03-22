@@ -1,9 +1,116 @@
 <div class="dashboard">
-    <h1>Dashboard</h1>
-    
-    <div class="game-cards" >
-        @for (game of games; track $index) {
-            <app-game-card [game]="game"></app-game-card>
-        }
+    <header class="dashboard-header">
+        <h1>Mi Biblioteca de Juegos</h1>
+        <div class="search-bar">
+            <input 
+                type="text" 
+                placeholder="Buscar juegos..." 
+                [(ngModel)]="searchTerm"
+                (input)="filterGames()"
+            >
+            <span class="material-icons">search</span>
+        </div>
+    </header>
+
+    <!-- Filters section -->
+    <div class="filters">
+        <div class="filter-chips">
+            <div 
+                class="filter-chip" 
+                [class.active]="activeGenre === 'All'"
+                (click)="filterByGenre('All')"
+            >Todos</div>
+            @for (genre of uniqueGenres; track genre) {
+                <div 
+                    class="filter-chip" 
+                    [class.active]="activeGenre === genre"
+                    (click)="filterByGenre(genre)"
+                >{{ genre }}</div>
+            }
+        </div>
     </div>
+
+    <!-- Featured Games Carousel -->
+    <section class="featured-section" *ngIf="filteredGames.length > 0">
+        <h2>Juegos Destacados</h2>
+        
+        <div class="carousel-container">
+            <button class="carousel-control left" (click)="scrollCarousel('left')">
+                <span class="material-icons">chevron_left</span>
+            </button>
+            
+            <div class="carousel" #carousel>
+                @for (game of filteredGames; track $index) {
+                    <div class="carousel-item">
+                        <app-game-card [game]="game"></app-game-card>
+                    </div>
+                }
+            </div>
+            
+            <button class="carousel-control right" (click)="scrollCarousel('right')">
+                <span class="material-icons">chevron_right</span>
+            </button>
+        </div>
+
+        <!-- Pagination dots -->
+        <div class="carousel-dots">
+            @for (dot of carouselDots; track $index) {
+                <div 
+                    class="dot" 
+                    [class.active]="currentPage === $index"
+                    (click)="goToPage($index)"
+                ></div>
+            }
+        </div>
+    </section>
+
+    <!-- All Games Grid -->
+    <section class="all-games">
+        <div class="section-header">
+            <h2>Todos los Juegos</h2>
+            <div class="view-controls">
+                <button class="view-btn" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'">
+                    <span class="material-icons">grid_view</span>
+                </button>
+                <button class="view-btn" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
+                    <span class="material-icons">view_list</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" *ngIf="filteredGames.length === 0">
+            <span class="material-icons">videogame_asset</span>
+            <p>No se encontraron juegos que coincidan con tu búsqueda</p>
+            <button class="btn" (click)="resetFilters()">Reiniciar filtros</button>
+        </div>
+
+        <!-- Grid view -->
+        <div class="game-grid" *ngIf="viewMode === 'grid' && filteredGames.length > 0">
+            @for (game of filteredGames; track $index) {
+                <app-game-card [game]="game"></app-game-card>
+            }
+        </div>
+
+        <!-- List view -->
+        <div class="game-list" *ngIf="viewMode === 'list' && filteredGames.length > 0">
+            @for (game of filteredGames; track $index) {
+                <div class="list-item">
+                    <div class="list-img">
+                        <img [src]="game.image_url" [alt]="game.name">
+                    </div>
+                    <div class="list-content">
+                        <h3>{{ game.name }}</h3>
+                        <p class="list-description">{{ game.description }}</p>
+                        <div class="list-meta">
+                            <span>{{ game.genre }}</span>
+                            <span>{{ game.platform }}</span>
+                            <span>{{ game.releaseDate | date: 'dd/MM/yyyy' }}</span>
+                        </div>
+                    </div>
+                    <button class="list-btn" routerLink="/dashboard">Ver Detalles</button>
+                </div>
+            }
+        </div>
+    </section>
 </div>
