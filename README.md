@@ -1,4 +1,4 @@
-# 🎮 Mi Biblioteca de Juegos
+# 🎮 My Gaming Library - by Biel40
 
 ![Angular Version](https://img.shields.io/badge/Angular-19.2.1-DD0031?style=for-the-badge&logo=angular)
 ![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)
