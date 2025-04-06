@@ -17,20 +17,6 @@ A modern, visually stunning video game library application built with Angular. T
 - **Detailed Game Information**: Comprehensive game details with descriptions, ratings, and more
 - **Beautiful UI Elements**: Enhanced section titles with gradient effects and improved navigation arrows
 
-## 🖼️ Screenshots
-
-<table>
-  <tr>
-    <td><img src="path/to/screenshot1.png" alt="Featured Games Carousel" width="400"/></td>
-    <td><img src="path/to/screenshot2.png" alt="Game Details View" width="400"/></td>
-  </tr>
-  <tr>
-    <td><img src="path/to/screenshot3.png" alt="Game Library Grid View" width="400"/></td>
-    <td><img src="path/to/screenshot4.png" alt="Mobile View" width="400"/></td>
-  </tr>
-</table>
-
-> Note: Replace `path/to/screenshot*.png` with actual screenshot paths once available
 
 ## 🚀 Getting Started
 
@@ -114,16 +100,6 @@ src/
 - Primary font: Roboto (or your chosen font)
 - Header styles with gradient effects for enhanced visibility
 
-### Components
-
-- **Cards**: Holographic effects with smooth transitions
-- **Filters**: Chip-based design with active state indicators
-- **Carousel**: Smooth scrolling with intuitive navigation arrows
-
-## 📋 Development Guidelines
-
-### Adding a New Game
-
 Games are stored in Supabase and include the following information:
 - Name
 - Description
@@ -159,13 +135,6 @@ ng build --prod
 
 This will generate optimized production files in the `dist/` directory.
 
-## 🔄 Continuous Integration
-
-The project is configured with GitHub Actions for CI/CD. Any push to the main branch triggers:
-- Lint checks
-- Unit tests
-- Build verification
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
@@ -180,4 +149,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 Created with 💙 by Gabriel Borras Serra
 
-> This README is a living document and will be updated as the project evolves.
