@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
 
 @Component({
@@ -10,7 +11,8 @@ import { SupabaseService, Videogame } from '../../services/supabase/supabase.ser
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    FormsModule
   ]
 })
 export class GameDetailComponent implements OnInit {
@@ -59,6 +61,45 @@ export class GameDetailComponent implements OnInit {
   toggleFavorite(): void {
     if (this.game) {
       this.supabaseService.toggleFavorite(this.game);
+    }
+  }
+
+  /**
+   * Update the game score
+   */
+  async updateGameScore(): Promise<void> {
+    if (this.game && this.game.id) {
+      try {
+        await this.supabaseService.updateGameScore(this.game.id, this.game.score || 0);
+      } catch (err) {
+        console.error('Error updating game score:', err);
+        this.error = 'Error al actualizar la puntuación';
+      }
+    }
+  }
+
+  /**
+   * Update the game review
+   */
+  async updateGameReview(): Promise<void> {
+    if (this.game && this.game.id) {
+      try {
+        await this.supabaseService.updateGameReview(this.game.id, this.game.review || '');
+      } catch (err) {
+        console.error('Error updating game review:', err);
+        this.error = 'Error al actualizar la review';
+      }
+    }
+  }
+
+  /**
+   * Set the game score from star rating
+   * @param score The score to set (1-10)
+   */
+  setScore(score: number): void {
+    if (this.game) {
+      this.game.score = score;
+      this.updateGameScore();
     }
   }
 }

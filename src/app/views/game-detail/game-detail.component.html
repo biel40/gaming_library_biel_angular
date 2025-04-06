@@ -7,26 +7,29 @@
   </div>
 
   @if (loading) {
-    <div class="loading-container">
-      <div class="loading-spinner"></div>
-      <p>Cargando detalles del juego...</p>
-    </div>
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Cargando detalles del juego...</p>
+  </div>
   } @else if (!loading && error) {
-    <div class="error-container">
-      <span class="material-icons error-icon">error_outline</span>
-      <h2>¡Oops!</h2>
-      <p>{{ error }}</p>
-      <button routerLink="/dashboard" class="btn">Volver a la biblioteca</button>
-    </div>
+  <div class="error-container">
+    <span class="material-icons error-icon">error_outline</span>
+    <h2>¡Oops!</h2>
+    <p>{{ error }}</p>
+    <button routerLink="/dashboard" class="btn">Volver a la biblioteca</button>
+  </div>
   } @else if (game && !loading && !error) {
-    <div class="game-detail">
+  <div class="game-detail">
     <div class="game-header">
       <div class="game-header-content">
         <div class="game-title-container">
           <h1>{{ game.name }}</h1>
-          <button type="button" class="favorite-button" (click)="toggleFavorite()" title="{{game.favorite ? 'Remove from favorites' : 'Add to favorites'}}">
-            <span class="material-icons">{{game.favorite ? 'star' : 'star_border'}}</span>
-          </button>
+          <div class="favorite-container" [class.is-favorite]="game.favorite">
+            <button type="button" class="favorite-button" (click)="toggleFavorite()"
+              [attr.aria-label]="game.favorite ? 'Remove from favorites' : 'Add to favorites'">
+              <span class="material-icons favorite-icon">{{game.favorite ? 'star' : 'star_border'}}</span>
+            </button>
+          </div>
         </div>
         <div class="game-metadata">
           <span class="game-genre">{{ game.genre }}</span>
@@ -35,55 +38,75 @@
         </div>
       </div>
     </div>
-    
+
     <div class="game-content">
       <div class="game-image-container">
         <img [src]="game.image_url" [alt]="game.name" class="game-image">
         <div class="game-image-overlay"></div>
       </div>
-      
+
       <div class="game-info">
         <div class="game-section">
           <h2>Descripción</h2>
           <p class="game-description">{{ game.description }}</p>
         </div>
-        
+
         <div class="game-section">
           <h2>Detalles</h2>
           <div class="game-details">
             @if (game.genre) {
-              <div class="detail-item">
-                <span class="detail-label">Género:</span>
-                <span class="detail-value">{{ game.genre }}</span>
-              </div>
+            <div class="detail-item">
+              <span class="detail-label">Género:</span>
+              <span class="detail-value">{{ game.genre }}</span>
+            </div>
             }
             @if (game.platform) {
-              <div class="detail-item">
-                <span class="detail-label">Plataforma:</span>
-                <span class="detail-value">{{ game.platform }}</span>
-              </div>
+            <div class="detail-item">
+              <span class="detail-label">Plataforma:</span>
+              <span class="detail-value">{{ game.platform }}</span>
+            </div>
             }
             @if (game.releaseDate) {
-              <div class="detail-item">
-                <span class="detail-label">Fecha de lanzamiento:</span>
-                <span class="detail-value">{{ game.releaseDate | date: 'dd MMMM, yyyy' }}</span>
-              </div>
+            <div class="detail-item">
+              <span class="detail-label">Fecha de lanzamiento:</span>
+              <span class="detail-value">{{ game.releaseDate | date: 'dd MMMM, yyyy' }}</span>
+            </div>
             }
           </div>
         </div>
-        
+
+        <div class="game-section">
+          <h2>Mi Valoración</h2>
+          <div class="game-rating">
+            <div class="score-input" [attr.data-score]="game.score">
+              <label for="gameScore">Puntuación:</label>
+              <div class="star-rating">
+                @for (star of [1,2,3,4,5]; track star) {
+                <span class="material-icons star" [class.filled]="game.score && star <= game.score"
+                  (click)="setScore(star)">star</span>
+                }
+              </div>
+            </div>
+            <div class="review-input">
+              <label for="gameReview">Mi Review:</label>
+              <textarea id="gameReview" [(ngModel)]="game.review" (blur)="updateGameReview()"
+                placeholder="Escribe tu review sobre el juego..." class="review-field"></textarea>
+            </div>
+          </div>
+        </div>
+
         <div class="game-actions">
           <button class="action-btn primary">
             <span class="material-icons">play_arrow</span>
-            Jugar ahora
+            Guardar
           </button>
-          <button class="action-btn secondary">
-            <span class="material-icons">bookmark</span>
-            Añadir a favoritos
+          <button class="action-btn secondary favorite-action-btn" [class.is-favorite]="game.favorite" (click)="toggleFavorite()">
+            <span class="material-icons">{{game.favorite ? 'star' : 'star_border'}}</span>
+            {{game.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}}
           </button>
         </div>
       </div>
     </div>
-    </div>
+  </div>
   }
 </div>

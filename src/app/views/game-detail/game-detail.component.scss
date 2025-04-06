@@ -289,6 +289,47 @@
     .material-icons {
       font-size: 1.2rem;
     }
+    
+    &.favorite-action-btn {
+      position: relative;
+      overflow: hidden;
+      
+      &.is-favorite {
+        background: #fff8e1;
+        color: #f39c12;
+        border: 1px solid #ffeaa7;
+        
+        .material-icons {
+          color: #f1c40f;
+        }
+        
+        &:hover {
+          background: #ffeaa7;
+          transform: translateY(-2px);
+        }
+        
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transform: translateX(-100%);
+          animation: shine 2s infinite;
+        }
+      }
+    }
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  20%, 100% {
+    transform: translateX(100%);
   }
 }
 
@@ -322,6 +363,228 @@
     .action-btn {
       width: 100%;
       justify-content: center;
+    }
+  }
+}
+
+.game-rating {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
+
+  .score-input,
+  .review-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      font-weight: 500;
+      color: #2c3e50;
+    }
+
+    .score-field {
+      width: 100px;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      
+      &:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+      }
+    }
+
+    .review-field {
+      width: 100%;
+      min-height: 120px;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      resize: vertical;
+      
+      &:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+      }
+    }
+  }
+}
+
+// Enhanced score input styling
+.score-input {
+  position: relative;
+  
+  .score-field {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 40px;
+    padding: 0 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    background-color: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    
+    &:focus {
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+      background-color: #fff;
+    }
+    
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      opacity: 1;
+      height: 30px;
+      background: #3498db url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat center;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+    }
+    
+    &::-moz-inner-spin-button,
+    &::-moz-outer-spin-button {
+      opacity: 1;
+      height: 30px;
+      background: #3498db url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat center;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+    }
+  }
+  
+  // Score indicator
+  &::after {
+    content: '';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background-color: #3498db;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    pointer-events: none;
+  }
+  
+  // Score value indicator
+  &::before {
+    content: attr(data-score);
+    position: absolute;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #3498db;
+    pointer-events: none;
+  }
+  
+  // Star rating display
+  .star-rating {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+    
+    .star {
+      font-size: 1.5rem;
+      color: #e0e0e0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: scale(1.2);
+      }
+      
+      &.filled {
+        color: #f1c40f;
+      }
+    }
+  }
+}
+
+.game-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  
+  h1 {
+    margin: 0;
+    flex: 1;
+  }
+  
+  .favorite-container {
+    margin-left: 1rem;
+    
+    &.is-favorite {
+      .favorite-button {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-color: #f1c40f;
+        
+        .favorite-icon {
+          color: #f1c40f;
+          transform: scale(1.1);
+        }
+        
+        .favorite-text {
+          color: #f1c40f;
+        }
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.3);
+          transform: translateY(-2px);
+          
+          .favorite-icon {
+            transform: scale(1.2) rotate(5deg);
+          }
+        }
+      }
+    }
+    
+    .favorite-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 30px;
+      padding: 0.5rem 1rem;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        
+        .favorite-icon {
+          transform: scale(1.1);
+        }
+      }
+      
+      .favorite-icon {
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+      
+      .favorite-text {
+        transition: all 0.3s ease;
+      }
     }
   }
 }

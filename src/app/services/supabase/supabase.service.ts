@@ -26,6 +26,8 @@ export interface Videogame {
   releaseDate?: Date
   platform?: string
   favorite?: boolean
+  score?: number
+  review?: string
 }
 
 @Injectable({
@@ -180,16 +182,48 @@ export class SupabaseService {
       genre: data.genre,
       releaseDate: new Date(data.release_date),
       image_url: data.image_url,
-      platform: data.platform
+      platform: data.platform,
+      score: data.score,
+      review: data.review
     };
 
     // Check if game is favorite
     videogame.favorite = this.isFavorite(videogame.id || '');
-    
+
     return videogame;
   }
 
+  /**
+   * Update the score for a specific game
+   * @param gameId The ID of the game to update
+   * @param score The new score value (0-10)
+   */
+  public async updateGameScore(gameId: string, score: number): Promise<void> {
+    const { error } = await this._supabaseClient
+      .from('videogames')
+      .update({ score })
+      .eq('id', gameId);
 
+    if (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Update the review for a specific game
+   * @param gameId The ID of the game to update
+   * @param review The new review text
+   */
+  public async updateGameReview(gameId: string, review: string): Promise<void> {
+    const { error } = await this._supabaseClient
+      .from('videogames')
+      .update({ review })
+      .eq('id', gameId);
+
+    if (error) {
+      throw error;
+    }
+  }
 
   // Store favorites in localStorage since we don't want to modify the database
   private getFavoritesFromStorage(): string[] {
@@ -199,10 +233,10 @@ export class SupabaseService {
 
   public toggleFavorite(game: Videogame): boolean {
     if (!game.id) return false;
-    
+
     const favorites = this.getFavoritesFromStorage();
     const index = favorites.indexOf(game.id);
-    
+
     // Toggle favorite status
     if (index >= 0) {
       favorites.splice(index, 1);
@@ -211,7 +245,7 @@ export class SupabaseService {
       favorites.push(game.id);
       game.favorite = true;
     }
-    
+
     // Save to localStorage
     localStorage.setItem('favorite-games', JSON.stringify(favorites));
     return game.favorite;
