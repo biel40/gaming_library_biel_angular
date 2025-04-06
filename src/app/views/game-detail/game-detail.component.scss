@@ -2,7 +2,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
-  @media (min-width: 640px) { padding: 1.5rem; }
   @media (min-width: 1024px) { padding: 2rem; }
 }
 
@@ -132,10 +131,6 @@
     font-size: 2rem;
     font-weight: 700;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
-    @media (min-width: 768px) {
-      font-size: 2.5rem;
-    }
   }
 
   .game-metadata {
@@ -166,18 +161,10 @@
   position: relative;
   flex: 1;
 
-  @media (min-width: 768px) {
-    max-width: 40%;
-  }
-
   .game-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-
-    @media (max-width: 767px) {
-      max-height: 300px;
-    }
   }
 
   .game-image-overlay {
@@ -188,10 +175,6 @@
     height: 100%;
     background: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
     pointer-events: none;
-
-    @media (max-width: 767px) {
-      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
-    }
   }
 }
 
@@ -282,10 +265,6 @@
       }
     }
 
-    .material-icons {
-      font-size: 1.2rem;
-    }
-
     &.favorite-action-btn {
       position: relative;
       overflow: hidden;
@@ -303,64 +282,7 @@
           background: #ffeaa7;
           transform: translateY(-2px);
         }
-
-        &::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-          transform: translateX(-100%);
-          animation: shine 2s infinite;
-        }
       }
-    }
-  }
-}
-
-@keyframes shine {
-  0% {
-    transform: translateX(-100%);
-  }
-
-  20%,
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-// Mobile optimization
-@media (max-width: 430px) {
-  .game-header {
-    padding: 1.5rem;
-
-    h1 {
-      font-size: 1.75rem;
-    }
-
-    .game-metadata {
-      gap: 0.5rem;
-
-      span {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.8rem;
-      }
-    }
-  }
-
-  .game-info {
-    padding: 1.5rem;
-  }
-
-  .game-actions {
-    flex-direction: column;
-    width: 100%;
-
-    .action-btn {
-      width: 100%;
-      justify-content: center;
     }
   }
 }
@@ -512,11 +434,6 @@
   justify-content: space-between;
   margin-bottom: 1rem;
 
-  h1 {
-    margin: 0;
-    flex: 1;
-  }
-
   .favorite-container {
     margin-left: 1rem;
 
@@ -562,10 +479,6 @@
       &:hover {
         background-color: rgba(255, 255, 255, 0.2);
         transform: translateY(-2px);
-
-        .favorite-icon {
-          transform: scale(1.1);
-        }
       }
 
       .favorite-icon {
