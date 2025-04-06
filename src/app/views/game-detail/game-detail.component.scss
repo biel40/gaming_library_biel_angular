@@ -2,19 +2,13 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
-  
-  @media (min-width: 640px) {
-    padding: 1.5rem;
-  }
-  
-  @media (min-width: 1024px) {
-    padding: 2rem;
-  }
+  @media (min-width: 640px) { padding: 1.5rem; }
+  @media (min-width: 1024px) { padding: 2rem; }
 }
 
 .back-button {
   margin-bottom: 1.5rem;
-  
+
   .back-btn {
     display: flex;
     align-items: center;
@@ -26,12 +20,12 @@
     padding: 0.5rem 0;
     cursor: pointer;
     transition: all 0.2s ease;
-    
+
     &:hover {
       color: #2980b9;
       transform: translateX(-4px);
     }
-    
+
     .material-icons {
       font-size: 1.2rem;
     }
@@ -46,7 +40,7 @@
   justify-content: center;
   gap: 1.5rem;
   min-height: 400px;
-  
+
   .loading-spinner {
     width: 48px;
     height: 48px;
@@ -55,7 +49,7 @@
     border-radius: 50%;
     animation: spin 1.2s linear infinite;
   }
-  
+
   p {
     color: #666;
     font-size: 1.1rem;
@@ -63,7 +57,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 // Error state
@@ -75,25 +71,25 @@
   gap: 1.25rem;
   min-height: 400px;
   text-align: center;
-  
+
   .error-icon {
     font-size: 3rem;
     color: #e74c3c;
   }
-  
+
   h2 {
     font-size: 1.5rem;
     font-weight: 700;
     margin: 0;
     color: #2c3e50;
   }
-  
+
   p {
     color: #666;
     max-width: 500px;
     margin: 0;
   }
-  
+
   .btn {
     margin-top: 1rem;
     padding: 0.75rem 1.5rem;
@@ -104,7 +100,7 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    
+
     &:hover {
       background: #2980b9;
       transform: translateY(-2px);
@@ -125,28 +121,28 @@
   padding: 2rem;
   background: linear-gradient(135deg, #3498db, #2980b9);
   color: white;
-  
+
   .game-header-content {
     position: relative;
     z-index: 2;
   }
-  
+
   h1 {
     margin: 0 0 1rem;
     font-size: 2rem;
     font-weight: 700;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    
+
     @media (min-width: 768px) {
       font-size: 2.5rem;
     }
   }
-  
+
   .game-metadata {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    
+
     span {
       padding: 0.35rem 0.75rem;
       background: rgba(255, 255, 255, 0.2);
@@ -160,7 +156,7 @@
 .game-content {
   display: flex;
   flex-direction: column;
-  
+
   @media (min-width: 768px) {
     flex-direction: row;
   }
@@ -169,32 +165,32 @@
 .game-image-container {
   position: relative;
   flex: 1;
-  
+
   @media (min-width: 768px) {
     max-width: 40%;
   }
-  
+
   .game-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    
+
     @media (max-width: 767px) {
       max-height: 300px;
     }
   }
-  
+
   .game-image-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0));
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
     pointer-events: none;
-    
+
     @media (max-width: 767px) {
-      background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0));
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
     }
   }
 }
@@ -206,7 +202,7 @@
 
 .game-section {
   margin-bottom: 2rem;
-  
+
   h2 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -215,7 +211,7 @@
     border-bottom: 2px solid #f0f0f0;
     padding-bottom: 0.5rem;
   }
-  
+
   .game-description {
     line-height: 1.7;
     color: #555;
@@ -226,22 +222,22 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
-  
+
   @media (min-width: 640px) {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .detail-item {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    
+
     .detail-label {
       font-size: 0.85rem;
       font-weight: 600;
       color: #777;
     }
-    
+
     .detail-value {
       font-size: 1rem;
       color: #2c3e50;
@@ -254,7 +250,7 @@
   flex-wrap: wrap;
   gap: 1rem;
   margin-top: 2rem;
-  
+
   .action-btn {
     display: flex;
     align-items: center;
@@ -265,49 +261,49 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    
+
     &.primary {
       background: #3498db;
       color: white;
-      
+
       &:hover {
         background: #2980b9;
         transform: translateY(-2px);
       }
     }
-    
+
     &.secondary {
       background: #f5f5f5;
       color: #555;
-      
+
       &:hover {
         background: #e0e0e0;
         transform: translateY(-2px);
       }
     }
-    
+
     .material-icons {
       font-size: 1.2rem;
     }
-    
+
     &.favorite-action-btn {
       position: relative;
       overflow: hidden;
-      
+
       &.is-favorite {
         background: #fff8e1;
         color: #f39c12;
         border: 1px solid #ffeaa7;
-        
+
         .material-icons {
           color: #f1c40f;
         }
-        
+
         &:hover {
           background: #ffeaa7;
           transform: translateY(-2px);
         }
-        
+
         &::after {
           content: '';
           position: absolute;
@@ -328,7 +324,9 @@
   0% {
     transform: translateX(-100%);
   }
-  20%, 100% {
+
+  20%,
+  100% {
     transform: translateX(100%);
   }
 }
@@ -337,29 +335,29 @@
 @media (max-width: 430px) {
   .game-header {
     padding: 1.5rem;
-    
+
     h1 {
       font-size: 1.75rem;
     }
-    
+
     .game-metadata {
       gap: 0.5rem;
-      
+
       span {
         padding: 0.25rem 0.5rem;
         font-size: 0.8rem;
       }
     }
   }
-  
+
   .game-info {
     padding: 1.5rem;
   }
-  
+
   .game-actions {
     flex-direction: column;
     width: 100%;
-    
+
     .action-btn {
       width: 100%;
       justify-content: center;
@@ -390,7 +388,7 @@
       border: 1px solid #ddd;
       border-radius: 4px;
       font-size: 1rem;
-      
+
       &:focus {
         outline: none;
         border-color: #3498db;
@@ -406,7 +404,7 @@
       border-radius: 4px;
       font-size: 1rem;
       resize: vertical;
-      
+
       &:focus {
         outline: none;
         border-color: #3498db;
@@ -419,7 +417,7 @@
 // Enhanced score input styling
 .score-input {
   position: relative;
-  
+
   .score-field {
     appearance: none;
     -webkit-appearance: none;
@@ -433,22 +431,15 @@
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     transition: all 0.3s ease;
-    
+
     &:focus {
       border-color: #3498db;
       box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
       background-color: #fff;
     }
-    
+
     &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button {
-      opacity: 1;
-      height: 30px;
-      background: #3498db url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat center;
-      border-radius: 0 8px 8px 0;
-      cursor: pointer;
-    }
-    
+    &::-webkit-outer-spin-button,
     &::-moz-inner-spin-button,
     &::-moz-outer-spin-button {
       opacity: 1;
@@ -458,7 +449,7 @@
       cursor: pointer;
     }
   }
-  
+
   // Score indicator
   &::after {
     content: '';
@@ -477,7 +468,7 @@
     font-weight: bold;
     pointer-events: none;
   }
-  
+
   // Score value indicator
   &::before {
     content: attr(data-score);
@@ -490,24 +481,24 @@
     color: #3498db;
     pointer-events: none;
   }
-  
+
   // Star rating display
   .star-rating {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
     margin-top: 10px;
-    
+
     .star {
       font-size: 1.5rem;
       color: #e0e0e0;
       cursor: pointer;
       transition: all 0.2s ease;
-      
+
       &:hover {
         transform: scale(1.2);
       }
-      
+
       &.filled {
         color: #f1c40f;
       }
@@ -520,40 +511,40 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
-  
+
   h1 {
     margin: 0;
     flex: 1;
   }
-  
+
   .favorite-container {
     margin-left: 1rem;
-    
+
     &.is-favorite {
       .favorite-button {
         background-color: rgba(255, 255, 255, 0.2);
         border-color: #f1c40f;
-        
+
         .favorite-icon {
           color: #f1c40f;
           transform: scale(1.1);
         }
-        
+
         .favorite-text {
           color: #f1c40f;
         }
-        
+
         &:hover {
           background-color: rgba(255, 255, 255, 0.3);
           transform: translateY(-2px);
-          
+
           .favorite-icon {
             transform: scale(1.2) rotate(5deg);
           }
         }
       }
     }
-    
+
     .favorite-button {
       display: flex;
       align-items: center;
@@ -567,21 +558,21 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
-      
+
       &:hover {
         background-color: rgba(255, 255, 255, 0.2);
         transform: translateY(-2px);
-        
+
         .favorite-icon {
           transform: scale(1.1);
         }
       }
-      
+
       .favorite-icon {
         font-size: 1.2rem;
         transition: all 0.3s ease;
       }
-      
+
       .favorite-text {
         transition: all 0.3s ease;
       }
