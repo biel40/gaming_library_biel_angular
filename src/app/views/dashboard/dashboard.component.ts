@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit, signal, computed } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit, signal, computed, effect, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
@@ -17,10 +17,11 @@ import { SupabaseService, Videogame } from '../../services/supabase/supabase.ser
         RouterLink
     ]
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('carousel') carouselElement!: ElementRef;
 
     private _supabaseService: SupabaseService = inject(SupabaseService);
+    private _resizeListener: () => void;
 
     // Signals for state management
     public title = signal('My Game Library');
@@ -31,26 +32,38 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     public currentPage = signal(0);
     public itemsPerPage = signal(0);
     public carouselDots = signal<number[]>([]);
+    public isLoading = signal(true);
+    public error = signal<string | null>(null);
     
     // Computed signals
     public filteredGames = computed(() => {
         const games = this.games();
-        const searchTerm = this.searchTerm().toLowerCase();
+        const searchTerm = this.searchTerm().toLowerCase().trim();
         const activeGenre = this.activeGenre();
         
         return games.filter(game => {
-            const matchesSearch = !searchTerm || 
-                (game.name?.toLowerCase().includes(searchTerm) || 
-                 game.description?.toLowerCase().includes(searchTerm));
+            // Handle null/undefined values
+            const gameName = game.name || '';
+            const gameDescription = game.description || '';
+            const gameGenre = game.genre || '';
             
-            const matchesGenre = activeGenre === 'All' || game.genre === activeGenre;
+            const matchesSearch = !searchTerm || 
+                gameName.toLowerCase().includes(searchTerm) || 
+                gameDescription.toLowerCase().includes(searchTerm);
+            
+            const matchesGenre = activeGenre === 'All' || gameGenre === activeGenre;
             
             return matchesSearch && matchesGenre;
         });
     });
     
     public favoriteGames = computed(() => {
-        return this.games().filter(game => game.favorite);
+        const games = this.games().filter(game => game.favorite);
+        const activeGenre = this.activeGenre();
+        
+        return activeGenre === 'All' 
+            ? games 
+            : games.filter(game => game.genre === activeGenre);
     });
     
     public uniqueGenres = computed(() => {
@@ -63,17 +76,48 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         return ['All', ...Array.from(genres).sort()];
     });
 
-    constructor() { }
+    constructor() {
+        // Set up effect to recalculate items per page when filtered games change
+        effect(() => {
+            const filtered = this.filteredGames();
+            this.calculateItemsPerPage();
+        });
+        
+        // Debug effect to log filtering changes
+        effect(() => {
+            const searchTerm = this.searchTerm();
+            const activeGenre = this.activeGenre();
+            const filteredCount = this.filteredGames().length;
+            const totalGames = this.games().length;
+            
+            console.log(`Filtering: searchTerm="${searchTerm}", activeGenre="${activeGenre}", filtered=${filteredCount}/${totalGames}`);
+        });
+        
+        // Set up resize listener
+        this._resizeListener = () => this.calculateItemsPerPage();
+    }
 
     async ngOnInit() {
-        const games = await this._supabaseService.getVideogames();
-        this.games.set(games);
-        this.extractUniqueGenres();
+        try {
+            this.isLoading.set(true);
+            this.error.set(null);
+            const games = await this._supabaseService.getVideogames();
+            this.games.set(games);
+        } catch (err) {
+            console.error('Error loading games:', err);
+            this.error.set('Error loading games. Please try again later.');
+        } finally {
+            this.isLoading.set(false);
+        }
     }
 
     ngAfterViewInit() {
         this.calculateItemsPerPage();
-        window.addEventListener('resize', () => this.calculateItemsPerPage());
+        window.addEventListener('resize', this._resizeListener);
+    }
+    
+    ngOnDestroy() {
+        window.removeEventListener('resize', this._resizeListener);
     }
 
     private calculateItemsPerPage() {
@@ -88,15 +132,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         
         // Calculate number of pages
         const totalItems = this.filteredGames().length;
-        const totalPages = Math.ceil(totalItems / this.itemsPerPage());
+        const totalPages = Math.max(1, Math.ceil(totalItems / this.itemsPerPage()));
         
         // Generate dots array
         this.carouselDots.set(Array.from({ length: totalPages }, (_, i) => i));
-    }
-
-    public filterGames() {
-        // No need to manually filter as the computed signal handles it
-        this.currentPage.set(0); // Reset to first page when filtering
+        
+        // Ensure current page is valid
+        if (this.currentPage() >= totalPages) {
+            this.currentPage.set(0);
+        }
     }
 
     public filterByGenre(genre: string) {
@@ -108,10 +152,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.searchTerm.set('');
         this.activeGenre.set('All');
         this.currentPage.set(0);
-    }
-
-    private extractUniqueGenres() {
-        // No need to manually extract genres as the computed signal handles it
     }
 
     public scrollCarousel(direction: 'left' | 'right') {
@@ -129,9 +169,5 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     public goToPage(pageIndex: number) {
         this.currentPage.set(pageIndex);
-    }
-
-    private updateFavoriteGames() {
-        // No need to manually update favorite games as the computed signal handles it
     }
 }  

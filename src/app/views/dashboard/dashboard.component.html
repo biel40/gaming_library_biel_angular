@@ -7,20 +7,33 @@
                 placeholder="Buscar juegos..." 
                 [ngModel]="searchTerm()"
                 (ngModelChange)="searchTerm.set($event)"
-                (input)="filterGames()"
             >
             <span class="material-icons">search</span>
         </div>
     </header>
 
+    <!-- Loading state -->
+    @if (isLoading()) {
+    <div class="loading-state">
+        <span class="material-icons">hourglass_empty</span>
+        <p>Cargando juegos...</p>
+    </div>
+    }
+
+    <!-- Error state -->
+    @if (error()) {
+    <div class="error-state">
+        <span class="material-icons">error</span>
+        <p>{{ error() }}</p>
+        <button class="btn" (click)="ngOnInit()">Reintentar</button>
+    </div>
+    }
+
+    <!-- Content when loaded -->
+    @if (!isLoading() && !error()) {
     <!-- Filters section -->
     <div class="filters">
         <div class="filter-chips">
-            <div 
-                class="filter-chip" 
-                [class.active]="activeGenre() === 'All'"
-                (click)="filterByGenre('All')"
-            >Todos</div>
             @for (genre of uniqueGenres(); track genre) {
                 <div 
                     class="filter-chip" 
@@ -32,16 +45,23 @@
     </div>
 
     <!-- Favorites Section -->
-    <section class="favorites" *ngIf="favoriteGames().length > 0">
+    <section class="favorites">
         <div class="section-header">
             <h2>Mis Favoritos</h2>
         </div>
 
-        <div class="game-grid favorites-grid">
-            @for (game of favoriteGames(); track $index) {
-                <app-game-card [game]="game"></app-game-card>
-            }
-        </div>
+        @if (favoriteGames().length > 0) {
+            <div class="game-grid favorites-grid">
+                @for (game of favoriteGames(); track $index) {
+                    <app-game-card [game]="game"></app-game-card>
+                }
+            </div>
+        } @else {
+            <div class="empty-state">
+                <span class="material-icons">favorite_border</span>
+                <p>No hay juegos favoritos{{ activeGenre() !== 'All' ? ' en la categoría ' + activeGenre() : '' }}</p>
+            </div>
+        }
     </section>
 
     <!-- All Games Grid -->
@@ -99,4 +119,5 @@
         </div>
         }
     </section>
+    }
 </div>
