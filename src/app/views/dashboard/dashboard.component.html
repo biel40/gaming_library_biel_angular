@@ -1,11 +1,12 @@
 <div class="dashboard">
     <header class="dashboard-header">
-        <h1>{{ title }}</h1>
+        <h1>{{ title() }}</h1>
         <div class="search-bar">
             <input 
                 type="text" 
                 placeholder="Buscar juegos..." 
-                [(ngModel)]="searchTerm"
+                [ngModel]="searchTerm()"
+                (ngModelChange)="searchTerm.set($event)"
                 (input)="filterGames()"
             >
             <span class="material-icons">search</span>
@@ -17,13 +18,13 @@
         <div class="filter-chips">
             <div 
                 class="filter-chip" 
-                [class.active]="activeGenre === 'All'"
+                [class.active]="activeGenre() === 'All'"
                 (click)="filterByGenre('All')"
             >Todos</div>
-            @for (genre of uniqueGenres; track genre) {
+            @for (genre of uniqueGenres(); track genre) {
                 <div 
                     class="filter-chip" 
-                    [class.active]="activeGenre === genre"
+                    [class.active]="activeGenre() === genre"
                     (click)="filterByGenre(genre)"
                 >{{ genre }}</div>
             }
@@ -31,13 +32,13 @@
     </div>
 
     <!-- Favorites Section -->
-    <section class="favorites" *ngIf="favoriteGames.length > 0">
+    <section class="favorites" *ngIf="favoriteGames().length > 0">
         <div class="section-header">
             <h2>Mis Favoritos</h2>
         </div>
 
         <div class="game-grid favorites-grid">
-            @for (game of favoriteGames; track $index) {
+            @for (game of favoriteGames(); track $index) {
                 <app-game-card [game]="game"></app-game-card>
             }
         </div>
@@ -48,17 +49,17 @@
         <div class="section-header">
             <h2>Todos los Juegos</h2>
             <div class="view-controls">
-                <button class="view-btn" [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'">
+                <button class="view-btn" [class.active]="viewMode() === 'grid'" (click)="viewMode.set('grid')">
                     <span class="material-icons">grid_view</span>
                 </button>
-                <button class="view-btn" [class.active]="viewMode === 'list'" (click)="viewMode = 'list'">
+                <button class="view-btn" [class.active]="viewMode() === 'list'" (click)="viewMode.set('list')">
                     <span class="material-icons">view_list</span>
                 </button>
             </div>
         </div>
 
         <!-- Empty state -->
-        @if (filteredGames.length === 0) {
+        @if (filteredGames().length === 0) {
         <div class="empty-state">
             <span class="material-icons">videogame_asset</span>
             <p>No se encontraron juegos que coincidan con tu búsqueda</p>
@@ -67,18 +68,18 @@
         }
 
         <!-- Grid view -->
-        @if (viewMode === 'grid' && filteredGames.length > 0) {
+        @if (viewMode() === 'grid' && filteredGames().length > 0) {
         <div class="game-grid">
-            @for (game of filteredGames; track $index) {
+            @for (game of filteredGames(); track $index) {
                 <app-game-card [game]="game"></app-game-card>
             }
         </div>
         }
 
         <!-- List view -->
-        @if (viewMode === 'list' && filteredGames.length > 0) {
+        @if (viewMode() === 'list' && filteredGames().length > 0) {
         <div class="game-list">
-            @for (game of filteredGames; track $index) {
+            @for (game of filteredGames(); track $index) {
                 <div class="list-item">
                     <div class="list-img">
                         <img [src]="game.image_url" [alt]="game.name">

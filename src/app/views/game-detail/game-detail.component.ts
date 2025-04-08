@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed, WritableSignal } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,14 +16,25 @@ import { SupabaseService, Videogame } from '../../services/supabase/supabase.ser
   ]
 })
 export class GameDetailComponent implements OnInit {
-  game: Videogame | null = null;
-  loading: boolean = true;
-  error: string | null = null;
+  private _game = signal<Videogame | null>(null);
+  private _loading = signal<boolean>(true);
+  private _error = signal<string | null>(null);
+  private _score: WritableSignal<number> = signal<number>(0);
+  private _review: WritableSignal<string> = signal<string>('');
+
+  // Computed signals
+  readonly game = computed(() => this._game());
+  readonly loading = computed(() => this._loading());
+  readonly error = computed(() => this._error());
+  readonly score = computed(() => this._score());
+  readonly review = signal<string>('');
+  readonly favoriteIcon = computed(() => this._game()?.favorite ? 'star' : 'star_border');
+  readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Remove from favorites' : 'Add to favorites');
 
   constructor(
     private route: ActivatedRoute,
     private supabaseService: SupabaseService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Get the game ID from the route
@@ -32,8 +43,8 @@ export class GameDetailComponent implements OnInit {
       if (gameId) {
         this.loadGameDetails(gameId);
       } else {
-        this.error = 'No se encontró el ID del juego';
-        this.loading = false;
+        this._error.set('No se encontró el ID del juego');
+        this._loading.set(false);
       }
     });
   }
@@ -42,16 +53,21 @@ export class GameDetailComponent implements OnInit {
     try {
       const game = await this.supabaseService.getVideogameDetails(gameId);
 
-      this.game = game;
+      this._game.set(game);
 
-      if (!this.game) {
-        this.error = 'No se encontró el juego';
+      if (game) {
+        this._score.set(game.score || 0);
+        this._review.set(game.review || '');
+      }
+
+      if (!this._game()) {
+        this._error.set('No se encontró el juego');
       }
     } catch (err) {
-      console.error('Error loading game details:', err);
-      this.error = 'Error al cargar los detalles del juego';
+      this._error.set('Error al cargar los detalles del juego');
+      console.error(err);
     } finally {
-      this.loading = false;
+      this._loading.set(false);
     }
   }
 
@@ -59,8 +75,9 @@ export class GameDetailComponent implements OnInit {
    * Toggle the favorite status of the current game
    */
   toggleFavorite(): void {
-    if (this.game) {
-      this.supabaseService.toggleFavorite(this.game);
+    const currentGame = this._game();
+    if (currentGame) {
+      this.supabaseService.toggleFavorite(currentGame);
     }
   }
 
@@ -68,38 +85,39 @@ export class GameDetailComponent implements OnInit {
    * Update the game score
    */
   async updateGameScore(): Promise<void> {
-    if (this.game && this.game.id) {
-      try {
-        await this.supabaseService.updateGameScore(this.game.id, this.game.score || 0);
-      } catch (err) {
-        console.error('Error updating game score:', err);
-        this.error = 'Error al actualizar la puntuación';
-      }
+    const currentGame = this._game();
+    if (!currentGame || !currentGame.id) return;
+
+    try {
+      await this.supabaseService.updateGameScore(currentGame.id, this._score());
+    } catch (err) {
+      this._error.set('Error al actualizar la puntuación');
+      console.error(err);
     }
   }
 
   /**
-   * Update the game review
-   */
-  async updateGameReview(): Promise<void> {
-    if (this.game && this.game.id) {
-      try {
-        await this.supabaseService.updateGameReview(this.game.id, this.game.review || '');
-      } catch (err) {
-        console.error('Error updating game review:', err);
-        this.error = 'Error al actualizar la review';
-      }
+   * Update the game review and the score at the same time
+  */
+  public async updateGameReviewAndScore(): Promise<void> {
+    const currentGame = this._game();
+    if (!currentGame || !currentGame.id) return;
+
+    try {
+      await this.supabaseService.updateGameReview(currentGame.id, this._review());
+      await this.supabaseService.updateGameScore(currentGame.id, this._score());
+    } catch (err) {
+      this._error.set('Error al actualizar la reseña');
+      console.error(err);
     }
   }
+
 
   /**
    * Set the game score from star rating
    * @param score The score to set (1-10)
    */
   setScore(score: number): void {
-    if (this.game) {
-      this.game.score = score;
-      this.updateGameScore();
-    }
+    this._score.set(score);
   }
 }
