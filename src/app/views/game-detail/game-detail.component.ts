@@ -115,7 +115,7 @@ export class GameDetailComponent implements OnInit {
 
   /**
    * Set the game score from star rating
-   * @param score The score to set (1-10)
+   * @param score The score to set (1-5)
    */
   setScore(score: number): void {
     this._score.set(score);

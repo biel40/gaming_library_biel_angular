@@ -2,12 +2,8 @@
     <header class="dashboard-header">
         <h1>{{ title() }}</h1>
         <div class="search-bar">
-            <input 
-                type="text" 
-                placeholder="Buscar juegos..." 
-                [ngModel]="searchTerm()"
-                (ngModelChange)="searchTerm.set($event)"
-            >
+            <input type="text" placeholder="Buscar juegos..." [ngModel]="searchTerm()"
+                (ngModelChange)="searchTerm.set($event)">
             <span class="material-icons">search</span>
         </div>
     </header>
@@ -35,11 +31,8 @@
     <div class="filters">
         <div class="filter-chips">
             @for (genre of uniqueGenres(); track genre) {
-                <div 
-                    class="filter-chip" 
-                    [class.active]="activeGenre() === genre"
-                    (click)="filterByGenre(genre)"
-                >{{ genre }}</div>
+            <div class="filter-chip" [class.active]="activeGenre() === genre" (click)="filterByGenre(genre)">{{ genre }}
+            </div>
             }
         </div>
     </div>
@@ -51,16 +44,16 @@
         </div>
 
         @if (favoriteGames().length > 0) {
-            <div class="game-grid favorites-grid">
-                @for (game of favoriteGames(); track $index) {
-                    <app-game-card [game]="game"></app-game-card>
-                }
-            </div>
+        <div class="game-grid favorites-grid">
+            @for (game of favoriteGames(); track $index) {
+            <app-game-card [game]="game"></app-game-card>
+            }
+        </div>
         } @else {
-            <div class="empty-state">
-                <span class="material-icons">favorite_border</span>
-                <p>No hay juegos favoritos{{ activeGenre() !== 'All' ? ' en la categoría ' + activeGenre() : '' }}</p>
-            </div>
+        <div class="empty-state">
+            <span class="material-icons">favorite_border</span>
+            <p>No hay juegos favoritos{{ activeGenre() !== 'All' ? ' en la categoría ' + activeGenre() : '' }}</p>
+        </div>
         }
     </section>
 
@@ -91,7 +84,7 @@
         @if (viewMode() === 'grid' && filteredGames().length > 0) {
         <div class="game-grid">
             @for (game of filteredGames(); track $index) {
-                <app-game-card [game]="game"></app-game-card>
+            <app-game-card [game]="game"></app-game-card>
             }
         </div>
         }
@@ -100,21 +93,21 @@
         @if (viewMode() === 'list' && filteredGames().length > 0) {
         <div class="game-list">
             @for (game of filteredGames(); track $index) {
-                <div class="list-item">
-                    <div class="list-img">
-                        <img [src]="game.image_url" [alt]="game.name">
-                    </div>
-                    <div class="list-content">
-                        <h3>{{ game.name }}</h3>
-                        <p class="list-description">{{ game.description }}</p>
-                        <div class="list-meta">
-                            <span>{{ game.genre }}</span>
-                            <span>{{ game.platform }}</span>
-                            <span>{{ game.releaseDate | date: 'dd/MM/yyyy' }}</span>
-                        </div>
-                    </div>
-                    <button class="list-btn" routerLink="/dashboard">Ver Detalles</button>
+            <div class="list-item">
+                <div class="list-img">
+                    <img [src]="game.image_url" [alt]="game.name">
                 </div>
+                <div class="list-content">
+                    <h3>{{ game.name }}</h3>
+                    <p class="list-description">{{ game.description }}</p>
+                    <div class="list-meta">
+                        <span>{{ game.genre }}</span>
+                        <span>{{ game.platform }}</span>
+                        <span>{{ game.releaseDate | date: 'dd/MM/yyyy' }}</span>
+                    </div>
+                </div>
+                <button class="list-btn" routerLink="/dashboard">Ver Detalles</button>
+            </div>
             }
         </div>
         }

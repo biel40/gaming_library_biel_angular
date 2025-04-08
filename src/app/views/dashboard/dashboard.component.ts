@@ -34,38 +34,38 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public carouselDots = signal<number[]>([]);
     public isLoading = signal(true);
     public error = signal<string | null>(null);
-    
+
     // Computed signals
     public filteredGames = computed(() => {
         const games = this.games();
         const searchTerm = this.searchTerm().toLowerCase().trim();
         const activeGenre = this.activeGenre();
-        
+
         return games.filter(game => {
             // Handle null/undefined values
             const gameName = game.name || '';
             const gameDescription = game.description || '';
             const gameGenre = game.genre || '';
-            
-            const matchesSearch = !searchTerm || 
-                gameName.toLowerCase().includes(searchTerm) || 
+
+            const matchesSearch = !searchTerm ||
+                gameName.toLowerCase().includes(searchTerm) ||
                 gameDescription.toLowerCase().includes(searchTerm);
-            
+
             const matchesGenre = activeGenre === 'All' || gameGenre === activeGenre;
-            
+
             return matchesSearch && matchesGenre;
         });
     });
-    
+
     public favoriteGames = computed(() => {
         const games = this.games().filter(game => game.favorite);
         const activeGenre = this.activeGenre();
-        
-        return activeGenre === 'All' 
-            ? games 
+
+        return activeGenre === 'All'
+            ? games
             : games.filter(game => game.genre === activeGenre);
     });
-    
+
     public uniqueGenres = computed(() => {
         const genres = new Set<string>();
         this.games().forEach(game => {
@@ -82,17 +82,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             const filtered = this.filteredGames();
             this.calculateItemsPerPage();
         });
-        
+
         // Debug effect to log filtering changes
         effect(() => {
             const searchTerm = this.searchTerm();
             const activeGenre = this.activeGenre();
             const filteredCount = this.filteredGames().length;
             const totalGames = this.games().length;
-            
+
             console.log(`Filtering: searchTerm="${searchTerm}", activeGenre="${activeGenre}", filtered=${filteredCount}/${totalGames}`);
         });
-        
+
         // Set up resize listener
         this._resizeListener = () => this.calculateItemsPerPage();
     }
@@ -115,28 +115,28 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.calculateItemsPerPage();
         window.addEventListener('resize', this._resizeListener);
     }
-    
+
     ngOnDestroy() {
         window.removeEventListener('resize', this._resizeListener);
     }
 
     private calculateItemsPerPage() {
         if (!this.carouselElement) return;
-        
+
         const containerWidth = this.carouselElement.nativeElement.offsetWidth;
         const itemWidth = 300; // Approximate width of a game card
         const gap = 20; // Gap between items
-        
+
         const calculatedItemsPerPage = Math.floor((containerWidth + gap) / (itemWidth + gap));
         this.itemsPerPage.set(Math.max(1, calculatedItemsPerPage));
-        
+
         // Calculate number of pages
         const totalItems = this.filteredGames().length;
         const totalPages = Math.max(1, Math.ceil(totalItems / this.itemsPerPage()));
-        
+
         // Generate dots array
         this.carouselDots.set(Array.from({ length: totalPages }, (_, i) => i));
-        
+
         // Ensure current page is valid
         if (this.currentPage() >= totalPages) {
             this.currentPage.set(0);
@@ -157,13 +157,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public scrollCarousel(direction: 'left' | 'right') {
         const totalPages = this.carouselDots().length;
         let newPage = this.currentPage();
-        
+
         if (direction === 'left') {
             newPage = (newPage - 1 + totalPages) % totalPages;
         } else {
             newPage = (newPage + 1) % totalPages;
         }
-        
+
         this.currentPage.set(newPage);
     }
 
