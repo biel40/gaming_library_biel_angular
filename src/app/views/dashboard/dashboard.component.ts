@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
@@ -22,151 +22,116 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     private _supabaseService: SupabaseService = inject(SupabaseService);
 
-    public title: string = 'My Game Library';
-
-    // Game data
-    public games: Videogame[] = [];
-    public filteredGames: Videogame[] = [];
-    public favoriteGames: Videogame[] = [];
-    public uniqueGenres: string[] = [];
-    private genreMap: Map<string, string> = new Map<string, string>();
-
-    // UI state
-    public searchTerm: string = '';
-    public activeGenre: string = 'All';
-    public viewMode: 'grid' | 'list' = 'grid';
+    // Signals for state management
+    public title = signal('My Game Library');
+    public games = signal<Videogame[]>([]);
+    public searchTerm = signal('');
+    public activeGenre = signal('All');
+    public viewMode = signal<'grid' | 'list'>('grid');
+    public currentPage = signal(0);
+    public itemsPerPage = signal(0);
+    public carouselDots = signal<number[]>([]);
     
-    // Carousel state
-    public currentPage: number = 0;
-    public itemsPerPage: number = 0;
-    public carouselDots: number[] = [];
+    // Computed signals
+    public filteredGames = computed(() => {
+        const games = this.games();
+        const searchTerm = this.searchTerm().toLowerCase();
+        const activeGenre = this.activeGenre();
+        
+        return games.filter(game => {
+            const matchesSearch = !searchTerm || 
+                (game.name?.toLowerCase().includes(searchTerm) || 
+                 game.description?.toLowerCase().includes(searchTerm));
+            
+            const matchesGenre = activeGenre === 'All' || game.genre === activeGenre;
+            
+            return matchesSearch && matchesGenre;
+        });
+    });
+    
+    public favoriteGames = computed(() => {
+        return this.games().filter(game => game.favorite);
+    });
+    
+    public uniqueGenres = computed(() => {
+        const genres = new Set<string>();
+        this.games().forEach(game => {
+            if (game.genre) {
+                genres.add(game.genre);
+            }
+        });
+        return ['All', ...Array.from(genres).sort()];
+    });
 
     constructor() { }
 
     async ngOnInit() {
-        this.games = await this._supabaseService.getVideogames();
-        this.filteredGames = [...this.games];
-        this.updateFavoriteGames();
+        const games = await this._supabaseService.getVideogames();
+        this.games.set(games);
         this.extractUniqueGenres();
     }
 
     ngAfterViewInit() {
-        // Calculate items per page based on viewport
         this.calculateItemsPerPage();
         window.addEventListener('resize', () => this.calculateItemsPerPage());
     }
 
     private calculateItemsPerPage() {
-        // Get the carousel width and approximate item width (320px + margin)
-        const carouselWidth = this.carouselElement?.nativeElement.offsetWidth || 0;
-        const itemWidth = 352; // 320px card width + 32px margins
-
-        this.itemsPerPage = Math.floor(carouselWidth / itemWidth) || 3;
+        if (!this.carouselElement) return;
         
-        const totalPages = Math.ceil(this.filteredGames.length / this.itemsPerPage);
-        this.carouselDots = Array(totalPages).fill(0).map((_, i) => i);
+        const containerWidth = this.carouselElement.nativeElement.offsetWidth;
+        const itemWidth = 300; // Approximate width of a game card
+        const gap = 20; // Gap between items
+        
+        const calculatedItemsPerPage = Math.floor((containerWidth + gap) / (itemWidth + gap));
+        this.itemsPerPage.set(Math.max(1, calculatedItemsPerPage));
+        
+        // Calculate number of pages
+        const totalItems = this.filteredGames().length;
+        const totalPages = Math.ceil(totalItems / this.itemsPerPage());
+        
+        // Generate dots array
+        this.carouselDots.set(Array.from({ length: totalPages }, (_, i) => i));
     }
 
-    /**
-     * Filter games by search term and genre
-    */
     public filterGames() {
-        this.filteredGames = this.games.filter(game => {
-            // Apply search filter
-            const matchesSearch = this.searchTerm ? 
-                game.name?.toLowerCase().includes(this.searchTerm.toLowerCase()) || 
-                game.description?.toLowerCase().includes(this.searchTerm.toLowerCase()) :
-                true;
-            
-            // Apply genre filter
-            const matchesGenre = this.activeGenre === 'All' ? 
-                true : 
-                game.genre?.trim().toLowerCase() === this.activeGenre;
-                
-            return matchesSearch && matchesGenre;
-        });
-
-        this.updateFavoriteGames();
-        this.calculateItemsPerPage();
-        this.currentPage = 0;
+        // No need to manually filter as the computed signal handles it
+        this.currentPage.set(0); // Reset to first page when filtering
     }
 
-    /**
-     * Filter games by genre
-    */
     public filterByGenre(genre: string) {
-        // Use normalized genre for filtering
-        this.activeGenre = genre === 'All' ? 'All' : genre.trim().toLowerCase();
-        this.filterGames();
+        this.activeGenre.set(genre);
+        this.currentPage.set(0); // Reset to first page when changing genre
     }
 
-    /**
-     * Reset all filters
-    */
     public resetFilters() {
-        this.searchTerm = '';
-        this.activeGenre = 'All';
-        this.filteredGames = [...this.games];
-        this.updateFavoriteGames();
-        this.calculateItemsPerPage();
+        this.searchTerm.set('');
+        this.activeGenre.set('All');
+        this.currentPage.set(0);
     }
 
-    /**
-     * Extract unique genres from games for filter chips
-    */
     private extractUniqueGenres() {
-        const genres = new Set<string>();
-        this.genreMap.clear();
-        
-        this.games.forEach(game => {
-            if (game.genre) {
-                // Normalize genre text (trim whitespace and convert to lowercase)
-                const normalizedGenre = game.genre.trim().toLowerCase();
-                
-                if (!this.genreMap.has(normalizedGenre)) {
-                    this.genreMap.set(normalizedGenre, game.genre);
-                }
-
-                if (genres.has(normalizedGenre)) {
-                    return;
-                }
-                
-                genres.add(normalizedGenre);
-            }
-        });
-        
-        // Transform normalized genres to display versions
-        this.uniqueGenres = Array.from(genres).map(genre => this.genreMap.get(genre) || genre);
+        // No need to manually extract genres as the computed signal handles it
     }
 
-    /**
-     * Scroll the carousel left or right
-     */
     public scrollCarousel(direction: 'left' | 'right') {
+        const totalPages = this.carouselDots().length;
+        let newPage = this.currentPage();
+        
         if (direction === 'left') {
-            this.currentPage = Math.max(0, this.currentPage - 1);
+            newPage = (newPage - 1 + totalPages) % totalPages;
         } else {
-            this.currentPage = Math.min(this.carouselDots.length - 1, this.currentPage + 1);
+            newPage = (newPage + 1) % totalPages;
         }
-        this.goToPage(this.currentPage);
+        
+        this.currentPage.set(newPage);
     }
 
-    /**
-     * Go to a specific page in the carousel
-     */
     public goToPage(pageIndex: number) {
-        this.currentPage = pageIndex;
-        const scrollAmount = pageIndex * (this.itemsPerPage * 352); // 352px = card width + margins
-        this.carouselElement.nativeElement.scrollTo({
-            left: scrollAmount,
-            behavior: 'smooth'
-        });
+        this.currentPage.set(pageIndex);
     }
-    
-    /**
-     * Update the favoriteGames array based on current games
-     */
+
     private updateFavoriteGames() {
-        this.favoriteGames = this.filteredGames.filter(game => game.favorite);
+        // No need to manually update favorite games as the computed signal handles it
     }
 }  

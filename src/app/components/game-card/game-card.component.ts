@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, signal, computed } from "@angular/core";
 import { Videogame, SupabaseService } from "../../services/supabase/supabase.service";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
@@ -13,9 +13,24 @@ import { inject } from "@angular/core";
       CommonModule,
       RouterModule
     ]
-  })
-  export class GameCardComponent {
-    @Input() game!: Videogame;
+})
+export class GameCardComponent {
+    private _game = signal<Videogame | null>(null);
+    @Input() set game(value: Videogame) {
+        this._game.set(value);
+    }
+    
+    // Computed signals for template bindings
+    readonly favoriteIcon = computed(() => this._game()?.favorite ? 'star' : 'star_border');
+    readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Remove from favorites' : 'Add to favorites');
+    readonly gameId = computed(() => this._game()?.id);
+    readonly gameName = computed(() => this._game()?.name);
+    readonly gameDescription = computed(() => this._game()?.description);
+    readonly gameGenre = computed(() => this._game()?.genre);
+    readonly gamePlatform = computed(() => this._game()?.platform);
+    readonly gameReleaseDate = computed(() => this._game()?.releaseDate);
+    readonly gameImageUrl = computed(() => this._game()?.image_url);
+    
     private _supabaseService: SupabaseService = inject(SupabaseService);
     
     constructor() {}
@@ -29,8 +44,10 @@ import { inject } from "@angular/core";
       event.stopPropagation();
       event.preventDefault();
       
-      // Toggle the favorite status through the service
-      this._supabaseService.toggleFavorite(this.game);
+      const currentGame = this._game();
+      if (currentGame) {
+        // Toggle the favorite status through the service
+        this._supabaseService.toggleFavorite(currentGame);
+      }
     }
-
-  }
+}

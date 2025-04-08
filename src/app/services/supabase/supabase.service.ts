@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, signal, computed } from '@angular/core'
 import {
   AuthChangeEvent,
   AuthSession,
@@ -36,20 +36,23 @@ export interface Videogame {
 export class SupabaseService {
 
   private _supabaseClient: SupabaseClient;
-  public _session: AuthSession | null = null;
+  private _session = signal<AuthSession | null>(null);
+  private _videogames = signal<Videogame[]>([]);
+  private _favorites = signal<string[]>([]);
 
   constructor() {
-    this._supabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey)
+    this._supabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
+    this._loadFavoritesFromStorage();
   }
 
+  // Session management
   public async getSession() {
-    if (!this._session) {
+    if (!this._session()) {
       const { data } = await this._supabaseClient.auth.getSession();
-      this._session = data.session;
+      this._session.set(data.session);
     }
-    return this._session;
+    return this._session();
   }
-
 
   public profile(user: User) {
     return this._supabaseClient
@@ -145,6 +148,7 @@ export class SupabaseService {
       .select();
 
     if (!data) {
+      this._videogames.set([]);
       return [];
     }
 
@@ -160,6 +164,7 @@ export class SupabaseService {
       favorite: this.isFavorite(item.id)
     }));
 
+    this._videogames.set(videogames);
     return videogames;
   }
 
@@ -226,15 +231,23 @@ export class SupabaseService {
   }
 
   // Store favorites in localStorage since we don't want to modify the database
-  private getFavoritesFromStorage(): string[] {
+  private _loadFavoritesFromStorage(): void {
     const favorites = localStorage.getItem('favorite-games');
-    return favorites ? JSON.parse(favorites) : [];
+    this._favorites.set(favorites ? JSON.parse(favorites) : []);
+  }
+
+  private getFavoritesFromStorage(): string[] {
+    return this._favorites();
+  }
+
+  public isFavorite(gameId: string): boolean {
+    return this._favorites().includes(gameId);
   }
 
   public toggleFavorite(game: Videogame): boolean {
     if (!game.id) return false;
 
-    const favorites = this.getFavoritesFromStorage();
+    const favorites = this._favorites();
     const index = favorites.indexOf(game.id);
 
     // Toggle favorite status
@@ -246,13 +259,12 @@ export class SupabaseService {
       game.favorite = true;
     }
 
+    // Update the favorites signal
+    this._favorites.set([...favorites]);
+    
     // Save to localStorage
     localStorage.setItem('favorite-games', JSON.stringify(favorites));
+    
     return game.favorite;
-  }
-
-  public isFavorite(gameId: string): boolean {
-    const favorites = this.getFavoritesFromStorage();
-    return favorites.includes(gameId);
   }
 }

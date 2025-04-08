@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 
 @Component({
@@ -11,7 +11,7 @@ import { Router, RouterOutlet } from '@angular/router';
   standalone: true
 })
 export class AppComponent {
-  title = 'gaming_library_biel_angular';
+  title = signal('gaming_library_biel_angular');
 
   constructor(private _router: Router) {
 

@@ -1,18 +1,18 @@
-<div class="card" [routerLink]="['/game', game.id]">
-    <button type="button" class="favorite-button" (click)="toggleFavorite($event)" title="{{game.favorite ? 'Remove from favorites' : 'Add to favorites'}}">
-      <span class="material-icons">{{game.favorite ? 'star' : 'star_border'}}</span>
+<div class="card" [routerLink]="['/game', gameId()]">
+    <button type="button" class="favorite-button" (click)="toggleFavorite($event)" [title]="favoriteTitle()">
+      <span class="material-icons">{{favoriteIcon()}}</span>
     </button>
-    <img [src]="game.image_url" alt="{{ game.name }}" class="card-img">
+    <img [src]="gameImageUrl()" [alt]="gameName()" class="card-img">
     
     <div class="card-body">
-      <h2 class="card-title">{{ game.name }}</h2>
-      <p class="card-description">{{ game.description }}</p>
-      <p class="card-genre">Género: {{ game.genre }}</p>
-      <p class="card-platform">Plataforma: {{ game.platform }}</p>
-      <p class="card-release-date">Fecha de lanzamiento: {{ game.releaseDate | date: 'dd/MM/yyyy' }}</p>
-      <button type="button" [routerLink]="['/game', game.id]" class="btn">
+      <h2 class="card-title">{{ gameName() }}</h2>
+      <p class="card-description">{{ gameDescription() }}</p>
+      <p class="card-genre">Género: {{ gameGenre() }}</p>
+      <p class="card-platform">Plataforma: {{ gamePlatform() }}</p>
+      <p class="card-release-date">Fecha de lanzamiento: {{ gameReleaseDate() | date: 'dd/MM/yyyy' }}</p>
+      <button type="button" [routerLink]="['/game', gameId()]" class="btn">
         Ver Detalles
       </button>
     </div>
-  </div>
+</div>
   
