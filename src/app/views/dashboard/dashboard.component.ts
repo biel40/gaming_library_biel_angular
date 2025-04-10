@@ -60,10 +60,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public favoriteGames = computed(() => {
         const games = this.games().filter(game => game.favorite);
         const activeGenre = this.activeGenre();
+        const searchTerm = this.searchTerm().toLowerCase().trim();
 
-        return activeGenre === 'All'
-            ? games
-            : games.filter(game => game.genre === activeGenre);
+        return games.filter(game => {
+            // Handle null/undefined values
+            const gameName = game.name || '';
+            const gameDescription = game.description || '';
+            const gameGenre = game.genre || '';
+
+            const matchesSearch = !searchTerm ||
+                gameName.toLowerCase().includes(searchTerm) ||
+                gameDescription.toLowerCase().includes(searchTerm);
+
+            const matchesGenre = activeGenre === 'All' || gameGenre === activeGenre;
+
+            return matchesSearch && matchesGenre;
+        });
     });
 
     public uniqueGenres = computed(() => {
