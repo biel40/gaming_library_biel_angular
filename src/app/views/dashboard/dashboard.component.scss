@@ -1,96 +1,14 @@
-// Main layout - Mobile-first approach
+// Main layout
 .dashboard {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
   padding: 0.5rem;
   overflow-x: hidden;
-  box-sizing: border-box; 
-
-  // Mobile
-  @media (min-width: 600px) {
-    width: 100%;
-  }
-
-  .dashboard-header {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-
-    h1 {
-      color: #ff5722;
-      font-size: 2rem;
-      margin: 0;
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      flex-wrap: wrap;
-
-      .search-bar {
-        flex: 1;
-        min-width: 200px;
-        position: relative;
-        display: flex;
-        align-items: center;
-
-        input {
-          width: 100%;
-          padding: 0.75rem 1rem 0.75rem 2.5rem;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 8px;
-          background: rgba(255, 255, 255, 0.05);
-          color: #e0e0e0;
-          font-size: 1rem;
-          transition: border-color 0.2s;
-
-          &:focus {
-            outline: none;
-            border-color: #ff5722;
-          }
-
-          &::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-          }
-        }
-
-        .material-icons {
-          position: absolute;
-          left: 0.75rem;
-          color: rgba(255, 255, 255, 0.5);
-        }
-      }
-
-      .add-game-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.25rem;
-        background: #ff5722;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s;
-        white-space: nowrap;
-
-        &:hover {
-          background: #f4511e;
-        }
-
-        .material-icons {
-          font-size: 1.25rem;
-        }
-      }
-    }
-  }
+  box-sizing: border-box;
 }
 
+// Header styles
 .dashboard-header {
   display: flex;
   flex-direction: column;
@@ -98,10 +16,9 @@
   margin-bottom: 1.25rem;
   width: 75%;
   
-  
   h1 {
     margin: 0;
-    font-size: 1.5rem; 
+    font-size: 1.5rem;
     font-weight: 700;
     background: linear-gradient(90deg, #ff5722, #ff8a65);
     -webkit-background-clip: text;
@@ -112,19 +29,26 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
 }
 
-// Search bar - Mobile optimized
+// Search bar
 .search-bar {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
   display: flex;
   align-items: center;
   background: white;
   border-radius: 50px;
-  padding: 0.5rem 1rem; // Smaller padding on mobile
+  padding: 0.5rem 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  flex-grow: 1;
-  width: 100%; // Full width on mobile
-  max-width: 100%;
   transition: all 0.3s ease;
   
   &:focus-within {
@@ -133,23 +57,51 @@
   }
   
   input {
-    flex: 1;
+    width: 100%;
     border: none;
     outline: none;
     font-size: 1rem;
     padding: 0.5rem;
     background: transparent;
-    width: 100%;
-    // Improve for mobile input
     -webkit-appearance: none;
     appearance: none;
   }
+
+  .material-icons {
+    position: absolute;
+    left: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
 }
 
+// Add game button
+.add-game-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #ff5722;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background: #f4511e;
+  }
+
+  .material-icons {
+    font-size: 1.25rem;
+  }
+}
+
+// Filters
 .filters {
-  margin-bottom: 1.5rem;
-  margin-left: -0.5rem; 
-  margin-right: -0.5rem;
+  margin: 0 -0.5rem 1.5rem;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   padding: 0 0.5rem;
@@ -157,18 +109,11 @@
   
   &::-webkit-scrollbar {
     height: 4px;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-  }
-  
-  @media (min-width: 640px) {
-    margin-bottom: 2rem;
-    margin-left: 0;
-    margin-right: 0;
-    padding: 0;
+    
+    &-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
   }
 }
 
@@ -176,11 +121,6 @@
   display: flex;
   gap: 0.5rem;
   padding: 0.75rem 0.5rem;
-  
-  @media (min-width: 640px) {
-    gap: 0.75rem;
-    padding: 0.5rem 0;
-  }
 }
 
 .filter-chip {
@@ -208,21 +148,14 @@
     color: white;
     box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
   }
-  
-  @media (min-width: 640px) {
-    padding: 0.5rem 1.25rem;
-    font-size: 0.9rem;
-  }
 }
 
-
-.all-games {
+// Game sections
+.all-games, .favorites {
   h2 {
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: #ffffff;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     background: linear-gradient(90deg, #3498db, #2980b9);
     -webkit-background-clip: text;
     background-clip: text;
@@ -245,6 +178,7 @@
   }
 }
 
+// View controls
 .view-controls {
   display: flex;
   gap: 0.5rem;
@@ -273,100 +207,39 @@
   }
 }
 
-// Favorites section
-.favorites {
-  margin-bottom: 2rem;
-  margin-top: 2rem;
-  
-  .section-header h2 {
-    background: linear-gradient(90deg, #3498db, #2980b9);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    display: inline-block;
-    padding-bottom: 0.25rem;
-    
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, #3498db, #2980b9);
-      border-radius: 3px;
-    }
-  }
-  
-  .favorites-grid {
-    position: relative;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      top: -10px;
-      left: -20px;
-      right: -20px;
-      bottom: -10px;
-      background: linear-gradient(rgba(52, 152, 219, 0.05), transparent);
-      border-radius: 15px;
-      z-index: -1;
-    }
-  }
-
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    background-color: var(--surface-card);
-    border-radius: 8px;
-    text-align: center;
-
-    .material-icons {
-      font-size: 3rem;
-      color: var(--text-color-secondary);
-      margin-bottom: 1rem;
-    }
-
-    p {
-      color: var(--text-color-secondary);
-      font-size: 1.1rem;
-      margin: 0;
-    }
-  }
-}
-// Game grid view - Mobile optimized
+// Game grid and list views
 .game-grid {
   display: grid;
-  grid-template-columns: 1fr; 
-  gap: 0.85rem; 
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+  
   @media (min-width: 1280px) {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
 .game-list {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem; 
+  gap: 0.85rem;
   
   @media (min-width: 768px) {
     gap: 1.25rem;
   }
 }
 
+// List item styles
 .list-item {
   display: flex;
   flex-direction: column;
   background: white;
-  border-radius: 10px; 
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); 
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
   overflow: hidden;
   transition: all 0.3s ease;
-  margin-bottom: 0.25rem; 
+  margin-bottom: 0.25rem;
   
-  &:active { 
+  &:active {
     transform: scale(0.98);
     background-color: #fafafa;
   }
@@ -375,26 +248,19 @@
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
   }
-  
-  @media (min-width: 768px) {
-    flex-direction: row;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-bottom: 0;
-  }
 }
 
 .list-img {
   width: 100%;
-  height: 180px; 
+  height: 180px;
   flex-shrink: 0;
-  position: relative; 
+  position: relative;
   
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity 0.2s ease; 
+    transition: opacity 0.2s ease;
   }
   
   @media (min-width: 1024px) {
@@ -404,10 +270,10 @@
 
 .list-content {
   flex: 1;
-  padding: 1rem; 
+  padding: 1rem;
   
   h3 {
-    font-size: 1.1rem; 
+    font-size: 1.1rem;
     font-weight: 600;
     margin: 0 0 0.4rem;
     color: #2c3e50;
@@ -417,9 +283,9 @@
   }
   
   .list-description {
-    font-size: 0.85rem; 
+    font-size: 0.85rem;
     color: #555;
-    margin-bottom: 0.75rem; 
+    margin-bottom: 0.75rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -430,13 +296,13 @@
   .list-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem; 
+    gap: 0.5rem;
     
     span {
-      font-size: 0.75rem; 
+      font-size: 0.75rem;
       color: #666;
       background: #f5f5f5;
-      padding: 0.2rem 0.6rem; 
+      padding: 0.2rem 0.6rem;
       border-radius: 50px;
       max-width: 100%;
       white-space: nowrap;
@@ -444,150 +310,51 @@
       text-overflow: ellipsis;
     }
   }
-  
-  @media (min-width: 768px) {
-    padding: 1.25rem;
-    
-    h3 {
-      font-size: 1.2rem;
-      margin: 0 0 0.5rem;
-    }
-    
-    .list-description {
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
-    }
-    
-    .list-meta {
-      gap: 0.75rem;
-      
-      span {
-        font-size: 0.8rem;
-        padding: 0.25rem 0.75rem;
-      }
-    }
-  }
 }
 
-.list-btn {
-  width: 100%;
-  padding: 0.7rem 1rem; // Slightly less padding on mobile
-  background: #3498db;
-  color: white;
-  border: none;
-  border-radius: 0;
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-  font-size: 0.9rem; // Smaller font on mobile
-  min-height: 44px; // Minimum touch target height
+// Common states
+.empty-state, .loading-state, .error-state {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 2rem;
+  text-align: center;
   
-  &:active { // Better touch feedback
-    background: #2574a9;
-    transform: translateY(1px);
+  .material-icons {
+    font-size: 3rem;
+    margin-bottom: 1rem;
   }
   
-  &:hover {
-    background: #2980b9;
-  }
-  
-  @media (min-width: 768px) {
-    width: auto;
-    align-self: center;
-    margin-right: 1.25rem;
-    border-radius: 8px;
-    padding: 0.75rem 1.25rem;
-    font-size: 0.95rem;
+  p {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    margin-bottom: 1rem;
   }
 }
 
 .empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 1.5rem; 
-  text-align: center;
-  
   .material-icons {
-    font-size: 3.5rem; 
-    margin-bottom: 0.75rem; 
-    color: #e0e0e0;
+    color: var(--text-color-secondary);
   }
-
-  .btn {
-    padding: 0.75rem 1.25rem; 
-    background: #3498db;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-height: 44px; 
-    min-width: 120px; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.95rem;
-    
-    &:active { 
-      background: #2574a9;
-      transform: translateY(1px);
-    }
-    
-    &:hover {
-      background: #2980b9;
-    }
+  
+  p {
+    color: var(--text-color-secondary);
+    font-size: 1.1rem;
+    margin: 0;
   }
 }
 
 .loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  margin: 2rem 0;
-  text-align: center;
-  
   .material-icons {
-    font-size: 3rem;
     color: #ff5722;
-    margin-bottom: 1rem;
     animation: spin 2s linear infinite;
-  }
-  
-  p {
-    font-size: 1.2rem;
-    color: #e0e0e0;
   }
 }
 
-// Error state
 .error-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  margin: 2rem 0;
-  text-align: center;
-  
   .material-icons {
-    font-size: 3rem;
     color: #f44336;
-    margin-bottom: 1rem;
-  }
-  
-  p {
-    font-size: 1.2rem;
-    color: #e0e0e0;
-    margin-bottom: 1rem;
   }
   
   .btn {
