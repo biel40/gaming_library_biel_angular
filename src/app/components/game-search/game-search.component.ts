@@ -48,14 +48,12 @@ export class GameSearchComponent {
   public selectGame(game: GameSearchResult) {
     this.selectedGame = game;
 
-    console.log(game);
-    
     // Map the game data to our Videogame format
     const videogame: Partial<Videogame> = {
       name: game.name,
       description: game.description || '',
-      image_url: game.background_image,
-      genre: game.genres.length > 0 ? game.genres[0].name : '',
+      image_url: game.background_image ?? '',
+      genre: game.genres?.length > 0 ? game.genres[0].name : '',
       platform: game.platforms?.length > 0 ? game.platforms[0].platform.name : '',
       releaseDate: game.released ? new Date(game.released) : new Date()
     };
