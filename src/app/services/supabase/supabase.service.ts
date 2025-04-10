@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core'
+import { Injectable, signal, computed, EventEmitter } from '@angular/core'
 import {
   AuthChangeEvent,
   AuthSession,
@@ -39,6 +39,9 @@ export class SupabaseService {
   private _session = signal<AuthSession | null>(null);
   private _videogames = signal<Videogame[]>([]);
   private _favorites = signal<string[]>([]);
+  
+  // Event emitter for favorite changes
+  public favoriteChanged = new EventEmitter<Videogame>();
 
   constructor() {
     this._supabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
@@ -265,7 +268,31 @@ export class SupabaseService {
     // Save to localStorage
     localStorage.setItem('favorite-games', JSON.stringify(favorites));
     
+    // Emit an event to notify subscribers of the change
+    this.favoriteChanged.emit(game);
+    
+    // Update the game in the videogames signal
+    this._updateGameInVideogamesSignal(game);
+    
     return game.favorite;
+  }
+  
+  /**
+   * Updates a game in the videogames signal when its properties change
+   * @param updatedGame The game with updated properties
+   */
+  private _updateGameInVideogamesSignal(updatedGame: Videogame): void {
+    if (!updatedGame.id) return;
+    
+    const currentGames = this._videogames();
+    const updatedGames = currentGames.map(game => {
+      if (game.id === updatedGame.id) {
+        return { ...game, favorite: updatedGame.favorite };
+      }
+      return game;
+    });
+    
+    this._videogames.set(updatedGames);
   }
 
   public async addVideogame(game: Omit<Videogame, 'id'>): Promise<Videogame> {

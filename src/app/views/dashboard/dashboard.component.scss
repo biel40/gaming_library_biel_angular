@@ -6,6 +6,53 @@
   padding: 0.5rem;
   overflow-x: hidden;
   box-sizing: border-box;
+  position: relative;
+}
+
+// Notification styles
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out forwards;
+  max-width: 300px;
+  
+  &.success {
+    background: linear-gradient(90deg, #3498db, #2980b9);
+  }
+  
+  &.error {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+  }
+  
+  .material-icons {
+    font-size: 1.25rem;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 // Header styles

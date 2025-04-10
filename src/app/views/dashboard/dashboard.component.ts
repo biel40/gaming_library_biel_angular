@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit, signal, computed, effect, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
@@ -18,10 +19,14 @@ import { SupabaseService, Videogame } from '../../services/supabase/supabase.ser
     ]
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+    public showNotification = signal(false);
+    public notificationMessage = signal('');
+    public notificationType = signal<'success' | 'error'>('success');
     @ViewChild('carousel') carouselElement!: ElementRef;
 
     private _supabaseService: SupabaseService = inject(SupabaseService);
     private _resizeListener: () => void;
+    private _favoriteSubscription: Subscription | null = null;
 
     // Signals for state management
     public title = signal('My Game Library');
@@ -89,13 +94,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     constructor() {
-        // Set up effect to recalculate items per page when filtered games change
         effect(() => {
             const filtered = this.filteredGames();
             this.calculateItemsPerPage();
         });
 
-        // Debug effect to log filtering changes
         effect(() => {
             const searchTerm = this.searchTerm();
             const activeGenre = this.activeGenre();
@@ -105,7 +108,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             console.log(`Filtering: searchTerm="${searchTerm}", activeGenre="${activeGenre}", filtered=${filteredCount}/${totalGames}`);
         });
 
-        // Set up resize listener
         this._resizeListener = () => this.calculateItemsPerPage();
     }
 
@@ -115,6 +117,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             this.error.set(null);
             const games = await this._supabaseService.getVideogames();
             this.games.set(games);
+            
+            // Subscribe to favorite changes
+            this._favoriteSubscription = this._supabaseService.favoriteChanged.subscribe(game => {
+                this.handleFavoriteChange(game);
+            });
         } catch (err) {
             console.error('Error loading games:', err);
             this.error.set('Error loading games. Please try again later.');
@@ -130,6 +137,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         window.removeEventListener('resize', this._resizeListener);
+        
+        // Unsubscribe from favorite changes
+        if (this._favoriteSubscription) {
+            this._favoriteSubscription.unsubscribe();
+            this._favoriteSubscription = null;
+        }
     }
 
     private calculateItemsPerPage() {
@@ -137,19 +150,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
         const containerWidth = this.carouselElement.nativeElement.offsetWidth;
         const itemWidth = 300; // Approximate width of a game card
-        const gap = 20; // Gap between items
+        const gap = 20;
 
         const calculatedItemsPerPage = Math.floor((containerWidth + gap) / (itemWidth + gap));
         this.itemsPerPage.set(Math.max(1, calculatedItemsPerPage));
 
-        // Calculate number of pages
         const totalItems = this.filteredGames().length;
         const totalPages = Math.max(1, Math.ceil(totalItems / this.itemsPerPage()));
 
-        // Generate dots array
         this.carouselDots.set(Array.from({ length: totalPages }, (_, i) => i));
 
-        // Ensure current page is valid
         if (this.currentPage() >= totalPages) {
             this.currentPage.set(0);
         }
@@ -157,7 +167,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public filterByGenre(genre: string) {
         this.activeGenre.set(genre);
-        this.currentPage.set(0); // Reset to first page when changing genre
+        this.currentPage.set(0);
     }
 
     public resetFilters() {
@@ -181,5 +191,33 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public goToPage(pageIndex: number) {
         this.currentPage.set(pageIndex);
+    }
+    
+    /**
+     * Handle favorite change events from the SupabaseService
+     * @param game The game that was favorited/unfavorited
+     */
+    private handleFavoriteChange(game: Videogame) {
+        // Update the games array with the updated game
+        const updatedGames = this.games().map(g => {
+            if (g.id === game.id) {
+                return { ...g, favorite: game.favorite };
+            }
+            return g;
+        });
+        
+        this.games.set(updatedGames);
+        
+        this.showNotification.set(true);
+        this.notificationType.set('success');
+        this.notificationMessage.set(
+            game.favorite 
+                ? `${game.name} añadido a favoritos` 
+                : `${game.name} eliminado de favoritos`
+        );
+        
+        setTimeout(() => {
+            this.showNotification.set(false);
+        }, 3000);
     }
 }  

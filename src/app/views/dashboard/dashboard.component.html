@@ -1,4 +1,9 @@
 <div class="dashboard">
+    <!-- Notification component -->
+    <div class="notification" *ngIf="showNotification()" [ngClass]="notificationType()">
+        <span class="material-icons">{{ notificationType() === 'success' ? 'check_circle' : 'error' }}</span>
+        <p>{{ notificationMessage() }}</p>
+    </div>
     <header class="dashboard-header">
         <h1>{{ title() }}</h1>
         <div class="header-actions">
