@@ -1,0 +1,122 @@
+<div class="add-game-container">
+  <div class="add-game-header">
+    <h1>Añadir un nuevo juego</h1>
+    <p>Introduce los detalles del juego que quieres añadir a tu biblioteca</p>
+  </div>
+
+  <div class="add-game-content">
+    <div class="search-toggle">
+      <button class="toggle-button" (click)="toggleSearch()">
+        {{ useSearch ? 'Usar formulario manual' : 'Buscar juego' }}
+      </button>
+    </div>
+
+    <ng-container *ngIf="useSearch; else manualForm">
+      <app-game-search (gameSelected)="onGameSelected($event)"></app-game-search>
+    </ng-container>
+
+    <ng-template #manualForm>
+      <form (ngSubmit)="onSubmit()" #gameForm="ngForm" class="add-game-form">
+        <div class="form-group">
+          <label for="name">Nombre del Juego</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            [(ngModel)]="game.name"
+            required
+            #name="ngModel"
+          />
+          <div class="error-message" *ngIf="name.invalid && (name.dirty || name.touched)">
+            El nombre del juego es obligatorio
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descripción</label>
+          <textarea
+            id="description"
+            name="description"
+            [(ngModel)]="game.description"
+            required
+            #description="ngModel"
+          ></textarea>
+          <div class="error-message" *ngIf="description.invalid && (description.dirty || description.touched)">
+            La descripción es obligatoria
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="genre">Género</label>
+          <input
+            type="text"
+            id="genre"
+            name="genre"
+            [(ngModel)]="game.genre"
+            required
+            #genre="ngModel"
+          />
+          <div class="error-message" *ngIf="genre.invalid && (genre.dirty || genre.touched)">
+            El género es obligatorio
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="platform">Plataforma</label>
+          <input
+            type="text"
+            id="platform"
+            name="platform"
+            [(ngModel)]="game.platform"
+            required
+            #platform="ngModel"
+          />
+          <div class="error-message" *ngIf="platform.invalid && (platform.dirty || platform.touched)">
+            La plataforma es obligatoria
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="image_url">URL de la Imagen</label>
+          <input
+            type="url"
+            id="image_url"
+            name="image_url"
+            [(ngModel)]="game.image_url"
+            required
+            #imageUrl="ngModel"
+          />
+          <div class="error-message" *ngIf="imageUrl.invalid && (imageUrl.dirty || imageUrl.touched)">
+            La URL de la imagen es obligatoria
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="releaseDate">Fecha de Lanzamiento</label>
+          <input
+            type="date"
+            id="releaseDate"
+            name="releaseDate"
+            [(ngModel)]="game.releaseDate"
+            required
+            #releaseDate="ngModel"
+          />
+          <div class="error-message" *ngIf="releaseDate.invalid && (releaseDate.dirty || releaseDate.touched)">
+            La fecha de lanzamiento es obligatoria
+          </div>
+        </div>
+
+        <div class="error-message" *ngIf="error">
+          {{ error }}
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="cancel-button" (click)="goBack()">Cancelar</button>
+          <button type="submit" class="submit-button" [disabled]="!gameForm.form.valid || isLoading">
+            {{ isLoading ? 'Añadiendo...' : 'Añadir Juego' }}
+          </button>
+        </div>
+      </form>
+    </ng-template>
+  </div>
+</div>

@@ -1,0 +1,279 @@
+// Variables
+$primary-color: #ff5722;
+$secondary-color: #3498db;
+$error-color: #f44336;
+$success-color: #4caf50;
+$text-color: #e0e0e0;
+$dark-bg: #1d1f21;
+$dark-bg-secondary: #282a2e;
+$light-gray: rgba(255, 255, 255, 0.05);
+$border-radius: 8px;
+$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+$transition-speed: 0.3s;
+
+// Import the color module for modern Sass functions
+@use "sass:color";
+
+// Animations
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+// Main container
+.add-game-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, $dark-bg, $dark-bg-secondary);
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  animation: fadeIn 0.5s ease-out;
+  color: $text-color;
+}
+
+// Header styles
+.add-game-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  
+  h1 {
+    color: $primary-color;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+    display: inline-block;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(to right, $primary-color, $secondary-color);
+      border-radius: 2px;
+    }
+  }
+  
+  p {
+    color: $text-color;
+    font-size: 1.1rem;
+    opacity: 0.8;
+  }
+}
+
+// Toggle button
+.search-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  
+  .toggle-button {
+    background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: -10%));
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: $border-radius;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all $transition-speed;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Form styles
+.add-game-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    
+    .form-group:nth-child(2) {
+      grid-column: span 2;
+    }
+  }
+}
+
+.form-group {
+  position: relative;
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: $text-color;
+    transition: color $transition-speed;
+  }
+  
+  input, textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: $border-radius;
+    font-size: 1rem;
+    transition: all $transition-speed;
+    background-color: $light-gray;
+    color: $text-color;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.2);
+    }
+    
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+  
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+  
+  &.ng-invalid.ng-touched {
+    input, textarea {
+      border-color: $error-color;
+      animation: shake 0.5s ease-in-out;
+    }
+  }
+}
+
+// Error message
+.error-message {
+  color: $error-color;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Form actions
+.form-actions {
+  grid-column: span 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  
+  @media (min-width: 768px) {
+    grid-column: span 2;
+  }
+  
+  button {
+    padding: 0.8rem 1.5rem;
+    border-radius: $border-radius;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all $transition-speed;
+    border: none;
+    
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+  
+  .cancel-button {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: $text-color;
+    
+    &:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+  
+  .submit-button {
+    background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: -10%));
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    
+    &:disabled {
+      background: linear-gradient(135deg, color.adjust($primary-color, $lightness: 20%), color.adjust($primary-color, $lightness: 10%));
+    }
+  }
+}
+
+// Loading state
+.submit-button:disabled {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: loading 1.5s infinite;
+  }
+}
+
+@keyframes loading {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+// Success animation
+.success-animation {
+  animation: pulse 0.5s ease-in-out;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .add-game-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .add-game-header h1 {
+    font-size: 2rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+}

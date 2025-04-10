@@ -1,10 +1,16 @@
 <div class="dashboard">
     <header class="dashboard-header">
         <h1>{{ title() }}</h1>
-        <div class="search-bar">
-            <input type="text" placeholder="Buscar juegos..." [ngModel]="searchTerm()"
-                (ngModelChange)="searchTerm.set($event)">
-            <span class="material-icons">search</span>
+        <div class="header-actions">
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar juegos..." [ngModel]="searchTerm()"
+                    (ngModelChange)="searchTerm.set($event)">
+                <span class="material-icons">search</span>
+            </div>
+            <button class="add-game-btn" routerLink="/add-game">
+                <span class="material-icons">add</span>
+                Añadir Juego
+            </button>
         </div>
     </header>
 

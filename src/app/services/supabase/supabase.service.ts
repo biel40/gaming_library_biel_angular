@@ -267,4 +267,32 @@ export class SupabaseService {
     
     return game.favorite;
   }
+
+  public async addVideogame(game: Omit<Videogame, 'id'>): Promise<Videogame> {
+    const { data, error } = await this._supabaseClient
+      .from('videogames')
+      .insert([{
+        name: game.name,
+        description: game.description,
+        genre: game.genre,
+        platform: game.platform,
+        image_url: game.image_url,
+        release_date: game.releaseDate
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      genre: data.genre,
+      platform: data.platform,
+      image_url: data.image_url,
+      releaseDate: new Date(data.release_date),
+      favorite: false
+    };
+  }
 }

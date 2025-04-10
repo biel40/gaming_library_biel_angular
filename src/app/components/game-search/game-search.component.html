@@ -1,0 +1,100 @@
+<div class="game-search-container">
+  <div class="search-header">
+    <h3>Buscar Juegos</h3>
+    <p>Busca juegos para obtener información y URLs de imágenes automáticamente</p>
+  </div>
+
+  <div class="search-form">
+    <div class="search-input">
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery" 
+        placeholder="Escribe el nombre del juego..." 
+        (keyup.enter)="searchGames()"
+      >
+      <button (click)="searchGames()" [disabled]="isLoading">
+        <span class="material-icons">search</span>
+      </button>
+    </div>
+  </div>
+
+  @if (error) {
+  <div class="error-message">
+    <span class="material-icons">error</span>
+    <p>{{ error }}</p>
+  </div>
+  }
+
+  @if (isLoading) {
+  <div class="loading-state">
+    <span class="material-icons loading">hourglass_empty</span>
+    <p>Buscando juegos...</p>
+  </div>
+  }
+
+  @if (searchResults.length > 0) {
+  <div class="search-results">
+    <h4>Resultados de búsqueda</h4>
+    <div class="results-grid">
+      @for (game of searchResults; track game.id) {
+      <div class="game-card" [class.selected]="selectedGame?.id === game.id" (click)="selectGame(game)">
+        <div class="game-image">
+          <img [src]="game.background_image" [alt]="game.name">
+        </div>
+        <div class="game-info">
+          <h5>{{ game.name }}</h5>
+          <div class="game-meta">
+            @if (game.released) {
+            <span>{{ game.released | date:'yyyy' }}</span>
+            }
+            @if (game.genres.length > 0) {
+            <span>{{ game.genres[0].name }}</span>
+            }
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  }
+
+  @if (selectedGame) {
+  <div class="selected-game">
+    <div class="selected-header">
+      <h4>Juego Seleccionado</h4>
+      <button class="clear-btn" (click)="clearSelection()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <div class="selected-content">
+      <div class="selected-image">
+        <img [src]="selectedGame.background_image" [alt]="selectedGame.name">
+      </div>
+      <div class="selected-details">
+        <h5>{{ selectedGame.name }}</h5>
+        <p class="selected-description">{{ selectedGame.description }}</p>
+        <div class="selected-meta">
+          @if (selectedGame.released) {
+          <div class="meta-item">
+            <span class="meta-label">Lanzamiento:</span>
+            <span>{{ selectedGame.released | date:'dd/MM/yyyy' }}</span>
+          </div>
+          }
+          @if (selectedGame.genres.length > 0) {
+          <div class="meta-item">
+            <span class="meta-label">Género:</span>
+            <span>{{ selectedGame.genres[0].name }}</span>
+          </div>
+          }
+          @if (selectedGame.platforms.length > 0) {
+          <div class="meta-item">
+            <span class="meta-label">Plataforma:</span>
+            <span>{{ selectedGame.platforms[0].platform.name }}</span>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div> 
