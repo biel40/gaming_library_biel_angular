@@ -1,9 +1,11 @@
 <div class="dashboard">
     <!-- Notification component -->
-    <div class="notification" *ngIf="showNotification()" [ngClass]="notificationType()">
+    @if (showNotification()) {
+    <div class="notification" [ngClass]="notificationType()">
         <span class="material-icons">{{ notificationType() === 'success' ? 'check_circle' : 'error' }}</span>
         <p>{{ notificationMessage() }}</p>
     </div>
+    }
     <header class="dashboard-header">
         <h1>{{ title() }}</h1>
         <div class="header-actions">
@@ -67,6 +69,7 @@
         </div>
         }
     </section>
+    }
 
     <!-- All Games Grid -->
     <section class="all-games">
@@ -123,5 +126,4 @@
         </div>
         }
     </section>
-    }
 </div>

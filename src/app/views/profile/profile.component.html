@@ -1,0 +1,91 @@
+<div class="profile-container">
+  <div class="profile-card">
+    <div class="profile-header">
+      <h1>Perfil de Usuario</h1>
+      <p>Gestiona tu perfil de videojuegos</p>
+    </div>
+
+    @if (loading) {
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Cargando perfil...</p>
+      </div>
+    } @else {
+      <div class="profile-content">
+        <!-- Success Message -->
+        @if (successMessage) {
+          <div class="success-message">
+            <p>{{ successMessage }}</p>
+          </div>
+        }
+
+        <!-- Error Message -->
+        @if (errorMessage) {
+          <div class="error-message">
+            <p>{{ errorMessage }}</p>
+          </div>
+        }
+
+        <!-- Profile Form -->
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+          <div class="form-group">
+            <label for="name">Nombre de usuario</label>
+            <input 
+              type="text" 
+              id="name" 
+              formControlName="name" 
+              placeholder="Introduce tu nombre de usuario"
+              [class.invalid]="profileForm.get('name')?.invalid && profileForm.get('name')?.touched"
+            >
+            @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
+              <div class="error-hint">
+                @if (profileForm.get('name')?.errors?.['required']) {
+                  <span>El nombre de usuario es obligatorio</span>
+                }
+                @if (profileForm.get('name')?.errors?.['minlength']) {
+                  <span>El nombre de usuario debe tener al menos 3 caracteres</span>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="description">Sobre mí</label>
+            <textarea 
+              id="description" 
+              formControlName="description" 
+              placeholder="Cuéntanos sobre ti y tus preferencias de videojuegos"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="image_url">URL de imagen de perfil</label>
+            <input 
+              type="text" 
+              id="image_url" 
+              formControlName="image_url" 
+              placeholder="Introduce la URL para tu imagen de perfil"
+            >
+          </div>
+
+          @if (profileForm.get('image_url')?.value) {
+            <div class="profile-image-preview">
+              <img [src]="profileForm.get('image_url')?.value" alt="Vista previa del perfil" 
+                  onerror="this.src='assets/images/default-avatar.png'; this.onerror=null;">
+            </div>
+          }
+
+          <div class="button-group">
+            <button type="submit" class="save-btn" [disabled]="loading || profileForm.invalid">
+              {{ loading ? 'Guardando...' : 'Guardar Cambios' }}
+            </button>
+            <button type="button" class="logout-btn" (click)="signOut()">
+              Cerrar Sesión
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+  </div>
+</div>

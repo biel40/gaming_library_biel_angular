@@ -1,0 +1,148 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>{{ isLoginMode ? 'Iniciar Sesión' : 'Registrarse' }}</h1>
+      <p>{{ isLoginMode ? '¡Bienvenido a mi biblioteca de videojuegos personal!' : '¿Quieres unirte a la comunidad de videojuegos?' }}</p>
+    </div>
+
+    <div class="form-container">
+      <!-- Login Form -->
+      @if (isLoginMode) {
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <div class="form-group">
+            <label for="email">Correo electrónico</label>
+            <input 
+              type="email" 
+              id="email" 
+              formControlName="email" 
+              placeholder="Introduce tu correo electrónico"
+              [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+            >
+            @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+              <div class="error-message">
+                @if (loginForm.get('email')?.errors?.['required']) {
+                  <span>El correo electrónico es obligatorio</span>
+                }
+                @if (loginForm.get('email')?.errors?.['email']) {
+                  <span>Por favor, introduce un correo electrónico válido</span>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input 
+              type="password" 
+              id="password" 
+              formControlName="password" 
+              placeholder="Introduce tu contraseña"
+              [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+            >
+            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+              <div class="error-message">
+                @if (loginForm.get('password')?.errors?.['required']) {
+                  <span>La contraseña es obligatoria</span>
+                }
+                @if (loginForm.get('password')?.errors?.['minlength']) {
+                  <span>La contraseña debe tener al menos 6 caracteres</span>
+                }
+              </div>
+            }
+          </div>
+
+          <button type="submit" class="submit-btn" [disabled]="loading">
+            {{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+          </button>
+        </form>
+      } @else {
+        <!-- Register Form -->
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+          <div class="form-group">
+            <label for="reg-email">Correo electrónico</label>
+            <input 
+              type="email" 
+              id="reg-email" 
+              formControlName="email" 
+              placeholder="Introduce tu correo electrónico"
+              [class.invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+            >
+            @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+              <div class="error-message">
+                @if (registerForm.get('email')?.errors?.['required']) {
+                  <span>El correo electrónico es obligatorio</span>
+                }
+                @if (registerForm.get('email')?.errors?.['email']) {
+                  <span>Por favor, introduce un correo electrónico válido</span>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="name">Nombre de usuario</label>
+            <input 
+              type="text" 
+              id="name" 
+              formControlName="name" 
+              placeholder="Elige un nombre de usuario"
+              [class.invalid]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
+            >
+            @if (registerForm.get('name')?.invalid && registerForm.get('name')?.touched) {
+              <div class="error-message">
+                @if (registerForm.get('name')?.errors?.['required']) {
+                  <span>El nombre de usuario es obligatorio</span>
+                }
+                @if (registerForm.get('name')?.errors?.['minlength']) {
+                  <span>El nombre de usuario debe tener al menos 3 caracteres</span>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="reg-password">Contraseña</label>
+            <input 
+              type="password" 
+              id="reg-password" 
+              formControlName="password" 
+              placeholder="Elige una contraseña"
+              [class.invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+            >
+            @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+              <div class="error-message">
+                @if (registerForm.get('password')?.errors?.['required']) {
+                  <span>La contraseña es obligatoria</span>
+                }
+                @if (registerForm.get('password')?.errors?.['minlength']) {
+                  <span>La contraseña debe tener al menos 6 caracteres</span>
+                }
+              </div>
+            }
+          </div>
+
+          <button type="submit" class="submit-btn" [disabled]="loading">
+            {{ loading ? 'Registrando...' : 'Registrarse' }}
+          </button>
+        </form>
+      }
+
+      <!-- Error Message -->
+      @if (errorMessage) {
+        <div class="error-container">
+          <p class="error-text">{{ errorMessage }}</p>
+        </div>
+      }
+
+      <!-- Toggle Mode -->
+      <div class="toggle-container">
+        <p>
+          {{ isLoginMode ? '¿No tienes una cuenta?' : '¿Ya tienes una cuenta?' }}
+          <a href="javascript:void(0)" (click)="toggleMode()">
+            {{ isLoginMode ? 'Registrarse' : 'Iniciar Sesión' }}
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

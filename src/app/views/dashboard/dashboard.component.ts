@@ -30,6 +30,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Signals for state management
     public title = signal('My Game Library');
+    public isAuthenticated = signal(false);
     public games = signal<Videogame[]>([]);
     public searchTerm = signal('');
     public activeGenre = signal('All');
@@ -47,7 +48,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         const activeGenre = this.activeGenre();
 
         return games.filter(game => {
-            // Handle null/undefined values
             const gameName = game.name || '';
             const gameDescription = game.description || '';
             const gameGenre = game.genre || '';
@@ -115,13 +115,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
             this.isLoading.set(true);
             this.error.set(null);
+
+            // For now, always set as authenticated to show all UI elements
+            this.isAuthenticated.set(true);
+
             const games = await this._supabaseService.getVideogames();
             this.games.set(games);
-            
-            // Subscribe to favorite changes
+
+            // Subscribe to favorite changes (authentication check commented out)
+            // if (this.isAuthenticated()) {
             this._favoriteSubscription = this._supabaseService.favoriteChanged.subscribe(game => {
                 this.handleFavoriteChange(game);
             });
+            // }
         } catch (err) {
             console.error('Error loading games:', err);
             this.error.set('Error loading games. Please try again later.');
@@ -137,8 +143,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         window.removeEventListener('resize', this._resizeListener);
-        
-        // Unsubscribe from favorite changes
+
         if (this._favoriteSubscription) {
             this._favoriteSubscription.unsubscribe();
             this._favoriteSubscription = null;
@@ -192,7 +197,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public goToPage(pageIndex: number) {
         this.currentPage.set(pageIndex);
     }
-    
+
     /**
      * Handle favorite change events from the SupabaseService
      * @param game The game that was favorited/unfavorited
@@ -205,17 +210,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             return g;
         });
-        
+
         this.games.set(updatedGames);
-        
+
         this.showNotification.set(true);
         this.notificationType.set('success');
         this.notificationMessage.set(
-            game.favorite 
-                ? `${game.name} añadido a favoritos` 
+            game.favorite
+                ? `${game.name} añadido a favoritos`
                 : `${game.name} eliminado de favoritos`
         );
-        
+
         setTimeout(() => {
             this.showNotification.set(false);
         }, 3000);
