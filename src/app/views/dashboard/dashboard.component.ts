@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit, signal, computed, effect, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
 
@@ -25,6 +25,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('carousel') carouselElement!: ElementRef;
 
     private _supabaseService: SupabaseService = inject(SupabaseService);
+    private _router: Router = inject(Router);
     private _resizeListener: () => void;
     private _favoriteSubscription: Subscription | null = null;
 
@@ -203,7 +204,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param game The game that was favorited/unfavorited
      */
     private handleFavoriteChange(game: Videogame) {
-        // Update the games array with the updated game
         const updatedGames = this.games().map(g => {
             if (g.id === game.id) {
                 return { ...g, favorite: game.favorite };
@@ -224,5 +224,26 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => {
             this.showNotification.set(false);
         }, 3000);
+    }
+    
+    /**
+     * Logs out the current user and redirects to the login page
+     */
+    public async logout(): Promise<void> {
+        try {
+            // Sign out and clear session
+            await this._supabaseService.signOut();
+            
+            this.notificationMessage.set('Sesión cerrada correctamente');
+            this.notificationType.set('success');
+            this.showNotification.set(true);
+            
+            this._router.navigate(['/login']);
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+            this.notificationMessage.set('Error al cerrar sesión');
+            this.notificationType.set('error');
+            this.showNotification.set(true);
+        }
     }
 }  

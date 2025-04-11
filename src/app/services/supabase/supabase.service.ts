@@ -93,8 +93,13 @@ export class SupabaseService {
     });
   }
 
-  public signOut(): any {
-    return this._supabaseClient.auth.signOut()
+  /**
+   * Signs out the current user and clears the session
+   */
+  public async signOut(): Promise<void> {
+    await this._supabaseClient.auth.signOut();
+    // Clear the session signal to ensure the user is properly logged out
+    this._session.set(null);
   }
 
   // Had to fix this manually to work
