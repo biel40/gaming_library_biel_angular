@@ -117,18 +117,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             this.isLoading.set(true);
             this.error.set(null);
 
-            // For now, always set as authenticated to show all UI elements
-            this.isAuthenticated.set(true);
+            // Check if user is authenticated
+            const session = await this._supabaseService.getSession();
+            this.isAuthenticated.set(!!session);
+
+            // If not authenticated, redirect to login
+            if (!session) {
+                this._router.navigate(['/login']);
+                return;
+            }
 
             const games = await this._supabaseService.getVideogames();
             this.games.set(games);
 
-            // Subscribe to favorite changes (authentication check commented out)
-            // if (this.isAuthenticated()) {
-            this._favoriteSubscription = this._supabaseService.favoriteChanged.subscribe(game => {
-                this.handleFavoriteChange(game);
-            });
-            // }
+            // Subscribe to favorite changes (only if authenticated)
+            if (this.isAuthenticated()) {
+                this._favoriteSubscription = this._supabaseService.favoriteChanged.subscribe(game => {
+                    this.handleFavoriteChange(game);
+                });
+            }
         } catch (err) {
             console.error('Error loading games:', err);
             this.error.set('Error loading games. Please try again later.');
