@@ -17,7 +17,9 @@ import { Profile, SupabaseService } from '../../../services/supabase/supabase.se
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   registerForm!: FormGroup;
+  resetPasswordForm!: FormGroup;
   isLoginMode = true;
+  isResetPasswordMode = false;
   loading = false;
   errorMessage = '';
 
@@ -48,11 +50,54 @@ export class LoginComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       name: ['', [Validators.required, Validators.minLength(3)]]
     });
+    
+    this.resetPasswordForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
   }
 
   toggleMode(): void {
     this.isLoginMode = !this.isLoginMode;
+    this.isResetPasswordMode = false;
     this.errorMessage = '';
+  }
+  
+  showResetPasswordForm(): void {
+    this.isResetPasswordMode = true;
+    this.isLoginMode = false;
+    this.errorMessage = '';
+    
+    // Pre-fill email if it's already entered in login form
+    if (this.loginForm.get('email')?.valid) {
+      this.resetPasswordForm.get('email')?.setValue(this.loginForm.get('email')?.value);
+    }
+  }
+  
+  async handleResetPassword(): Promise<void> {
+    if (this.resetPasswordForm.invalid) {
+      this.errorMessage = 'Por favor, introduce un correo electrónico válido';
+      return;
+    }
+    
+    this.loading = true;
+    this.errorMessage = '';
+    
+    try {
+      const email = this.resetPasswordForm.get('email')?.value;
+      const { error } = await this.supabaseService.resetPassword(email);
+      
+      if (error) {
+        throw error;
+      }
+      
+      this.errorMessage = 'Se ha enviado un correo electrónico con instrucciones para restablecer tu contraseña';
+      this.isLoginMode = true;
+      this.isResetPasswordMode = false;
+    } catch (error: any) {
+      this.errorMessage = error.message || 'Ha ocurrido un error al intentar restablecer la contraseña';
+    } finally {
+      this.loading = false;
+    }
   }
 
   async onSubmit(): Promise<void> {
@@ -60,7 +105,9 @@ export class LoginComponent implements OnInit {
     this.errorMessage = '';
     
     try {
-      if (this.isLoginMode) {
+      if (this.isResetPasswordMode) {
+        await this.handleResetPassword();
+      } else if (this.isLoginMode) {
         await this.handleLogin();
       } else {
         await this.handleRegistration();

@@ -1,13 +1,48 @@
 <div class="login-container">
   <div class="login-card">
     <div class="login-header">
-      <h1>{{ isLoginMode ? 'Iniciar Sesión' : 'Registrarse' }}</h1>
-      <p>{{ isLoginMode ? '¡Bienvenido a mi biblioteca de videojuegos personal!' : '¿Quieres unirte a la comunidad de videojuegos?' }}</p>
+      <h1>{{ isResetPasswordMode ? 'Restablecer Contraseña' : (isLoginMode ? 'Iniciar Sesión' : 'Registrarse') }}</h1>
+      <p>{{ isResetPasswordMode ? 'Introduce tu correo electrónico para recibir instrucciones' : (isLoginMode ? '¡Bienvenido a mi biblioteca de videojuegos personal!' : '¿Quieres unirte a la comunidad de videojuegos?') }}</p>
     </div>
 
     <div class="form-container">
+      <!-- Reset Password Form -->
+      @if (isResetPasswordMode) {
+        <form [formGroup]="resetPasswordForm" (ngSubmit)="onSubmit()" class="login-form">
+          <div class="form-group">
+            <label for="reset-email">Correo electrónico</label>
+            <input 
+              type="email" 
+              id="reset-email" 
+              formControlName="email" 
+              placeholder="Introduce tu correo electrónico"
+              [class.invalid]="resetPasswordForm.get('email')?.invalid && resetPasswordForm.get('email')?.touched"
+            >
+            @if (resetPasswordForm.get('email')?.invalid && resetPasswordForm.get('email')?.touched) {
+              <div class="error-message">
+                @if (resetPasswordForm.get('email')?.errors?.['required']) {
+                  <span>El correo electrónico es obligatorio</span>
+                }
+                @if (resetPasswordForm.get('email')?.errors?.['email']) {
+                  <span>Por favor, introduce un correo electrónico válido</span>
+                }
+              </div>
+            }
+          </div>
+
+          <button type="submit" class="submit-btn" [disabled]="loading">
+            {{ loading ? 'Enviando...' : 'Enviar Instrucciones' }}
+          </button>
+          
+          <div class="back-to-login">
+            <a href="javascript:void(0)" (click)="toggleMode()">
+              Volver al inicio de sesión
+            </a>
+          </div>
+        </form>
+      } 
       <!-- Login Form -->
-      @if (isLoginMode) {
+      @else if (isLoginMode) {
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
           <div class="form-group">
             <label for="email">Correo electrónico</label>
@@ -54,6 +89,13 @@
           <button type="submit" class="submit-btn" [disabled]="loading">
             {{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
           </button>
+          
+          <!-- Forgot Password Link -->
+          <div class="forgot-password">
+            <a href="javascript:void(0)" (click)="showResetPasswordForm()">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
         </form>
       } @else {
         <!-- Register Form -->
@@ -143,6 +185,18 @@
           </a>
         </p>
       </div>
+      
+      <!-- Only show in login mode -->
+      @if (isLoginMode) {
+        <div class="forgot-password-container">
+          <p>
+            ¿Olvidaste tu contraseña?
+            <a href="javascript:void(0)" (click)="showResetPasswordForm()">
+              Restablecer contraseña
+            </a>
+          </p>
+        </div>
+      }
     </div>
   </div>
 </div>

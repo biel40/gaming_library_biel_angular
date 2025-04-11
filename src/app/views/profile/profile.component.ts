@@ -32,12 +32,12 @@ export class ProfileComponent implements OnInit {
   }
 
   private async checkSession(): Promise<void> {
-    // Authentication check commented out
     const session = await this.supabaseService.getSession();
-    // if (!session) {
-    //   this.router.navigate(['/login']);
-    //   return;
-    // }
+
+    if (!session) {
+      this.router.navigate(['/login']);
+      return;
+    }
     
     this.userId = session.user.id;
     this.loadProfile();

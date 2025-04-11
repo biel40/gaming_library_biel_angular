@@ -51,15 +51,12 @@ export class SupabaseService {
 
   // Session management
   public async getSession() {
-    // Authentication check commented out
-    // if (!this._session()) {
-    //   const { data } = await this._supabaseClient.auth.getSession();
-    //   this._session.set(data.session);
-    // }
-    // return this._session();
-    
-    // Always return a mock session to bypass authentication
-    return { user: { id: 'mock-user-id' } } as any;
+    // Authentication check reactivated
+    if (!this._session()) {
+      const { data } = await this._supabaseClient.auth.getSession();
+      this._session.set(data.session);
+    }
+    return this._session();
   }
 
   public profile(user: User) {
@@ -115,7 +112,6 @@ export class SupabaseService {
   }
 
   public async updateProfileStats(profile: Profile) {
-    // TODO: Change this method select fields
     const update = {
       ...profile,
       updated_at: new Date(),
@@ -332,5 +328,26 @@ export class SupabaseService {
       releaseDate: new Date(data.release_date),
       favorite: false
     };
+  }
+
+  /*
+    Public method to manually reset password for a given user email
+  */
+  public async resetPassword(email: string) {
+    // Use window.location.origin to get the current domain (works for both local and production)
+    const redirectUrl = `${window.location.origin}/reset-password`;
+    return await this._supabaseClient.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectUrl
+    });
+  }
+  
+  /*
+    Public method to update the user's password with a new one
+    This is used after the user clicks the reset password link in their email
+  */
+  public async updatePassword(newPassword: string) {
+    return await this._supabaseClient.auth.updateUser({
+      password: newPassword
+    });
   }
 }
