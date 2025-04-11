@@ -151,9 +151,6 @@ export class LoginComponent implements OnInit {
       }
       
       if (data.user) {
-
-        // TODO: Arreglar login para que use el id de la tabla auth
-
         const userId = data.user.id;
 
         const profile: Profile = {
