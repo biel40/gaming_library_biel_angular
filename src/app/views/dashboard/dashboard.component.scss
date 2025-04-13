@@ -1,7 +1,49 @@
+@use 'sass:color';
+
+// Variables and mixins
+$primary-color: #3498db;
+$primary-dark: #2980b9;
+$accent-color: #ff5722;
+$accent-light: #ff8a65;
+$error-color: #f44336;
+$error-dark: #d32f2f;
+$text-dark: #2c3e50;
+$text-medium: #555;
+$text-light: #757575;
+$bg-light: #f5f5f5;
+$white: #fff;
+$box-shadow-sm: 0 3px 10px rgba(0, 0, 0, 0.05);
+$box-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.1);
+$box-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 10px;
+$border-radius-xl: 50px;
+
+@mixin flex($direction: row, $align: center, $justify: flex-start, $gap: 0.5rem) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: $align;
+  justify-content: $justify;
+  gap: $gap;
+}
+
+@mixin gradient-text($gradient) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@mixin truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 // Main layout
 .dashboard {
   width: 100%;
-  max-width: 100%;
   margin: 0 auto;
   padding: 0.5rem;
   overflow-x: hidden;
@@ -9,57 +51,9 @@
   position: relative;
 }
 
-// Notification styles
-.notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  color: white;
-  font-weight: 500;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  animation: slideIn 0.3s ease-out forwards;
-  max-width: 300px;
-  
-  &.success {
-    background: linear-gradient(90deg, #3498db, #2980b9);
-  }
-  
-  &.error {
-    background: linear-gradient(90deg, #e74c3c, #c0392b);
-  }
-  
-  .material-icons {
-    font-size: 1.25rem;
-  }
-  
-  p {
-    margin: 0;
-    font-size: 0.95rem;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
 // Header styles
 .dashboard-header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  @include flex(column, flex-start, flex-start, 0.75rem);
   margin-bottom: 1.25rem;
   width: 75%;
   
@@ -67,24 +61,16 @@
     margin: 0;
     font-size: 1.5rem;
     font-weight: 700;
-    background: linear-gradient(90deg, #ff5722, #ff8a65);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    @include gradient-text(linear-gradient(90deg, $accent-color, $accent-light));
     text-shadow: 0 2px 4px rgba(255, 87, 34, 0.1);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    @include truncate;
   }
 
   .header-actions {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+    @include flex(row, center, flex-start, 1rem);
     flex-wrap: wrap;
   }
   
-  /* Mobile styles */
   @media (max-width: 767px) {
     width: 100%;
     
@@ -95,21 +81,20 @@
   }
 }
 
-// Search bar
+// UI Components
 .search-bar {
   flex: 1;
   min-width: 200px;
   position: relative;
-  display: flex;
-  align-items: center;
-  background: white;
-  border-radius: 50px;
+  @include flex;
+  background: $white;
+  border-radius: $border-radius-xl;
   padding: 0.5rem 1rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: $box-shadow-sm;
   transition: all 0.3s ease;
   
   &:focus-within {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: $box-shadow-md;
     transform: translateY(-2px);
   }
   
@@ -120,7 +105,6 @@
     font-size: 1rem;
     padding: 0.5rem;
     background: transparent;
-    -webkit-appearance: none;
     appearance: none;
   }
 
@@ -131,55 +115,42 @@
   }
 }
 
-// Add game button
-.add-game-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+// Button styles
+@mixin button-base {
+  @include flex;
   padding: 0.75rem 1.25rem;
-  background: #ff5722;
-  color: white;
+  color: $white;
   border: none;
-  border-radius: 8px;
+  border-radius: $border-radius-md;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
-
-  &:hover {
-    background: #f4511e;
-  }
-
+  
   .material-icons {
     font-size: 1.25rem;
   }
 }
 
+.add-game-btn {
+  @include button-base;
+  background: $accent-color;
+
+  &:hover {
+    background: color.adjust($accent-color, $lightness: -5%);
+  }
+}
+
 .logout-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  background: linear-gradient(90deg, #3498db, #2980b9);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
+  @include button-base;
+  background: linear-gradient(90deg, $primary-color, $primary-dark);
   margin-left: 0.5rem;
 
   &:hover {
-    background: linear-gradient(90deg, #2980b9, #3498db);
+    background: linear-gradient(90deg, $primary-dark, $primary-color);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
-  }
-
-  .material-icons {
-    font-size: 1.25rem;
   }
 }
 
@@ -196,22 +167,21 @@
     
     &-thumb {
       background-color: rgba(0, 0, 0, 0.2);
-      border-radius: 4px;
+      border-radius: $border-radius-sm;
     }
   }
 }
 
 .filter-chips {
-  display: flex;
-  gap: 0.5rem;
+  @include flex;
   padding: 0.75rem 0.5rem;
 }
 
 .filter-chip {
   padding: 0.5rem 1rem;
-  border-radius: 50px;
-  background: #f5f5f5;
-  color: #555;
+  border-radius: $border-radius-xl;
+  background: $bg-light;
+  color: $text-medium;
   font-size: 0.85rem;
   font-weight: 500;
   white-space: nowrap;
@@ -219,39 +189,36 @@
   transition: all 0.2s ease;
   scroll-snap-align: start;
   min-height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex(row, center, center);
   
   &:hover {
-    background: #e0e0e0;
+    background: color.adjust($bg-light, $lightness: -5%);
   }
   
   &.active {
-    background: #3498db;
-    color: white;
+    background: $primary-color;
+    color: $white;
     box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
   }
 }
 
-// Game sections
+// Section headers
+@mixin section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  @include gradient-text(linear-gradient(90deg, $primary-color, $primary-dark));
+  letter-spacing: 0.5px;
+}
+
 .all-games, .favorites {
   h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    background: linear-gradient(90deg, #3498db, #2980b9);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    letter-spacing: 0.5px;
+    @include section-title;
   }
 }
 
 .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex(row, center, space-between);
   margin-bottom: 1.5rem;
   
   h2 {
@@ -264,25 +231,24 @@
 
 // View controls
 .view-controls {
-  display: flex;
-  gap: 0.5rem;
+  @include flex;
 }
 
 .view-btn {
   background: none;
   border: none;
-  border-radius: 4px;
+  border-radius: $border-radius-sm;
   padding: 0.5rem;
   cursor: pointer;
-  color: #757575;
+  color: $text-light;
   transition: all 0.2s ease;
   
   &:hover {
-    background: #f5f5f5;
+    background: $bg-light;
   }
   
   &.active {
-    color: #3498db;
+    color: $primary-color;
     background: rgba(52, 152, 219, 0.1);
   }
   
@@ -303,9 +269,7 @@
 }
 
 .game-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
+  @include flex(column, stretch, flex-start, 0.85rem);
   
   @media (min-width: 768px) {
     gap: 1.25rem;
@@ -314,11 +278,10 @@
 
 // List item styles
 .list-item {
-  display: flex;
-  flex-direction: column;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  @include flex(column);
+  background: $white;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-sm;
   overflow: hidden;
   transition: all 0.3s ease;
   margin-bottom: 0.25rem;
@@ -330,7 +293,7 @@
   
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    box-shadow: $box-shadow-lg;
   }
 }
 
@@ -360,15 +323,13 @@
     font-size: 1.1rem;
     font-weight: 600;
     margin: 0 0 0.4rem;
-    color: #2c3e50;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    color: $text-dark;
+    @include truncate;
   }
   
   .list-description {
     font-size: 0.85rem;
-    color: #555;
+    color: $text-medium;
     margin-bottom: 0.75rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -378,30 +339,24 @@
   }
   
   .list-meta {
-    display: flex;
+    @include flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
     
     span {
       font-size: 0.75rem;
       color: #666;
-      background: #f5f5f5;
+      background: $bg-light;
       padding: 0.2rem 0.6rem;
-      border-radius: 50px;
+      border-radius: $border-radius-xl;
       max-width: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      @include truncate;
     }
   }
 }
 
 // Common states
-.empty-state, .loading-state, .error-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+@mixin state-base {
+  @include flex(column, center, center);
   padding: 2rem;
   text-align: center;
   
@@ -411,52 +366,51 @@
   }
   
   p {
-    font-size: 1.2rem;
-    color: #e0e0e0;
-    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    margin: 0 0 1rem;
   }
 }
 
 .empty-state {
-  .material-icons {
-    color: var(--text-color-secondary);
-  }
+  @include state-base;
   
-  p {
+  .material-icons, p {
     color: var(--text-color-secondary);
-    font-size: 1.1rem;
-    margin: 0;
   }
 }
 
 .loading-state {
+  @include state-base;
+  
   .material-icons {
-    color: #ff5722;
+    color: $accent-color;
     animation: spin 2s linear infinite;
   }
 }
 
 .error-state {
+  @include state-base;
+  
   .material-icons {
-    color: #f44336;
+    color: $error-color;
   }
   
   .btn {
-    background-color: #f44336;
-    color: white;
+    background-color: $error-color;
+    color: $white;
     border: none;
     padding: 0.5rem 1rem;
-    border-radius: 4px;
+    border-radius: $border-radius-sm;
     cursor: pointer;
     font-weight: 500;
     
     &:hover {
-      background-color: #d32f2f;
+      background-color: $error-dark;
     }
   }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
