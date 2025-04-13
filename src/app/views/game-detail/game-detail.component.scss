@@ -2,7 +2,6 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
-  @media (min-width: 1024px) { padding: 2rem; }
 }
 
 .back-button {
@@ -19,15 +18,6 @@
     padding: 0.5rem 0;
     cursor: pointer;
     transition: all 0.2s ease;
-
-    &:hover {
-      color: #2980b9;
-      transform: translateX(-4px);
-    }
-
-    .material-icons {
-      font-size: 1.2rem;
-    }
   }
 }
 
@@ -369,36 +359,6 @@
       box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
       background-color: #fff;
     }
-
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button,
-    &::-moz-inner-spin-button,
-    &::-moz-outer-spin-button {
-      opacity: 1;
-      height: 30px;
-      background: #3498db url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat center;
-      border-radius: 0 8px 8px 0;
-      cursor: pointer;
-    }
-  }
-
-  // Score indicator
-  &::after {
-    content: '';
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 24px;
-    height: 24px;
-    background-color: #3498db;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    pointer-events: none;
   }
 
   // Score value indicator
@@ -464,10 +424,6 @@
         &:hover {
           background-color: rgba(255, 255, 255, 0.3);
           transform: translateY(-2px);
-
-          .favorite-icon {
-            transform: scale(1.2) rotate(5deg);
-          }
         }
       }
     }
@@ -489,11 +445,6 @@
       &:hover {
         background-color: rgba(255, 255, 255, 0.2);
         transform: translateY(-2px);
-      }
-
-      .favorite-icon {
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
       }
 
       .favorite-text {
