@@ -89,13 +89,6 @@
           <button type="submit" class="submit-btn" [disabled]="loading">
             {{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
           </button>
-          
-          <!-- Forgot Password Link -->
-          <div class="forgot-password">
-            <a href="javascript:void(0)" (click)="showResetPasswordForm()">
-              ¿Olvidaste tu contraseña?
-            </a>
-          </div>
         </form>
       } @else {
         <!-- Register Form -->

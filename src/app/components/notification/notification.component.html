@@ -1,0 +1,17 @@
+@if (activeNotifications().length > 0) {
+<div class="notification-container">
+  @for (notification of activeNotifications(); track notification) {
+  <div class="notification" [ngClass]="notification.type" [@notificationAnimation]="'visible'">
+    <div class="notification-content">
+      <span class="material-icons notification-icon">
+        {{ getIconForType(notification.type) }}
+      </span>
+      <span class="notification-message">{{ notification.message }}</span>
+    </div>
+    <button class="notification-close" (click)="removeNotification(notification)">
+      <span class="material-icons">close</span>
+    </button>
+  </div>
+  }
+</div>
+}

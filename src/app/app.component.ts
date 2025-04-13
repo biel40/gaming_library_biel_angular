@@ -1,12 +1,14 @@
 import { Component, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { NotificationComponent } from './components/notification/notification.component';
 
 @Component({
   selector: 'app-root',
   imports: [
     RouterOutlet,
-    CommonModule
+    CommonModule,
+    NotificationComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

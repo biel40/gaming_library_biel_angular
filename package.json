@@ -17,6 +17,7 @@
     "@angular/platform-browser": "^19.2.0",
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
+    "@esbuild/win32-x64": "^0.25.2",
     "@supabase/supabase-js": "^2.49.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
@@ -34,5 +35,8 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.7.2"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-win32-x64-msvc": "^4.39.0"
   }
 }

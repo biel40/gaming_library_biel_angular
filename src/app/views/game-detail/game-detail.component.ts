@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
+import { NotificationService } from '../../services/notification/notification.service';
 
 @Component({
   selector: 'app-game-detail',
@@ -27,13 +28,14 @@ export class GameDetailComponent implements OnInit {
   readonly loading = computed(() => this._loading());
   readonly error = computed(() => this._error());
   readonly score = computed(() => this._score());
-  readonly review = signal<string>('');
+  readonly review = computed(() => this._review());
   readonly favoriteIcon = computed(() => this._game()?.favorite ? 'star' : 'star_border');
   readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Remove from favorites' : 'Add to favorites');
 
   constructor(
     private route: ActivatedRoute,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -90,8 +92,10 @@ export class GameDetailComponent implements OnInit {
 
     try {
       await this.supabaseService.updateGameScore(currentGame.id, this._score());
+      this.notificationService.success('Puntuación guardada correctamente');
     } catch (err) {
       this._error.set('Error al actualizar la puntuación');
+      this.notificationService.error('Error al guardar la puntuación');
       console.error(err);
     }
   }
@@ -106,8 +110,43 @@ export class GameDetailComponent implements OnInit {
     try {
       await this.supabaseService.updateGameReview(currentGame.id, this._review());
       await this.supabaseService.updateGameScore(currentGame.id, this._score());
+      this.notificationService.success('Valoración guardada correctamente');
+      
+      // Update the local game object with the new values
+      const updatedGame = { ...currentGame };
+      updatedGame.review = this._review();
+      updatedGame.score = this._score();
+      this._game.set(updatedGame);
     } catch (err) {
       this._error.set('Error al actualizar la reseña');
+      this.notificationService.error('Error al guardar la valoración');
+      console.error(err);
+    }
+  }
+
+  /**
+   * Remove the game review and score
+   */
+  public async removeGameReviewAndScore(): Promise<void> {
+    const currentGame = this._game();
+    if (!currentGame || !currentGame.id) return;
+
+    try {
+      await this.supabaseService.removeGameReviewAndScore(currentGame.id);
+      this.notificationService.success('Valoración eliminada correctamente');
+      
+      // Update the local game object with the removed values
+      const updatedGame = { ...currentGame };
+      updatedGame.review = '';
+      updatedGame.score = 0;
+      this._game.set(updatedGame);
+      
+      // Reset the local signals
+      this._review.set('');
+      this._score.set(0);
+    } catch (err) {
+      this._error.set('Error al eliminar la valoración');
+      this.notificationService.error('Error al eliminar la valoración');
       console.error(err);
     }
   }
@@ -119,5 +158,13 @@ export class GameDetailComponent implements OnInit {
    */
   setScore(score: number): void {
     this._score.set(score);
+  }
+
+  /**
+   * Set the game review text
+   * @param review The review text to set
+   */
+  setReview(review: string): void {
+    this._review.set(review);
   }
 }

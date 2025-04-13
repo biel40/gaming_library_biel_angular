@@ -245,6 +245,21 @@ export class SupabaseService {
     }
   }
 
+  /**
+   * Remove the review and score for a specific game
+   * @param gameId The ID of the game to update
+   */
+  public async removeGameReviewAndScore(gameId: string): Promise<void> {
+    const { error } = await this._supabaseClient
+      .from('videogames')
+      .update({ review: null, score: null })
+      .eq('id', gameId);
+
+    if (error) {
+      throw error;
+    }
+  }
+
   // Store favorites in localStorage since we don't want to modify the database
   private _loadFavoritesFromStorage(): void {
     const favorites = localStorage.getItem('favorite-games');

@@ -256,11 +256,21 @@
     }
 
     &.secondary {
-      background: #f5f5f5;
-      color: #555;
+      background: #3498db;
+      color: white;
 
       &:hover {
-        background: #e0e0e0;
+        background: #2980b9;
+        transform: translateY(-2px);
+      }
+    }
+    
+    &.danger {
+      background: #e74c3c;
+      color: white;
+
+      &:hover {
+        background: #c0392b;
         transform: translateY(-2px);
       }
     }

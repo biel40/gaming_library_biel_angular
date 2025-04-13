@@ -89,7 +89,7 @@
             </div>
             <div class="review-input">
               <label for="gameReview">Mi Review:</label>
-              <textarea id="gameReview" [(ngModel)]="review"
+              <textarea id="gameReview" [ngModel]="review()" (ngModelChange)="setReview($event)"
                 placeholder="Escribe tu review sobre el juego..." class="review-field"></textarea>
             </div>
           </div>
@@ -98,8 +98,14 @@
         <div class="game-actions">
           <button class="action-btn secondary" (click)="updateGameReviewAndScore()">
             <span class="material-icons">save</span>
-            Guardar Valoración
+            Actualizar Valoración
           </button>
+          @if (review() || score()) {
+          <button class="action-btn danger" (click)="removeGameReviewAndScore()">
+            <span class="material-icons">delete</span>
+            Eliminar Valoración
+          </button>
+          }
         </div>
       </div>
     </div>
