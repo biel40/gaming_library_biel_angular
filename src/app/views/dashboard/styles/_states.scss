@@ -1,0 +1,134 @@
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+// Loading state
+.loading-state {
+  @include mix.state-base;
+  
+  .material-icons {
+    color: vars.$primary-color;
+    animation: spin 1.5s linear infinite;
+  }
+}
+
+// Error state
+.error-state {
+  @include mix.state-base;
+  
+  .material-icons {
+    color: vars.$error-color;
+  }
+  
+  p {
+    color: vars.$error-color;
+  }
+  
+  button {
+    @include mix.button-base;
+    background: vars.$error-color;
+    margin-top: 1rem;
+    
+    &:hover {
+      background: vars.$error-dark;
+    }
+  }
+}
+
+// Empty state
+.empty-state {
+  @include mix.state-base;
+  
+  .material-icons {
+    color: vars.$text-light;
+  }
+  
+  p {
+    color: vars.$text-medium;
+  }
+  
+  button {
+    @include mix.button-base;
+    background: linear-gradient(90deg, vars.$primary-color, vars.$primary-dark);
+    margin-top: 1rem;
+    
+    &:hover {
+      background: linear-gradient(90deg, vars.$primary-dark, vars.$primary-color);
+    }
+  }
+}
+
+// Notification
+.notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 1rem 1.5rem;
+  border-radius: vars.$border-radius-md;
+  background-color: vars.$white;
+  color: vars.$text-dark;
+  box-shadow: vars.$box-shadow-lg;
+  z-index: 1000;
+  @include mix.flex(row, center, flex-start, 0.75rem);
+  max-width: 350px;
+  animation: slideInRight 0.3s ease, fadeOut 0.3s ease 4.7s;
+  
+  &.success {
+    border-left: 4px solid #4caf50;
+    
+    .material-icons {
+      color: #4caf50;
+    }
+  }
+  
+  &.error {
+    border-left: 4px solid vars.$error-color;
+    
+    .material-icons {
+      color: vars.$error-color;
+    }
+  }
+  
+  .notification-content {
+    flex: 1;
+    
+    h4 {
+      margin: 0 0 0.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: vars.$text-light;
+    }
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    color: vars.$text-light;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      color: vars.$text-dark;
+    }
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

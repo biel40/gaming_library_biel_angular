@@ -1,0 +1,69 @@
+@use 'sass:color';
+@use 'variables' as vars;
+
+// Layout mixins
+@mixin flex($direction: row, $align: center, $justify: flex-start, $gap: 0.5rem) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: $align;
+  justify-content: $justify;
+  gap: $gap;
+}
+
+// Text mixins
+@mixin gradient-text($gradient) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@mixin truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Button mixins
+@mixin button-base {
+  @include flex;
+  padding: 0.75rem 1.25rem;
+  color: vars.$white;
+  border: none;
+  border-radius: vars.$border-radius-md;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  
+  .material-icons {
+    font-size: 1.25rem;
+  }
+}
+
+// State mixins
+@mixin state-base {
+  @include flex(column, center, center);
+  padding: 2rem;
+  text-align: center;
+  
+  .material-icons {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    margin: 0 0 1rem;
+  }
+}
+
+// Section title mixin
+@mixin section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  @include gradient-text(linear-gradient(90deg, vars.$primary-color, vars.$primary-dark));
+  letter-spacing: 0.5px;
+}

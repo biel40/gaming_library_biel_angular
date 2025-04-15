@@ -1,0 +1,25 @@
+@use 'sass:color';
+
+// Color variables
+$primary-color: #3498db;
+$primary-dark: #2980b9;
+$accent-color: #ff5722;
+$accent-light: #ff8a65;
+$error-color: #f44336;
+$error-dark: #d32f2f;
+$text-dark: #2c3e50;
+$text-medium: #555;
+$text-light: #757575;
+$bg-light: #f5f5f5;
+$white: #fff;
+
+// Shadow variables
+$box-shadow-sm: 0 3px 10px rgba(0, 0, 0, 0.05);
+$box-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.1);
+$box-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+// Border radius variables
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 10px;
+$border-radius-xl: 50px;

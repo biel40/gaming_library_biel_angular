@@ -20,6 +20,9 @@ export class GameCardComponent {
         this._game.set(value);
     }
     
+    // Input for select mode
+    @Input() selectMode = signal(false);
+    
     // Computed signals for template bindings
     readonly favoriteIcon = computed(() => this._game()?.favorite ? 'star' : 'star_border');
     readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Remove from favorites' : 'Add to favorites');

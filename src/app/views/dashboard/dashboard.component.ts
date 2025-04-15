@@ -42,6 +42,88 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public isLoading = signal(true);
     public error = signal<string | null>(null);
 
+    // Multi-select functionality
+    public selectMode = signal(false);
+    public selectedGameIds = signal<string[]>([]);
+    public showDeleteConfirm = signal(false);
+    public deleteLoading = signal(false);
+
+    public toggleSelectMode() {
+        this.selectMode.set(!this.selectMode());
+        if (!this.selectMode()) this.selectedGameIds.set([]);
+    }
+
+    public isSelected(id: string | undefined) {
+        return id ? this.selectedGameIds().includes(id) : false;
+    }
+
+    public toggleSelectGame(id: string | undefined) {
+        if (!id) return;
+        
+        const selected = [...this.selectedGameIds()];
+        const idx = selected.indexOf(id);
+        
+        if (idx > -1) {
+            selected.splice(idx, 1);
+        } else {
+            selected.push(id);
+        }
+        
+        this.selectedGameIds.set(selected);
+    }
+
+    public selectAllFiltered() {
+        const ids = this.filteredGames()
+            .map(g => g.id)
+            .filter((id): id is string => !!id);
+        this.selectedGameIds.set(ids);
+    }
+
+    public clearSelection() {
+        this.selectedGameIds.set([]);
+    }
+
+    public openDeleteConfirm() {
+        if (this.selectedGameIds().length === 0) return;
+        this.showDeleteConfirm.set(true);
+    }
+
+    public closeDeleteConfirm() {
+        this.showDeleteConfirm.set(false);
+    }
+
+    public async deleteSelectedGames() {
+        const ids = this.selectedGameIds();
+        if (!ids.length) return;
+        
+        this.deleteLoading.set(true);
+        
+        try {
+            await this._supabaseService.deleteVideogames(ids);
+            
+            // Update local games list
+            this.games.set(this.games().filter(g => !ids.includes(g.id!)));
+            
+            // Reset selection state
+            this.selectedGameIds.set([]);
+            this.showDeleteConfirm.set(false);
+            this.selectMode.set(false);
+            
+            // Show success notification
+            this.notificationMessage.set('Juegos eliminados correctamente');
+            this.notificationType.set('success');
+            this.showNotification.set(true);
+        } catch (err) {
+            // Show error notification
+            this.notificationMessage.set('Error al eliminar juegos');
+            this.notificationType.set('error');
+            this.showNotification.set(true);
+        } finally {
+            this.deleteLoading.set(false);
+            setTimeout(() => { this.showNotification.set(false); }, 2500);
+        }
+    }
+
     // Computed signals
     public filteredGames = computed(() => {
         const games = this.games();

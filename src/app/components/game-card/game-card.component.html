@@ -1,4 +1,4 @@
-<div class="card" [routerLink]="['/game', gameId()]">
+<div class="card" [routerLink]="!selectMode() ? ['/game', gameId()] : null" [class.select-mode]="selectMode()">
     <button type="button" class="favorite-button" (click)="toggleFavorite($event)" [title]="favoriteTitle()">
       <span class="material-icons">{{favoriteIcon()}}</span>
     </button>
@@ -10,7 +10,7 @@
       <p class="card-genre">Género: {{ gameGenre() }}</p>
       <p class="card-platform">Plataforma: {{ gamePlatform() }}</p>
       <p class="card-release-date">Fecha de lanzamiento: {{ gameReleaseDate() | date: 'dd/MM/yyyy' }}</p>
-      <button type="button" [routerLink]="['/game', gameId()]" class="btn">
+      <button type="button" [routerLink]="!selectMode() ? ['/game', gameId()] : null" class="btn" [class.disabled]="selectMode()" [attr.disabled]="selectMode() ? true : null">
         Ver Detalles
       </button>
     </div>

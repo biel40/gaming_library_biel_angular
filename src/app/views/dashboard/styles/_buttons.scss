@@ -1,0 +1,57 @@
+@use 'sass:color';
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+// Button styles
+.add-game-btn {
+  @include mix.button-base;
+  background: vars.$accent-color;
+
+  &:hover {
+    background: color.scale(vars.$accent-color, $lightness: -5%);
+  }
+}
+
+.logout-btn {
+  @include mix.button-base;
+  background: linear-gradient(90deg, vars.$primary-color, vars.$primary-dark);
+  margin-left: 0.5rem;
+
+  &:hover {
+    background: linear-gradient(90deg, vars.$primary-dark, vars.$primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+  }
+}
+
+.select-btn {
+  @include mix.flex(row, center, center, 0.5rem);
+  background: linear-gradient(90deg, vars.$primary-color, vars.$primary-dark);
+  color: vars.$white;
+  border: none;
+  border-radius: vars.$border-radius-md;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 0.5rem;
+  box-shadow: vars.$box-shadow-sm;
+  
+  &:hover {
+    box-shadow: vars.$box-shadow-md;
+    transform: translateY(-2px);
+  }
+  
+  &.active {
+    background: vars.$error-color;
+    
+    &:hover {
+      background: vars.$error-dark;
+    }
+  }
+  
+  .material-icons {
+    font-size: 1.2rem;
+  }
+}

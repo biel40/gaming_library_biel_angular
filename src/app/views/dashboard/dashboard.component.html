@@ -18,6 +18,10 @@
                 <span class="material-icons">add</span>
                 Añadir Juego
             </button>
+            <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()">
+                <span class="material-icons">{{ selectMode() ? 'close' : 'check_box' }}</span>
+                {{ selectMode() ? 'Cancelar' : 'Seleccionar' }}
+            </button>
             <button class="logout-btn" (click)="logout()">
                 <span class="material-icons">logout</span>
                 Cerrar Sesión
@@ -63,7 +67,7 @@
         @if (favoriteGames().length > 0) {
         <div class="game-grid favorites-grid">
             @for (game of favoriteGames(); track $index) {
-            <app-game-card [game]="game"></app-game-card>
+            <app-game-card [game]="game" [selectMode]="selectMode"></app-game-card>
             }
         </div>
         } @else {
@@ -98,11 +102,38 @@
         </div>
         }
 
+        <!-- Multi-select controls -->
+        @if (selectMode() && filteredGames().length > 0) {
+        <div class="multi-select-bar">
+            <button class="multi-select-btn primary" (click)="selectAllFiltered()">
+                <span class="material-icons">select_all</span>
+                Seleccionar todos
+            </button>
+            <button class="multi-select-btn" (click)="clearSelection()">
+                <span class="material-icons">deselect</span>
+                Limpiar selección
+            </button>
+            <span class="selected-count">{{ selectedGameIds().length }} seleccionados</span>
+            <button class="multi-select-btn danger" [disabled]="selectedGameIds().length === 0" (click)="openDeleteConfirm()">
+                <span class="material-icons">delete_forever</span>
+                Eliminar seleccionados
+            </button>
+        </div>
+        }
+
         <!-- Grid view -->
         @if (viewMode() === 'grid' && filteredGames().length > 0) {
         <div class="game-grid">
             @for (game of filteredGames(); track $index) {
-            <app-game-card [game]="game"></app-game-card>
+            <div class="game-card-wrapper" [class.selected]="isSelected(game.id)">
+                @if (selectMode()) {
+                <label class="select-checkbox" (click)="$event.stopPropagation()">
+                    <input type="checkbox" [checked]="isSelected(game.id)" (change)="toggleSelectGame(game.id); $event.stopPropagation()">
+                    <span class="checkmark"></span>
+                </label>
+                }
+                <app-game-card [game]="game" [selectMode]="selectMode"></app-game-card>
+            </div>
             }
         </div>
         }
@@ -111,7 +142,13 @@
         @if (viewMode() === 'list' && filteredGames().length > 0) {
         <div class="game-list">
             @for (game of filteredGames(); track $index) {
-            <div class="list-item">
+            <div class="list-item" [class.selected]="isSelected(game.id)">
+                @if (selectMode()) {
+                <label class="select-checkbox list-checkbox" (click)="$event.stopPropagation()">
+                    <input type="checkbox" [checked]="isSelected(game.id)" (change)="toggleSelectGame(game.id); $event.stopPropagation()">
+                    <span class="checkmark"></span>
+                </label>
+                }
                 <div class="list-img">
                     <img [src]="game.image_url" [alt]="game.name">
                 </div>
@@ -130,4 +167,26 @@
         </div>
         }
     </section>
+
+    <!-- Delete confirmation modal -->
+    @if (showDeleteConfirm()) {
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <h3>Confirmar eliminación</h3>
+            <p>¿Estás seguro de que quieres eliminar {{ selectedGameIds().length }} juego(s) seleccionado(s)?</p>
+            <p class="warning">Esta acción no se puede deshacer.</p>
+            <div class="modal-actions">
+                <button class="modal-btn" (click)="closeDeleteConfirm()">Cancelar</button>
+                <button class="modal-btn danger" [disabled]="deleteLoading()" (click)="deleteSelectedGames()">
+                    @if (deleteLoading()) {
+                    <span class="loading-spinner"></span>
+                    } @else {
+                    <span class="material-icons">delete_forever</span>
+                    }
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+    }
 </div>

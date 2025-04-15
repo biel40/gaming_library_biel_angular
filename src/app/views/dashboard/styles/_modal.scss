@@ -1,0 +1,112 @@
+@use 'sass:color';
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+// Modal styles
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: vars.$white;
+  border-radius: vars.$border-radius-lg;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: vars.$box-shadow-lg;
+  animation: slideIn 0.3s ease;
+  
+  h3 {
+    color: vars.$text-dark;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  p {
+    color: vars.$text-medium;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    
+    &.warning {
+      color: vars.$error-color;
+      font-weight: 500;
+    }
+  }
+  
+  .modal-actions {
+    @include mix.flex(row, center, flex-end, 1rem);
+    margin-top: 2rem;
+    
+    .modal-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: vars.$border-radius-md;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      @include mix.flex(row, center, center, 0.5rem);
+      
+      &:first-child {
+        background-color: vars.$bg-light;
+        color: vars.$text-dark;
+        
+        &:hover {
+          background-color: color.scale(vars.$bg-light, $lightness: -5%);
+        }
+      }
+      
+      &.danger {
+        background-color: vars.$error-color;
+        color: vars.$white;
+        
+        &:hover:not(:disabled) {
+          background-color: vars.$error-dark;
+        }
+        
+        &:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: vars.$white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

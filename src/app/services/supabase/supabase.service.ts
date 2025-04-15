@@ -157,6 +157,21 @@ export class SupabaseService {
   }
 
   // Videogame Service functions
+
+  /**
+   * Delete multiple videogames by their IDs
+   * @param ids Array of videogame IDs to delete
+   */
+  public async deleteVideogames(ids: string[]): Promise<void> {
+    if (!ids.length) return;
+    
+    const { error } = await this._supabaseClient
+      .from('videogames')
+      .delete()
+      .in('id', ids);
+      
+    if (error) throw error;
+  }
   public async getVideogames(): Promise<Videogame[]> {
     const { data, error } = await this._supabaseClient
       .from('videogames')

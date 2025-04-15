@@ -1,0 +1,126 @@
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+// Main layout
+.dashboard {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0.5rem;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  position: relative;
+}
+
+// Header styles
+.dashboard-header {
+  @include mix.flex(column, flex-start, flex-start, 0.75rem);
+  margin-bottom: 1.25rem;
+  width: 75%;
+  
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    @include mix.gradient-text(linear-gradient(90deg, vars.$accent-color, vars.$accent-light));
+    text-shadow: 0 2px 4px rgba(255, 87, 34, 0.1);
+    @include mix.truncate;
+  }
+
+  .header-actions {
+    @include mix.flex(row, center, flex-start, 1rem);
+    flex-wrap: wrap;
+    
+    // Search bar styles
+    .search-bar {
+      position: relative;
+      min-width: 250px;
+      
+      input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 1px solid vars.$bg-light;
+        border-radius: vars.$border-radius-md;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+        background-color: vars.$white;
+        color: vars.$text-dark;
+        
+        &:focus {
+          outline: none;
+          border-color: vars.$primary-color;
+          box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        &::placeholder {
+          color: vars.$text-light;
+        }
+      }
+      
+      .material-icons {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: vars.$text-light;
+        font-size: 1.2rem;
+        pointer-events: none;
+      }
+    }
+  }
+  
+  @media (max-width: 767px) {
+    width: 100%;
+    
+    .header-actions {
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+// Section headers
+.all-games, .favorites {
+  h2 {
+    @include mix.section-title;
+  }
+}
+
+.section-header {
+  @include mix.flex(row, center, space-between);
+  margin-bottom: 1.5rem;
+  
+  h2 {
+    position: relative;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+// View controls
+.view-controls {
+  @include mix.flex;
+}
+
+.view-btn {
+  background: none;
+  border: none;
+  border-radius: vars.$border-radius-sm;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: vars.$text-light;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: vars.$bg-light;
+  }
+  
+  &.active {
+    color: vars.$primary-color;
+    background: rgba(52, 152, 219, 0.1);
+  }
+  
+  .material-icons {
+    font-size: 1.2rem;
+  }
+}

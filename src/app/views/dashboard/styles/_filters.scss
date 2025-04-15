@@ -1,0 +1,37 @@
+@use 'sass:color';
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+// Filters section
+.filters {
+  margin: 1.5rem 0;
+  
+  .filter-chips {
+    @include mix.flex(row, center, flex-start, 0.75rem);
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  
+  .filter-chip {
+    padding: 0.5rem 1rem;
+    border-radius: vars.$border-radius-xl;
+    background: vars.$bg-light;
+    color: vars.$text-medium;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: vars.$box-shadow-sm;
+    
+    &:hover {
+      background: color.scale(vars.$bg-light, $lightness: -5%);
+      transform: translateY(-2px);
+    }
+    
+    &.active {
+      background: linear-gradient(90deg, vars.$primary-color, vars.$primary-dark);
+      color: vars.$white;
+      box-shadow: vars.$box-shadow-md;
+    }
+  }
+}

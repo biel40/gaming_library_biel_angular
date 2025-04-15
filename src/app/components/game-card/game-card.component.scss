@@ -19,6 +19,15 @@
     overflow: hidden;
     transition: all 0.4s ease-out;
     margin: 16px;
+    
+    &.select-mode {
+        cursor: default;
+        
+        &:hover {
+            transform: translateY(0);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+    }
     position: relative;
     transform-style: preserve-3d;
     perspective: 1000px;
