@@ -97,6 +97,15 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
+  align-items: center; // Vertically center items in the grid
+  min-height: 100%;
+  
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr; // Single column on mobile
+    place-items: center; // Center both horizontally and vertically
+    min-height: 50vh; // Ensure there's enough vertical space for centering
+    align-content: center; // Center content vertically in the grid container
+  }
   
   .game-card-wrapper {
     position: relative;
@@ -104,6 +113,9 @@
     overflow: hidden;
     box-shadow: vars.$box-shadow-md;
     transition: all 0.3s ease;
+    width: 100%; // Ensure full width on mobile
+    display: flex;
+    justify-content: center; // Center the card horizontally
     
     &:hover {
       transform: translateY(-5px);
