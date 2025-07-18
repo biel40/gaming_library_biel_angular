@@ -1,0 +1,148 @@
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+// User avatar styles
+.user-avatar {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  
+  .avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, vars.$primary-color, vars.$accent-color);
+    @include mix.flex(row, center, center);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .avatar-initials {
+      color: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+  
+  .user-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: white;
+    border-radius: vars.$border-radius-md;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    min-width: 220px;
+    padding: 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    border: 1px solid vars.$border-color;
+    
+    &.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    // Triangle arrow
+    &::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      right: 20px;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid white;
+    }
+    
+    .user-info {
+      padding: 1rem;
+      border-bottom: 1px solid vars.$border-color;
+      
+      .user-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: vars.$text-dark;
+        margin-bottom: 0.25rem;
+        @include mix.truncate;
+      }
+      
+      .user-email {
+        font-size: 0.8rem;
+        color: vars.$text-light;
+        @include mix.truncate;
+      }
+    }
+    
+    .menu-divider {
+      margin: 0;
+      border: none;
+      height: 1px;
+      background: vars.$border-color;
+    }
+    
+    .menu-item {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: none;
+      background: none;
+      text-align: left;
+      cursor: pointer;
+      @include mix.flex(row, center, flex-start, 0.75rem);
+      font-size: 0.9rem;
+      color: vars.$text-dark;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: vars.$bg-light;
+      }
+      
+      &:first-of-type {
+        border-top: 1px solid vars.$border-color;
+      }
+      
+      &:last-of-type {
+        border-bottom-left-radius: vars.$border-radius-md;
+        border-bottom-right-radius: vars.$border-radius-md;
+      }
+      
+      .material-icons {
+        font-size: 1.1rem;
+        color: vars.$text-light;
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 767px) {
+  .user-avatar {
+    .avatar-circle {
+      width: 36px;
+      height: 36px;
+      
+      .avatar-initials {
+        font-size: 0.8rem;
+      }
+    }
+    
+    .user-menu {
+      min-width: 200px;
+      right: -10px;
+      
+      &::before {
+        right: 25px;
+      }
+    }
+  }
+}

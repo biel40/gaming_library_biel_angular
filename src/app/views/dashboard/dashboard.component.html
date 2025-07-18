@@ -20,16 +20,28 @@
             </button>
             <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()">
                 <span class="material-icons">{{ selectMode() ? 'close' : 'check_box' }}</span>
-                {{ selectMode() ? 'Cancelar' : 'Seleccionar' }}
+                {{ selectMode() ? 'Cancelar' : 'Selección múltiple' }}
             </button>
-            <button class="logout-btn" (click)="logout()">
-                <span class="material-icons">logout</span>
-                Cerrar Sesión
-            </button>
+        </div>
+
+        <div class="user-avatar" (click)="toggleUserMenu()">
+            <div class="avatar-circle">
+                <span class="avatar-initials">{{ userInitials() }}</span>
+            </div>
+            <div class="user-menu" [class.show]="showUserMenu()">
+                <div class="user-info">
+                    <div class="user-name">{{ userDisplayName() }}</div>
+                    <div class="user-email">{{ currentUser()?.email }}</div>
+                </div>
+                <hr class="menu-divider">
+                <button class="menu-item" (click)="logout()">
+                    <span class="material-icons">logout</span>
+                    Cerrar Sesión
+                </button>
+            </div>
         </div>
     </header>
 
-    <!-- Loading state -->
     @if (isLoading()) {
     <div class="loading-state">
         <span class="material-icons">hourglass_empty</span>
@@ -37,7 +49,6 @@
     </div>
     }
 
-    <!-- Error state -->
     @if (error()) {
     <div class="error-state">
         <span class="material-icons">error</span>
@@ -46,9 +57,7 @@
     </div>
     }
 
-    <!-- Content when loaded -->
     @if (!isLoading() && !error()) {
-    <!-- Filters section -->
     <div class="filters">
         <div class="filter-chips">
             @for (genre of uniqueGenres(); track genre) {
@@ -59,6 +68,7 @@
     </div>
 
     <!-- Favorites Section -->
+    @if (!selectMode()) {
     <section class="favorites">
         <div class="section-header">
             <h2>Mis Favoritos</h2>
@@ -78,11 +88,11 @@
         }
     </section>
     }
+    }
 
-    <!-- All Games Grid -->
     <section class="all-games">
         <div class="section-header">
-            <h2>Todos los Juegos</h2>
+            <h2>Todos los juegos</h2>
             <div class="view-controls">
                 <button class="view-btn" [class.active]="viewMode() === 'grid'" (click)="viewMode.set('grid')">
                     <span class="material-icons">grid_view</span>
@@ -114,7 +124,8 @@
                 Limpiar selección
             </button>
             <span class="selected-count">{{ selectedGameIds().length }} seleccionados</span>
-            <button class="multi-select-btn danger" [disabled]="selectedGameIds().length === 0" (click)="openDeleteConfirm()">
+            <button class="multi-select-btn danger" [disabled]="selectedGameIds().length === 0"
+                (click)="openDeleteConfirm()">
                 <span class="material-icons">delete_forever</span>
                 Eliminar seleccionados
             </button>
@@ -128,7 +139,8 @@
             <div class="game-card-wrapper" [class.selected]="isSelected(game.id)">
                 @if (selectMode()) {
                 <label class="select-checkbox" (click)="$event.stopPropagation()">
-                    <input type="checkbox" [checked]="isSelected(game.id)" (change)="toggleSelectGame(game.id); $event.stopPropagation()">
+                    <input type="checkbox" [checked]="isSelected(game.id)"
+                        (change)="toggleSelectGame(game.id); $event.stopPropagation()">
                     <span class="checkmark"></span>
                 </label>
                 }
@@ -145,7 +157,8 @@
             <div class="list-item" [class.selected]="isSelected(game.id)">
                 @if (selectMode()) {
                 <label class="select-checkbox list-checkbox" (click)="$event.stopPropagation()">
-                    <input type="checkbox" [checked]="isSelected(game.id)" (change)="toggleSelectGame(game.id); $event.stopPropagation()">
+                    <input type="checkbox" [checked]="isSelected(game.id)"
+                        (change)="toggleSelectGame(game.id); $event.stopPropagation()">
                     <span class="checkmark"></span>
                 </label>
                 }

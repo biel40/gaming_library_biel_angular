@@ -11,11 +11,11 @@
   position: relative;
 }
 
-// Header styles
 .dashboard-header {
   @include mix.flex(column, flex-start, flex-start, 0.75rem);
   margin-bottom: 1.25rem;
-  width: 75%;
+  width: 100%;
+  position: relative;
   
   h1 {
     margin: 0;
@@ -29,8 +29,9 @@
   .header-actions {
     @include mix.flex(row, center, flex-start, 1rem);
     flex-wrap: wrap;
+    width: 100%;
+    position: relative;
     
-    // Search bar styles
     .search-bar {
       position: relative;
       min-width: 250px;
@@ -68,12 +69,24 @@
     }
   }
   
+  // Position user avatar at the top right
+  .user-avatar {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  
   @media (max-width: 767px) {
     width: 100%;
     
     .header-actions {
       justify-content: center;
       margin-top: 0.5rem;
+    }
+    
+    .user-avatar {
+      top: 0.5rem;
+      right: 0.5rem;
     }
   }
 }

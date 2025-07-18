@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
+import { UserService } from '../../services/user/user.service';
+import { User } from '@supabase/supabase-js';
 
 @Component({
     selector: 'app-dashboard',
@@ -25,6 +27,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('carousel') carouselElement!: ElementRef;
 
     private _supabaseService: SupabaseService = inject(SupabaseService);
+    private _userService: UserService = inject(UserService);
     private _router: Router = inject(Router);
     private _resizeListener: () => void;
     private _favoriteSubscription: Subscription | null = null;
@@ -32,6 +35,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Signals for state management
     public title = signal('My Game Library');
     public isAuthenticated = signal(false);
+    public currentUser = signal<User | null>(null);
+    public showUserMenu = signal(false);
     public games = signal<Videogame[]>([]);
     public searchTerm = signal('');
     public activeGenre = signal('All');
@@ -47,6 +52,33 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public selectedGameIds = signal<string[]>([]);
     public showDeleteConfirm = signal(false);
     public deleteLoading = signal(false);
+
+    // Computed properties
+    public userDisplayName = computed(() => {
+        const user = this.currentUser();
+        if (!user) return '';
+        return user.user_metadata?.['full_name'] || user.email || 'Usuario';
+    });
+
+    public userInitials = computed(() => {
+        const user = this.currentUser();
+        if (!user) return 'U';
+        
+        const name = user.user_metadata?.['full_name'] || user.email || 'Usuario';
+        return name.split(' ')
+            .map((n: string) => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2);
+    });
+
+    public toggleUserMenu() {
+        this.showUserMenu.set(!this.showUserMenu());
+    }
+
+    public closeUserMenu() {
+        this.showUserMenu.set(false);
+    }
 
     public toggleSelectMode() {
         this.selectMode.set(!this.selectMode());
@@ -192,6 +224,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         this._resizeListener = () => this.calculateItemsPerPage();
+        
+        // Close user menu when clicking outside
+        document.addEventListener('click', (event) => {
+            const target = event.target as HTMLElement;
+            if (!target.closest('.user-menu') && !target.closest('.user-avatar')) {
+                this.showUserMenu.set(false);
+            }
+        });
     }
 
     async ngOnInit() {
@@ -207,6 +247,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!session) {
                 this._router.navigate(['/login']);
                 return;
+            }
+
+            // Set current user information
+            if (session.user) {
+                this.currentUser.set(session.user);
+                this._userService.setUser(session.user);
             }
 
             const games = await this._supabaseService.getVideogames();
@@ -322,6 +368,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
             // Sign out and clear session
             await this._supabaseService.signOut();
+            
+            // Clear user information
+            this.currentUser.set(null);
+            this._userService.clearUser();
             
             this.notificationMessage.set('Sesión cerrada correctamente');
             this.notificationType.set('success');

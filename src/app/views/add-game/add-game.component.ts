@@ -31,11 +31,15 @@ export class AddGameComponent {
 
   public isLoading = false;
   public error: string | null = null;
-  public useSearch = false;
+  public useSearch = true;
+  public showManualForm = false;
 
   public onGameSelected(gameData: Partial<Videogame>) {
     this.game = { ...this.game, ...gameData };
-    this.useSearch = false;
+  }
+
+  public toggleManualForm() {
+    this.showManualForm = !this.showManualForm;
   }
 
   public async onSubmit() {
@@ -43,10 +47,8 @@ export class AddGameComponent {
       this.isLoading = true;
       this.error = null;
 
-      // Add the game to the database
       await this._supabaseService.addVideogame(this.game as Omit<Videogame, 'id'>);
 
-      // Navigate back to dashboard
       this._router.navigate(['/dashboard']);
     } catch (err: any) {
       console.error('Error adding game:', err);

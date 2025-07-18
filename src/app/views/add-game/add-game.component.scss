@@ -258,6 +258,95 @@ $transition-speed: 0.3s;
   animation: pulse 0.5s ease-in-out;
 }
 
+// Manual form toggle styles
+.manual-form-toggle {
+  text-align: center;
+  margin: 2.5rem 0;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  
+  // Subtle background pattern
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 45%, rgba(255, 255, 255, 0.01) 50%, transparent 55%);
+    pointer-events: none;
+  }
+  
+  .toggle-button {
+    position: relative;
+    z-index: 1;
+    
+    &.secondary {
+      background: linear-gradient(135deg, #4a90e2, #357abd);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      
+      &:hover {
+        background: linear-gradient(135deg, #5ba0f2, #4a90e2);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+      
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+      }
+    }
+    
+    .material-icons {
+      margin-right: 0.75rem;
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+    
+    &:hover .material-icons {
+      transform: scale(1.1);
+    }
+  }
+  
+  .toggle-description {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.65);
+    font-style: italic;
+    line-height: 1.4;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+// Manual form container
+.manual-form-container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+  
+  &.show {
+    max-height: 2000px; // Suficiente para mostrar todo el formulario
+    padding-top: 1rem;
+  }
+}
+
 // Responsive adjustments
 @media (max-width: 768px) {
   .add-game-container {
@@ -274,6 +363,27 @@ $transition-speed: 0.3s;
     
     button {
       width: 100%;
+    }
+  }
+  
+  .manual-form-toggle {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    
+    .toggle-button {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      font-size: 0.95rem;
+      
+      .material-icons {
+        margin-right: 0.5rem;
+        font-size: 1.1rem;
+      }
+    }
+    
+    .toggle-description {
+      font-size: 0.9rem;
+      margin-top: 0.75rem;
     }
   }
 }

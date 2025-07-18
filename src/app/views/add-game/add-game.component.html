@@ -5,17 +5,20 @@
   </div>
 
   <div class="add-game-content">
-    <div class="search-toggle">
-      <button class="toggle-button" (click)="toggleSearch()">
-        {{ useSearch ? 'Usar formulario manual' : 'Buscar juego' }}
+    <!-- Búsqueda de juegos (opción principal) -->
+    <app-game-search (gameSelected)="onGameSelected($event)"></app-game-search>
+
+    <!-- Botón para mostrar formulario manual -->
+    <div class="manual-form-toggle">
+      <button class="toggle-button secondary" (click)="toggleManualForm()">
+        <span class="material-icons">edit</span>
+        {{ showManualForm ? 'Ocultar formulario manual' : 'Añadir manualmente' }}
       </button>
+      <p class="toggle-description">¿No encuentras el juego? Puedes añadirlo manualmente</p>
     </div>
 
-    <ng-container *ngIf="useSearch; else manualForm">
-      <app-game-search (gameSelected)="onGameSelected($event)"></app-game-search>
-    </ng-container>
-
-    <ng-template #manualForm>
+    <!-- Formulario manual (oculto por defecto) -->
+    <div class="manual-form-container" [class.show]="showManualForm">
       <form (ngSubmit)="onSubmit()" #gameForm="ngForm" class="add-game-form">
         <div class="form-group">
           <label for="name">Nombre del Juego</label>
@@ -117,6 +120,6 @@
           </button>
         </div>
       </form>
-    </ng-template>
+    </div>
   </div>
 </div>
