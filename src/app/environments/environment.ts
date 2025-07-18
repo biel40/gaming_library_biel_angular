@@ -1,6 +1,6 @@
 export const environment = {
-  production: false,
-  supabaseUrl: import.meta.env['VITE_SUPABASE_URL'],
-  supabaseKey: import.meta.env['VITE_SUPABASE_KEY'],
-  rawgApiKey: import.meta.env['VITE_RAWG_API_KEY']
-}
+  production: import.meta.env.PROD,
+  supabaseUrl: import.meta.env.VITE_SUPABASE_URL as string,
+  supabaseKey: import.meta.env.VITE_SUPABASE_KEY as string,
+  rawgApiKey: import.meta.env.VITE_RAWG_API_KEY as string
+};
