@@ -1,18 +1,9 @@
 import { defineConfig } from 'vite';
+import angular from '@analogjs/vite-plugin-angular';
 
 export default defineConfig({
-  // Configuración para cargar variables de entorno
+  plugins: [angular()],
   envPrefix: 'VITE_',
-  
-  // Configuración para development
-  server: {
-    port: 4200,
-    host: true
-  },
-  
-  // Configuración para build
-  build: {
-    outDir: 'dist',
-    sourcemap: true
-  }
+  // Asegurar que el archivo .env se cargue correctamente
+  envDir: '.',
 });

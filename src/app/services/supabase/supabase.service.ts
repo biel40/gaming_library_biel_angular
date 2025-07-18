@@ -45,6 +45,10 @@ export class SupabaseService {
   public favoriteChanged = new EventEmitter<Videogame>();
 
   constructor() {
+    if (!environment.supabaseUrl || !environment.supabaseKey) {
+      throw new Error('Las variables de entorno de Supabase no están configuradas correctamente');
+    }
+    
     this._supabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
     this._loadFavoritesFromStorage();
   }
