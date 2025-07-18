@@ -7,10 +7,9 @@ export default defineConfig(({ mode }) => {
     envPrefix: 'VITE_',
     envDir: '.',
     define: {
-      // Definir variables de entorno explícitamente para producción
-      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(process.env.VITE_SUPABASE_URL),
-      'import.meta.env.VITE_SUPABASE_KEY': JSON.stringify(process.env.VITE_SUPABASE_KEY),
-      'import.meta.env.VITE_RAWG_API_KEY': JSON.stringify(process.env.VITE_RAWG_API_KEY),
+      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(process.env.VITE_SUPABASE_URL || ''),
+      'import.meta.env.VITE_SUPABASE_KEY': JSON.stringify(process.env.VITE_SUPABASE_KEY || ''),
+      'import.meta.env.VITE_RAWG_API_KEY': JSON.stringify(process.env.VITE_RAWG_API_KEY || ''),
     },
     build: {
       target: 'esnext',
