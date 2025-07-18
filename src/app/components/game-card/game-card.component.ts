@@ -20,7 +20,6 @@ export class GameCardComponent {
     this._game.set(value);
   }
 
-  // Input for select mode
   @Input() selectMode = signal(false);
 
   // Computed signals for template bindings
