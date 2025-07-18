@@ -91,20 +91,70 @@
   }
 }
 
+// Favorites grid (similar animation to main grid)
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  align-items: start;
+  
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  
+  @media (max-width: 767px) {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    place-items: center;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    place-items: center;
+  }
+  
+  app-game-card {
+    // Animación fade-in para favoritos
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1.6s ease forwards;
+    
+    // Retraso escalonado
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
+    }
+  }
+}
+
 // Game grid
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
-  align-items: center; // Vertically center items in the grid
+  align-items: start; // Alinea los elementos al inicio para mantener consistencia
   min-height: 100%;
   
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  
   @media (max-width: 767px) {
-    grid-template-columns: 1fr; // Single column on mobile
-    place-items: center; // Center both horizontally and vertically
-    min-height: 50vh; // Ensure there's enough vertical space for centering
-    align-content: center; // Center content vertically in the grid container
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    place-items: center;
+    min-height: 50vh;
+    align-content: center;
+  }
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr; // Una sola columna en móviles muy pequeños
+    place-items: center;
   }
   
   .game-card-wrapper {
@@ -113,14 +163,39 @@
     overflow: hidden;
     box-shadow: vars.$box-shadow-md;
     transition: all 0.3s ease;
-    width: 100%; // Ensure full width on mobile
+    width: 100%;
+    height: 100%; // Ocupa toda la altura disponible
     display: flex;
-    justify-content: center; // Center the card horizontally
+    justify-content: center;
+    
+    // Animación fade-in
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1.6s ease forwards;
+    
+    // Retraso escalonado para cada card
+    @for $i from 1 through 20 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
+    }
     
     &:hover {
       transform: translateY(-5px);
       box-shadow: vars.$box-shadow-lg;
     }
+  }
+}
+
+// Animación fade-in para las cards
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

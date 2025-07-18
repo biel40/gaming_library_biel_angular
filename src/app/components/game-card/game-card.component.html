@@ -7,9 +7,13 @@
     <div class="card-body">
       <h2 class="card-title">{{ gameName() }}</h2>
       <p class="card-description">{{ gameDescription() }}</p>
-      <p class="card-genre">Género: {{ gameGenre() }}</p>
-      <p class="card-platform">Plataforma: {{ gamePlatform() }}</p>
-      <p class="card-release-date">Fecha de lanzamiento: {{ gameReleaseDate() | date: 'dd/MM/yyyy' }}</p>
+      
+      <div class="card-info">
+        <p class="card-genre">Género: {{ gameGenre() }}</p>
+        <p class="card-platform">Plataforma: {{ gamePlatform() }}</p>
+        <p class="card-release-date">Fecha de lanzamiento: {{ gameReleaseDate() | date: 'dd/MM/yyyy' }}</p>
+      </div>
+      
       <button type="button" [routerLink]="!selectMode() ? ['/game', gameId()] : null" class="btn" [class.disabled]="selectMode()" [attr.disabled]="selectMode() ? true : null">
         Ver Detalles
       </button>

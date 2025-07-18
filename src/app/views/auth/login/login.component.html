@@ -1,7 +1,7 @@
 <div class="login-container">
   <div class="login-card">
     <div class="login-header">
-      <h1>{{ isResetPasswordMode ? 'Restablecer Contraseña' : (isLoginMode ? 'Iniciar Sesión' : 'Registrarse') }}</h1>
+      <h1>{{ isResetPasswordMode ? 'Restablecer Contraseña' : (isLoginMode ? 'Iniciar sesión' : 'Registrarse') }}</h1>
       <p>{{ isResetPasswordMode ? 'Introduce tu correo electrónico para recibir instrucciones' : (isLoginMode ? '¡Bienvenido a mi biblioteca de videojuegos personal!' : '¿Te apetece ver mi biblioteca de juegos personal?') }}</p>
     </div>
 
@@ -87,7 +87,7 @@
           </div>
 
           <button type="submit" class="submit-btn" [disabled]="loading">
-            {{ loading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+            {{ loading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
           </button>
         </form>
       } @else {
@@ -174,7 +174,7 @@
         <p>
           {{ isLoginMode ? '¿No tienes una cuenta?' : '¿Ya tienes una cuenta?' }}
           <a href="javascript:void(0)" (click)="toggleMode()">
-            {{ isLoginMode ? 'Registrarse' : 'Iniciar Sesión' }}
+            {{ isLoginMode ? 'Registrarse' : 'Iniciar sesión' }}
           </a>
         </p>
       </div>

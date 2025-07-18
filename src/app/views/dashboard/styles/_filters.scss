@@ -6,6 +6,12 @@
 .filters {
   margin: 1.5rem 0;
   
+  // Animación para los filtros
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fadeInUp 1.7s ease forwards;
+  animation-delay: 0.4s;
+  
   .filter-chips {
     @include mix.flex(row, center, flex-start, 0.75rem);
     flex-wrap: wrap;
@@ -23,9 +29,20 @@
     transition: all 0.2s ease;
     box-shadow: vars.$box-shadow-sm;
     
+    // Animación individual para cada chip
+    opacity: 0;
+    transform: scale(0.9);
+    animation: chipFadeIn 1.5s ease forwards;
+    
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{0.6 + $i * 0.05}s;
+      }
+    }
+    
     &:hover {
       background: color.scale(vars.$bg-light, $lightness: -5%);
-      transform: translateY(-2px);
+      transform: translateY(-2px) scale(1.05);
     }
     
     &.active {
@@ -33,5 +50,29 @@
       color: vars.$white;
       box-shadow: vars.$box-shadow-md;
     }
+  }
+}
+
+// Animación para los chips de filtro
+@keyframes chipFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Keyframe para fadeInUp (si no está definido en otro lugar)
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -175,6 +175,7 @@
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
+            margin-bottom: 0.75rem;
 
             span {
               background: rgba(255, 255, 255, 0.1);
@@ -182,6 +183,52 @@
               padding: 0.25rem 0.5rem;
               border-radius: 4px;
               font-size: 0.8rem;
+            }
+          }
+
+          .game-actions {
+            .save-btn {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              padding: 0.5rem 0.75rem;
+              background: #4caf50;
+              color: white;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+              font-size: 0.85rem;
+              transition: all 0.2s;
+              width: 100%;
+              justify-content: center;
+
+              &:hover:not(:disabled) {
+                background: #45a049;
+                transform: translateY(-1px);
+              }
+
+              &:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+                transform: none;
+              }
+
+              &.saving {
+                background: #ff9800;
+                
+                .material-icons {
+                  animation: spin 1s linear infinite;
+                }
+              }
+
+              .material-icons {
+                font-size: 1rem;
+              }
+
+              span {
+                font-size: 0.85rem;
+                font-weight: 500;
+              }
             }
           }
         }

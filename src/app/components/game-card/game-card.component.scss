@@ -13,6 +13,7 @@
 .card {
     max-width: 320px;
     width: 100%;
+    height: 500px; // Altura fija para todas las cards
     border: none;
     border-radius: 16px;
     background: white;
@@ -24,13 +25,13 @@
     transform-style: preserve-3d;
     perspective: 1000px;
     cursor: pointer; // Make it clear this is clickable
+    display: flex;
+    flex-direction: column; // Para organizar el contenido verticalmente
     
     @media (max-width: 767px) {
         max-width: 90%;
         margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
+        height: 480px; // Altura ligeramente menor en móviles
     }
     
     &.select-mode {
@@ -126,13 +127,14 @@
 
 .card-img {
     width: 100%;
-    height: 180px;
+    height: 180px; // Altura fija para todas las imágenes
     object-fit: cover;
     display: block;
     transition: transform 0.5s ease;
     transform: translateZ(0);
     position: relative;
     z-index: 1;
+    flex-shrink: 0; // Evita que la imagen se reduzca
 }
 
 .card-body {
@@ -141,65 +143,89 @@
     transition: transform 0.5s ease;
     position: relative;
     z-index: 1;
-}
-
-.card-title {
-    margin: 0 0 12px;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #2c3e50;
-    line-height: 1.2;
-}
-
-.card-description {
-    font-size: 0.95rem;
-    color: #5f6368;
-    margin-bottom: 16px;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.card-genre,
-.card-platform,
-.card-release-date {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 8px;
+    flex: 1; // Ocupa el espacio restante
     display: flex;
-    align-items: center;
-    gap: 6px;
-
-    &:last-of-type {
+    flex-direction: column;
+    
+    .card-title {
+        margin: 0 0 12px;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+        line-height: 1.2;
+        flex-shrink: 0; // No se reduce
+    }
+    
+    .card-description {
+        font-size: 0.95rem;
+        color: #5f6368;
         margin-bottom: 16px;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        flex-grow: 1; // Permite que la descripción crezca
+        height: 4.5rem; // Altura fija para 3 líneas (1.5rem * 3)
+        text-align: justify; // Justifica el texto para mejor apariencia
     }
-}
+    
+    .card-info {
+        flex-shrink: 0; // No se reduce
+        margin-bottom: 16px;
+        
+        .card-genre,
+        .card-platform,
+        .card-release-date {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
 
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 20px;
-    background-color: #3498db;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-weight: 500;
-    font-size: 0.95rem;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    width: 100%;
-
-    &:hover {
-        background-color: #2980b9;
-        transform: translateY(-2px);
+            &:last-of-type {
+                margin-bottom: 0;
+            }
+        }
     }
+    
+    .btn {
+        margin-top: auto; // Empuja el botón hacia abajo
+        flex-shrink: 0; // No se reduce
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 20px;
+        background-color: #3498db;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        font-size: 0.95rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        width: 100%;
 
-    &:active {
-        transform: translateY(0);
+        &:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+        
+        &.disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            
+            &:hover {
+                background-color: #bdc3c7;
+                transform: none;
+            }
+        }
     }
 }

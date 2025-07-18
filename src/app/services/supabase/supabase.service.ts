@@ -342,11 +342,16 @@ export class SupabaseService {
   }
 
   public async addVideogame(game: Omit<Videogame, 'id'>): Promise<Videogame> {
+    // Asegurar que siempre hay una descripción
+    const description = game.description && game.description.trim() !== '' 
+      ? game.description 
+      : this.getPlaceholderDescription(game.name || '');
+    
     const { data, error } = await this._supabaseClient
       .from('videogames')
       .insert([{
         name: game.name,
-        description: game.description,
+        description: description,
         genre: game.genre,
         platform: game.platform,
         image_url: game.image_url,
@@ -367,6 +372,47 @@ export class SupabaseService {
       releaseDate: new Date(data.release_date),
       favorite: false
     };
+  }
+
+  /**
+   * Genera una descripción placeholder variada basada en el nombre del juego
+   * @param gameName El nombre del juego
+   * @returns Una descripción placeholder
+   */
+  private getPlaceholderDescription(gameName: string): string {
+    const placeholders = [
+      'Este juego forma parte de tu biblioteca personal. Añade una valoración y comparte tu experiencia con otros jugadores.',
+      'Un título fascinante que espera ser descubierto. Explora mundos increíbles y vive aventuras épicas.',
+      'Una experiencia única de juego que te mantendrá entretenido durante horas. ¡Sumérgete en esta aventura!',
+      'Descubre nuevas mecánicas de juego y disfruta de una experiencia inmersiva llena de sorpresas.',
+      'Un juego que combina diversión y desafío. Perfecto para relajarse o ponerse a prueba.',
+      'Una obra maestra del entretenimiento interactivo. Cada partida es una nueva oportunidad de diversión.',
+      'Explora, conquista y disfruta de este increíble título. Una experiencia de juego que no olvidarás.',
+      'Un videojuego que destaca por su jugabilidad única y su capacidad de mantenerte enganchado.'
+    ];
+    
+    // Usar el nombre del juego para generar un índice consistente
+    const index = gameName.length % placeholders.length;
+    return placeholders[index];
+  }
+
+  /**
+   * Check if a game already exists in the user's library by name
+   * @param gameName The name of the game to check
+   * @returns Promise<boolean> - true if the game exists, false otherwise
+   */
+  public async gameExistsInLibrary(gameName: string): Promise<boolean> {
+    const { data, error } = await this._supabaseClient
+      .from('videogames')
+      .select('id')
+      .eq('name', gameName)
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+      throw error;
+    }
+
+    return !!data;
   }
 
   /*

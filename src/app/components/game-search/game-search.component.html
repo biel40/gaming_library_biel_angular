@@ -1,7 +1,7 @@
 <div class="game-search-container">
   <div class="search-header">
-    <h3>Buscar Juegos</h3>
-    <p>Busca juegos para obtener información y URLs de imágenes automáticamente</p>
+    <h3>Buscar juegos</h3>
+    <p>Busca juegos para obtener información automáticamente</p>
   </div>
 
   <div class="search-form">
@@ -50,6 +50,22 @@
             @if (game.genres.length > 0) {
             <span>{{ game.genres[0].name }}</span>
             }
+          </div>
+          <div class="game-actions">
+            <button 
+              class="save-btn" 
+              (click)="saveGameToLibrary(game, $event)"
+              [disabled]="isSavingGame(game.id)"
+              [class.saving]="isSavingGame(game.id)"
+            >
+              @if (isSavingGame(game.id)) {
+                <span class="material-icons loading">hourglass_empty</span>
+                <span>Guardando...</span>
+              } @else {
+                <span class="material-icons">library_add</span>
+                <span>Guardar en biblioteca</span>
+              }
+            </button>
           </div>
         </div>
       </div>

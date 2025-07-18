@@ -9,13 +9,23 @@
   overflow-x: hidden;
   box-sizing: border-box;
   position: relative;
+  
+  // Animación inicial para el dashboard
+  opacity: 0;
+  animation: fadeIn 1.8s ease forwards;
 }
 
+// Animación para el header
 .dashboard-header {
   @include mix.flex(column, flex-start, flex-start, 0.75rem);
   margin-bottom: 1.25rem;
   width: 100%;
   position: relative;
+  
+  // Animación slide-in desde arriba
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: slideInDown 1.6s ease forwards;
   
   h1 {
     margin: 0;
@@ -135,5 +145,71 @@
   
   .material-icons {
     font-size: 1.2rem;
+  }
+}
+
+// Animaciones para las secciones
+.favorites,
+.all-games {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 1.8s ease forwards;
+  
+  .section-header {
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideInLeft 1.6s ease forwards;
+    animation-delay: 0.2s;
+  }
+}
+
+.favorites {
+  animation-delay: 0.3s;
+}
+
+.all-games {
+  animation-delay: 0.5s;
+}
+
+// Keyframes para las animaciones
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

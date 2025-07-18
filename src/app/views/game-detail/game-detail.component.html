@@ -98,13 +98,13 @@
         <div class="game-actions">
           <button class="action-btn secondary" (click)="updateGameReviewAndScore()">
             <span class="material-icons">save</span>
-            Actualizar Valoración
+            Actualizar valoración 
           </button>
           @if (review() || score()) {
-          <button class="action-btn danger" (click)="removeGameReviewAndScore()">
-            <span class="material-icons">delete</span>
-            Eliminar Valoración
-          </button>
+            <button class="action-btn danger" (click)="removeGameReviewAndScore()">
+              <span class="material-icons">delete</span>
+              Eliminar valoración 
+            </button>
           }
         </div>
       </div>
