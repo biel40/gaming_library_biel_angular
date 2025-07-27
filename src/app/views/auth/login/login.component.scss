@@ -160,6 +160,22 @@
   }
 }
 
+.registration-disabled-info {
+  text-align: center;
+  margin-top: 20px;
+  padding: 12px;
+  background: rgba(255, 193, 7, 0.1);
+  border-left: 3px solid #ffc107;
+  border-radius: 4px;
+  
+  p {
+    color: #856404;
+    font-size: 0.9rem;
+    margin: 0;
+    font-style: italic;
+  }
+}
+
 .back-to-login {
   margin-top: 15px;
   

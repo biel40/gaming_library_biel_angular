@@ -172,7 +172,8 @@
         </div>
       }
 
-      <!-- Toggle Mode -->
+      <!-- Toggle Mode - Solo mostrar si el registro está habilitado -->
+      @if (allowRegistration && !isResetPasswordMode) {
       <div class="toggle-container">
         <p>
           {{ isLoginMode ? '¿No tienes una cuenta?' : '¿Ya tienes una cuenta?' }}
@@ -181,6 +182,14 @@
           </a>
         </p>
       </div>
+      }
+
+      <!-- Mensaje cuando el registro está deshabilitado -->
+      @if (!allowRegistration && isLoginMode && !isResetPasswordMode) {
+      <div class="registration-disabled-info">
+        <p>El registro de nuevos usuarios está temporalmente deshabilitado.</p>
+      </div>
+      }
       
       <!-- Only show in login mode -->
       @if (isLoginMode) {

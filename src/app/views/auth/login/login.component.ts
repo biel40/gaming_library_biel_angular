@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Profile, SupabaseService } from '../../../services/supabase/supabase.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +23,7 @@ export class LoginComponent implements OnInit {
   isResetPasswordMode = false;
   loading = false;
   errorMessage = '';
+  allowRegistration = environment.allowRegistration;
 
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
@@ -57,9 +59,12 @@ export class LoginComponent implements OnInit {
   }
 
   toggleMode(): void {
-    this.isLoginMode = !this.isLoginMode;
-    this.isResetPasswordMode = false;
-    this.errorMessage = '';
+    // Solo permite cambiar al modo de registro si está habilitado en el entorno
+    if (!this.isLoginMode || this.allowRegistration) {
+      this.isLoginMode = !this.isLoginMode;
+      this.isResetPasswordMode = false;
+      this.errorMessage = '';
+    }
   }
   
   showResetPasswordForm(): void {
@@ -136,6 +141,12 @@ export class LoginComponent implements OnInit {
   }
 
   private async handleRegistration(): Promise<void> {
+    // Verificar si el registro está permitido en el entorno actual
+    if (!this.allowRegistration) {
+      this.errorMessage = 'El registro de nuevos usuarios está deshabilitado en este momento.';
+      return;
+    }
+
     if (this.registerForm.invalid) {
       this.errorMessage = 'Por favor, completa todos los campos correctamente';
       return;
