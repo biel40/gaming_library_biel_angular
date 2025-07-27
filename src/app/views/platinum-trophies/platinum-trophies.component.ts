@@ -30,6 +30,9 @@ export class PlatinumTrophiesComponent implements OnInit {
   public notificationMessage = signal('');
   public notificationType = signal<'success' | 'error'>('success');
   
+  // Read-only user state
+  private _isReadOnlyUser = signal<boolean>(false);
+  
   // User info
   public currentUser = signal<User | null>(null);
   public showUserMenu = signal(false);
@@ -46,6 +49,8 @@ export class PlatinumTrophiesComponent implements OnInit {
     if (!user) return '';
     return user.user_metadata?.['full_name'] || user.email || 'Usuario';
   });
+
+  public readonly isReadOnlyUser = computed(() => this._isReadOnlyUser());
 
   public userInitials = computed(() => {
     const user = this.currentUser();
@@ -115,6 +120,12 @@ export class PlatinumTrophiesComponent implements OnInit {
       if (session.user) {
         this.currentUser.set(session.user);
         this._userService.setUser(session.user);
+        
+        // Check if user is read-only
+        const isReadOnly = await this._supabaseService.isReadOnlyUser();
+        this._isReadOnlyUser.set(isReadOnly);
+      } else {
+        this._isReadOnlyUser.set(false);
       }
 
       // Load platinum games
@@ -186,6 +197,11 @@ export class PlatinumTrophiesComponent implements OnInit {
    * Open the date editing modal for a specific game
    */
   public openDateEditModal(game: Videogame): void {
+    if (this._isReadOnlyUser()) {
+      this.showErrorNotification('No puedes editar fechas en modo de solo lectura');
+      return;
+    }
+
     this.editingGame.set(game);
     
     // Set the current date in YYYY-MM-DD format for the input
@@ -216,6 +232,11 @@ export class PlatinumTrophiesComponent implements OnInit {
    * Update the platinum date for the selected game
    */
   public async updatePlatinumDate(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this.showErrorNotification('No puedes actualizar fechas en modo de solo lectura');
+      return;
+    }
+
     const game = this.editingGame();
     const dateString = this.newPlatinumDate();
     

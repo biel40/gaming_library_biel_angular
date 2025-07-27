@@ -1,5 +1,6 @@
 <div class="card" [routerLink]="!selectMode() ? ['/game', gameId()] : null" [class.select-mode]="selectMode()">
-    <button type="button" class="favorite-button" (click)="toggleFavorite($event)" [title]="favoriteTitle()">
+    <button type="button" class="favorite-button" (click)="toggleFavorite($event)" [title]="favoriteTitle()"
+      [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()">
       <span class="material-icons">{{favoriteIcon()}}</span>
     </button>
     <img [src]="gameImageUrl()" [alt]="gameName()" class="card-img">

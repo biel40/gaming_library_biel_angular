@@ -1,8 +1,8 @@
-import { Component, Input, signal, computed } from "@angular/core";
+import { Component, Input, signal, computed, inject, OnInit } from "@angular/core";
 import { Videogame, SupabaseService } from "../../services/supabase/supabase.service";
+import { NotificationService } from "../../services/notification/notification.service";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { inject } from "@angular/core";
 
 @Component({
   selector: 'app-game-card',
@@ -14,8 +14,10 @@ import { inject } from "@angular/core";
     RouterModule
   ]
 })
-export class GameCardComponent {
+export class GameCardComponent implements OnInit {
   private _game = signal<Videogame | null>(null);
+  private _isReadOnlyUser = signal<boolean>(false);
+  
   @Input() set game(value: Videogame) {
     this._game.set(value);
   }
@@ -39,10 +41,26 @@ export class GameCardComponent {
   readonly gamePlatform = computed(() => this._game()?.platform);
   readonly gameReleaseDate = computed(() => this._game()?.releaseDate);
   readonly gameImageUrl = computed(() => this._game()?.image_url);
+  readonly isReadOnlyUser = computed(() => this._isReadOnlyUser());
 
   private _supabaseService: SupabaseService = inject(SupabaseService);
+  private _notificationService: NotificationService = inject(NotificationService);
 
   constructor() { }
+
+  async ngOnInit(): Promise<void> {
+    await this.checkReadOnlyUser();
+  }
+
+  private async checkReadOnlyUser(): Promise<void> {
+    try {
+      const isReadOnly = await this._supabaseService.isReadOnlyUser();
+      this._isReadOnlyUser.set(isReadOnly);
+    } catch (error) {
+      console.error('Error checking read-only user status:', error);
+      this._isReadOnlyUser.set(false);
+    }
+  }
 
   /**
    * Genera una descripción placeholder variada basada en el nombre del juego
@@ -74,6 +92,11 @@ export class GameCardComponent {
     // Prevent navigation to game details when clicking the star
     event.stopPropagation();
     event.preventDefault();
+
+    if (this._isReadOnlyUser()) {
+      this._notificationService.info('No tienes permisos para modificar favoritos en modo solo lectura.');
+      return;
+    }
 
     const currentGame = this._game();
     if (currentGame) {

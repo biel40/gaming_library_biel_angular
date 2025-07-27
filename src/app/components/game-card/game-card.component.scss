@@ -229,3 +229,20 @@
         }
     }
 }
+
+// Disabled favorite button styles
+.favorite-button.disabled,
+.favorite-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    pointer-events: none;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.8) !important;
+        transform: none !important;
+    }
+
+    .material-icons {
+        color: inherit !important;
+    }
+}

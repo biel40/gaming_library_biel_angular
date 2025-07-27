@@ -57,6 +57,12 @@
     }
 
     @if (!isLoading() && !error()) {
+    @if (isReadOnlyUser()) {
+      <div class="read-only-notice">
+        <span class="material-icons">info</span>
+        <p>Modo de test: Solo lectura. Inicia sesión con otra cuenta para modificar fechas de platino.</p>
+      </div>
+    }
     <div class="platinum-stats">
         <div class="stat-card" title="Número total de juegos que has completado al 100%">
             <div class="stat-icon">
@@ -111,6 +117,7 @@
                         <span class="material-icons">event</span>
                         <span>{{ game.platinum_date | date: 'dd/MM/yyyy' }}</span>
                         <button class="edit-date-btn" (click)="openDateEditModal(game)"
+                            [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()"
                             title="Editar fecha de obtención del platino">
                             <span class="material-icons">edit</span>
                         </button>
@@ -178,19 +185,22 @@
 
                 <div class="date-input-group">
                     <label for="platinumDate">Fecha de obtención del platino:</label>
-                    <input type="date" id="platinumDate" [(ngModel)]="newPlatinumDate" [disabled]="isUpdatingDate()"
+                    <input type="date" id="platinumDate" [(ngModel)]="newPlatinumDate" 
+                        [disabled]="isUpdatingDate() || isReadOnlyUser()"
                         class="date-input">
                 </div>
                 }
             </div>
 
             <div class="modal-actions">
-                <button class="btn secondary" (click)="closeDateEditModal()" [disabled]="isUpdatingDate()"
+                <button class="btn secondary" (click)="closeDateEditModal()" 
+                    [disabled]="isUpdatingDate()"
                     title="Cancelar edición">
                     Cancelar
                 </button>
                 <button class="btn primary" (click)="updatePlatinumDate()"
-                    [disabled]="isUpdatingDate() || !newPlatinumDate()" title="Guardar nueva fecha">
+                    [disabled]="isUpdatingDate() || !newPlatinumDate() || isReadOnlyUser()" 
+                    title="Guardar nueva fecha">
                     @if (isUpdatingDate()) {
                     <span class="material-icons loading">hourglass_empty</span>
                     } @else {

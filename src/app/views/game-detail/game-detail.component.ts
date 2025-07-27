@@ -22,6 +22,7 @@ export class GameDetailComponent implements OnInit {
   private _error = signal<string | null>(null);
   private _score: WritableSignal<number> = signal<number>(0);
   private _review: WritableSignal<string> = signal<string>('');
+  private _isReadOnlyUser = signal<boolean>(false);
 
   // Computed signals
   readonly game = computed(() => this._game());
@@ -29,6 +30,7 @@ export class GameDetailComponent implements OnInit {
   readonly error = computed(() => this._error());
   readonly score = computed(() => this._score());
   readonly review = computed(() => this._review());
+  readonly isReadOnlyUser = computed(() => this._isReadOnlyUser());
   readonly favoriteIcon = computed(() => this._game()?.favorite ? 'star' : 'star_border');
   readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos');
   readonly platinumIcon = computed(() => this._game()?.platinum ? 'emoji_events' : 'emoji_events');
@@ -41,6 +43,9 @@ export class GameDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Check if current user is read-only
+    this.checkReadOnlyUser();
+
     // Get the game ID from the route
     this.route.paramMap.subscribe(params => {
       const gameId = params.get('id');
@@ -51,6 +56,16 @@ export class GameDetailComponent implements OnInit {
         this._loading.set(false);
       }
     });
+  }
+
+  private async checkReadOnlyUser(): Promise<void> {
+    try {
+      const isReadOnly = await this.supabaseService.isReadOnlyUser();
+      this._isReadOnlyUser.set(isReadOnly);
+    } catch (error) {
+      console.error('Error checking read-only user status:', error);
+      this._isReadOnlyUser.set(false);
+    }
   }
 
   private async loadGameDetails(gameId: string): Promise<void> {
@@ -77,8 +92,13 @@ export class GameDetailComponent implements OnInit {
 
   /**
    * Toggle the favorite status of the current game
-   */
-  toggleFavorite(): void {
+  */
+  public toggleFavorite(): void {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar favoritos en modo solo lectura');
+      return;
+    }
+
     const currentGame = this._game();
     if (currentGame) {
       this.supabaseService.toggleFavorite(currentGame);
@@ -88,7 +108,12 @@ export class GameDetailComponent implements OnInit {
   /**
    * Update the game score
    */
-  async updateGameScore(): Promise<void> {
+  public async updateGameScore(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar puntuaciones en modo solo lectura');
+      return;
+    }
+
     const currentGame = this._game();
     if (!currentGame || !currentGame.id) return;
 
@@ -106,6 +131,11 @@ export class GameDetailComponent implements OnInit {
    * Update the game review and the score at the same time
   */
   public async updateGameReviewAndScore(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar valoraciones en modo solo lectura');
+      return;
+    }
+
     const currentGame = this._game();
     if (!currentGame || !currentGame.id) return;
 
@@ -131,6 +161,11 @@ export class GameDetailComponent implements OnInit {
    * Remove the game review and score
   */
   public async removeGameReviewAndScore(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para eliminar valoraciones en modo solo lectura');
+      return;
+    }
+
     const currentGame = this._game();
     if (!currentGame || !currentGame.id) return;
 
@@ -160,6 +195,10 @@ export class GameDetailComponent implements OnInit {
    * @param score The score to set (1-5)
    */
   public setScore(score: number): void {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar puntuaciones en modo solo lectura');
+      return;
+    }
     this._score.set(score);
   }
 
@@ -168,14 +207,24 @@ export class GameDetailComponent implements OnInit {
    * @param review The review text to set
   */
   public setReview(review: string): void {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar reseñas en modo solo lectura');
+      return;
+    }
     this._review.set(review);
   }
 
   /**
    * Toggle the platinum status of the current game
   */
-  async togglePlatinum(): Promise<void> {
+  public async togglePlatinum(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar el estado de Platino en modo solo lectura');
+      return;
+    }
+
     const currentGame = this._game();
+    
     if (!currentGame || !currentGame.id) return;
 
     try {

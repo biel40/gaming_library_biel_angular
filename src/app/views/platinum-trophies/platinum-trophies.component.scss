@@ -36,6 +36,29 @@
     }
   }
 
+  // Read-only notice styles
+  .read-only-notice {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+
+    .material-icons {
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    p {
+      margin: 0;
+      font-weight: 500;
+      color: white;
+    }
+  }
+
   // Header styles
   .platinum-header {
     display: flex;
@@ -475,10 +498,16 @@
               transition: all 0.3s ease;
               margin-left: 0.5rem;
 
-              &:hover {
+              &:hover:not(.disabled) {
                 color: #ff5722;
                 background: rgba(255, 87, 34, 0.1);
                 transform: scale(1.1);
+              }
+
+              &.disabled {
+                opacity: 0.3;
+                cursor: not-allowed;
+                color: rgba(255, 255, 255, 0.2);
               }
 
               .material-icons {

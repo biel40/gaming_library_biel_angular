@@ -42,7 +42,7 @@ export class SupabaseService {
   private _session = signal<AuthSession | null>(null);
   private _videogames = signal<Videogame[]>([]);
   private _favorites = signal<string[]>([]);
-  
+
   // Event emitter for favorite changes
   public favoriteChanged = new EventEmitter<Videogame>();
 
@@ -50,19 +50,28 @@ export class SupabaseService {
     if (!environment.supabaseUrl || !environment.supabaseKey) {
       throw new Error('Las variables de entorno de Supabase no están configuradas correctamente');
     }
-    
+
     this._supabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
     this._loadFavoritesFromStorage();
   }
 
   // Session management
   public async getSession() {
-    // Authentication check reactivated
     if (!this._session()) {
       const { data } = await this._supabaseClient.auth.getSession();
       this._session.set(data.session);
     }
+    
     return this._session();
+  }
+
+  /**
+   * Check if the current user is the read-only test user
+   * @returns boolean - true if current user is test@testuser.com
+  */
+  public async isReadOnlyUser(): Promise<boolean> {
+    const session = await this.getSession();
+    return session?.user?.email === 'test@testuser.com';
   }
 
   public profile(user: User) {
@@ -170,12 +179,12 @@ export class SupabaseService {
    */
   public async deleteVideogames(ids: string[]): Promise<void> {
     if (!ids.length) return;
-    
+
     const { error } = await this._supabaseClient
       .from('videogames')
       .delete()
       .in('id', ids);
-      
+
     if (error) throw error;
   }
   public async getVideogames(): Promise<Videogame[]> {
@@ -312,26 +321,26 @@ export class SupabaseService {
 
     // Update the favorites signal
     this._favorites.set([...favorites]);
-    
+
     // Save to localStorage
     localStorage.setItem('favorite-games', JSON.stringify(favorites));
-    
+
     // Emit an event to notify subscribers of the change
     this.favoriteChanged.emit(game);
-    
+
     // Update the game in the videogames signal
     this._updateGameInVideogamesSignal(game);
-    
+
     return game.favorite;
   }
-  
+
   /**
    * Updates a game in the videogames signal when its properties change
    * @param updatedGame The game with updated properties
    */
   private _updateGameInVideogamesSignal(updatedGame: Videogame): void {
     if (!updatedGame.id) return;
-    
+
     const currentGames = this._videogames();
     const updatedGames = currentGames.map(game => {
       if (game.id === updatedGame.id) {
@@ -339,16 +348,16 @@ export class SupabaseService {
       }
       return game;
     });
-    
+
     this._videogames.set(updatedGames);
   }
 
   public async addVideogame(game: Omit<Videogame, 'id'>): Promise<Videogame> {
     // Asegurar que siempre hay una descripción
-    const description = game.description && game.description.trim() !== '' 
-      ? game.description 
+    const description = game.description && game.description.trim() !== ''
+      ? game.description
       : this.getPlaceholderDescription(game.name || '');
-    
+
     const { data, error } = await this._supabaseClient
       .from('videogames')
       .insert([{
@@ -392,7 +401,7 @@ export class SupabaseService {
       'Explora, conquista y disfruta de este increíble título. Una experiencia de juego que no olvidarás.',
       'Un videojuego que destaca por su jugabilidad única y su capacidad de mantenerte enganchado.'
     ];
-    
+
     // Usar el nombre del juego para generar un índice consistente
     const index = gameName.length % placeholders.length;
     return placeholders[index];
@@ -427,7 +436,7 @@ export class SupabaseService {
       redirectTo: redirectUrl
     });
   }
-  
+
   /*
     Public method to update the user's password with a new one
     This is used after the user clicks the reset password link in their email
@@ -456,7 +465,7 @@ export class SupabaseService {
     }
 
     const newPlatinumStatus = !currentGame.platinum;
-    const updateData: any = { 
+    const updateData: any = {
       platinum: newPlatinumStatus,
       platinum_date: newPlatinumStatus ? new Date().toISOString() : null
     };

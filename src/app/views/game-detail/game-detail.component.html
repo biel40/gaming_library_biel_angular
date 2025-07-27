@@ -27,13 +27,15 @@
           <div class="game-actions-header">
             <div class="favorite-container" [class.is-favorite]="game()?.favorite">
               <button type="button" class="favorite-button" (click)="toggleFavorite()"
-                [attr.aria-label]="favoriteTitle()" [attr.title]="favoriteTitle()">
+                [attr.aria-label]="favoriteTitle()" [attr.title]="favoriteTitle()"
+                [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()">
                 <span class="material-icons favorite-icon">{{favoriteIcon()}}</span>
               </button>
             </div>
             <div class="platinum-container" [class.is-platinum]="game()?.platinum">
               <button type="button" class="platinum-button" (click)="togglePlatinum()"
-                [attr.aria-label]="platinumTitle()" [attr.title]="platinumTitle()">
+                [attr.aria-label]="platinumTitle()" [attr.title]="platinumTitle()"
+                [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()">
                 <span class="material-icons platinum-icon">{{platinumIcon()}}</span>
               </button>
             </div>
@@ -97,33 +99,43 @@
 
         <div class="game-section">
           <h2>Mi Valoración</h2>
-          <div class="game-rating">
+          @if (isReadOnlyUser()) {
+            <div class="read-only-notice">
+              <span class="material-icons">info</span>
+              <p>Modo de test: Solo lectura. Inicia sesión con otra cuenta para modificar valoraciones.</p>
+            </div>
+          }
+          <div class="game-rating" [class.read-only]="isReadOnlyUser()">
             <div class="score-input" [attr.data-score]="score()">
               <label for="gameScore">Puntuación:</label>
               <div class="star-rating">
                 @for (star of [1,2,3,4,5]; track star) {
                 <span class="material-icons star" [class.filled]="score() && star <= score()"
-                  (click)="setScore(star)">star</span>
+                  [class.disabled]="isReadOnlyUser()"
+                  (click)="!isReadOnlyUser() && setScore(star)">star</span>
                 }
               </div>
             </div>
             <div class="review-input">
               <label for="gameReview">Mi Review:</label>
               <textarea id="gameReview" [ngModel]="review()" (ngModelChange)="setReview($event)"
-                placeholder="Escribe tu review sobre el juego..." class="review-field"></textarea>
+                placeholder="Escribe tu review sobre el juego..." class="review-field"
+                [disabled]="isReadOnlyUser()"></textarea>
             </div>
           </div>
         </div>
 
         <div class="game-actions">
           <button class="action-btn secondary" (click)="updateGameReviewAndScore()" 
-            title="Guardar la puntuación y reseña del juego">
+            title="Guardar la puntuación y reseña del juego"
+            [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()">
             <span class="material-icons">save</span>
             Actualizar valoración 
           </button>
           @if (review() || score()) {
             <button class="action-btn danger" (click)="removeGameReviewAndScore()" 
-              title="Eliminar la puntuación y reseña del juego">
+              title="Eliminar la puntuación y reseña del juego"
+              [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()">
               <span class="material-icons">delete</span>
               Eliminar valoración 
             </button>
