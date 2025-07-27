@@ -46,33 +46,96 @@ $transition-speed: 0.3s;
 
 // Header styles
 .add-game-header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0;
   margin-bottom: 2rem;
-  
-  h1 {
-    color: $primary-color;
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    position: relative;
-    display: inline-block;
-    
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 4px;
-      background: linear-gradient(to right, $primary-color, $secondary-color);
-      border-radius: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: $text-color;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+  }
+
+  &:hover {
+    background: $primary-color;
+    color: white;
+    border-color: $primary-color;
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(255, 87, 34, 0.3);
+
+    &::before {
+      left: 100%;
+    }
+
+    .material-icons {
+      transform: translateX(-3px);
     }
   }
-  
-  p {
-    color: $text-color;
-    font-size: 1.1rem;
-    opacity: 0.8;
+
+  &:active {
+    transform: translateY(-1px) scale(1.01);
+  }
+
+  .material-icons {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+  }
+}
+
+.header-title {
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: $primary-color; // Título en color naranja
+    
+    .material-icons {
+      font-size: 2rem;
+      color: $primary-color;
+    }
+  }
+
+  .header-subtitle {
+    margin: 0.5rem 0 0 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    font-weight: 400;
   }
 }
 
@@ -182,80 +245,124 @@ $transition-speed: 0.3s;
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   
   @media (min-width: 768px) {
     grid-column: span 2;
   }
   
-  button {
-    padding: 0.8rem 1.5rem;
-    border-radius: $border-radius;
+  .btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
     font-weight: 600;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: all $transition-speed;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: none;
+    text-decoration: none;
+    min-width: 130px;
+    justify-content: center;
+    
+    .material-icons {
+      font-size: 1.1rem;
+    }
     
     &:disabled {
       opacity: 0.7;
       cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    &.secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: $text-color;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      
+      &:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+    }
+    
+    &.primary {
+      background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: -10%));
+      color: white;
+      box-shadow: 0 4px 15px rgba(255, 87, 34, 0.2);
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(255, 87, 34, 0.3);
+      }
+      
+      &:active:not(:disabled) {
+        transform: translateY(-1px) scale(1.01);
+      }
     }
   }
-  
-  .cancel-button {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: $text-color;
+}
+
+// Responsive design for buttons
+@media (max-width: 480px) {
+  .form-actions {
+    flex-direction: column;
     
-    &:hover:not(:disabled) {
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-  }
-  
-  .submit-button {
-    background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: -10%));
-    color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    
-    &:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-    
-    &:active:not(:disabled) {
-      transform: translateY(0);
-    }
-    
-    &:disabled {
-      background: linear-gradient(135deg, color.adjust($primary-color, $lightness: 20%), color.adjust($primary-color, $lightness: 10%));
+    .btn {
+      width: 100%;
     }
   }
 }
 
-// Loading state
-.submit-button:disabled {
-  position: relative;
-  overflow: hidden;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    animation: loading 1.5s infinite;
+// Header responsive design
+@media (max-width: 768px) {
+  .add-game-header {
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .header-left {
+    gap: 1rem;
+  }
+
+  .back-btn {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    
+    .material-icons {
+      font-size: 1.1rem;
+    }
+  }
+
+  .header-title {
+    h1 {
+      font-size: 1.5rem;
+      
+      .material-icons {
+        font-size: 1.5rem;
+      }
+    }
+
+    .header-subtitle {
+      font-size: 0.9rem;
+    }
   }
 }
 
-@keyframes loading {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
+@media (max-width: 480px) {
+  .header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
 
-// Success animation
-.success-animation {
-  animation: pulse 0.5s ease-in-out;
+  .back-btn {
+    align-self: flex-start;
+  }
 }
 
 // Manual form toggle styles

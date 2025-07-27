@@ -30,7 +30,9 @@ export class GameDetailComponent implements OnInit {
   readonly score = computed(() => this._score());
   readonly review = computed(() => this._review());
   readonly favoriteIcon = computed(() => this._game()?.favorite ? 'star' : 'star_border');
-  readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Remove from favorites' : 'Add to favorites');
+  readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos');
+  readonly platinumIcon = computed(() => this._game()?.platinum ? 'emoji_events' : 'emoji_events');
+  readonly platinumTitle = computed(() => this._game()?.platinum ? 'Quitar Platino' : 'Marcar como Platino');
 
   constructor(
     private route: ActivatedRoute,
@@ -111,9 +113,10 @@ export class GameDetailComponent implements OnInit {
       await this.supabaseService.updateGameReview(currentGame.id, this._review());
       await this.supabaseService.updateGameScore(currentGame.id, this._score());
       this.notificationService.success('Valoración guardada correctamente');
-      
-      // Update the local game object with the new values
+
+      // Update the local game object
       const updatedGame = { ...currentGame };
+
       updatedGame.review = this._review();
       updatedGame.score = this._score();
       this._game.set(updatedGame);
@@ -126,7 +129,7 @@ export class GameDetailComponent implements OnInit {
 
   /**
    * Remove the game review and score
-   */
+  */
   public async removeGameReviewAndScore(): Promise<void> {
     const currentGame = this._game();
     if (!currentGame || !currentGame.id) return;
@@ -134,13 +137,13 @@ export class GameDetailComponent implements OnInit {
     try {
       await this.supabaseService.removeGameReviewAndScore(currentGame.id);
       this.notificationService.success('Valoración eliminada correctamente');
-      
+
       // Update the local game object with the removed values
       const updatedGame = { ...currentGame };
       updatedGame.review = '';
       updatedGame.score = 0;
       this._game.set(updatedGame);
-      
+
       // Reset the local signals
       this._review.set('');
       this._score.set(0);
@@ -156,15 +159,40 @@ export class GameDetailComponent implements OnInit {
    * Set the game score from star rating
    * @param score The score to set (1-5)
    */
-  setScore(score: number): void {
+  public setScore(score: number): void {
     this._score.set(score);
   }
 
   /**
    * Set the game review text
    * @param review The review text to set
-   */
-  setReview(review: string): void {
+  */
+  public setReview(review: string): void {
     this._review.set(review);
+  }
+
+  /**
+   * Toggle the platinum status of the current game
+  */
+  async togglePlatinum(): Promise<void> {
+    const currentGame = this._game();
+    if (!currentGame || !currentGame.id) return;
+
+    try {
+      const updatedGame = await this.supabaseService.togglePlatinum(currentGame.id);
+
+      this._game.set(updatedGame);
+
+      // Show notification
+      const message = updatedGame.platinum
+        ? `¡${updatedGame.name} marcado como Platineado!`
+        : `${updatedGame.name} ya no está Platineado`;
+      this.notificationService.success(message);
+
+    } catch (err) {
+      this._error.set('Error al actualizar el estado de Platineado');
+      this.notificationService.error('Error al actualizar el Platineado');
+      console.error(err);
+    }
   }
 }

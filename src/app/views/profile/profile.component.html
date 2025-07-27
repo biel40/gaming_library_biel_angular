@@ -61,10 +61,12 @@
         }
 
         <div class="button-group">
-          <button type="submit" class="save-btn" [disabled]="loading || profileForm.invalid">
+          <button type="submit" class="save-btn" [disabled]="loading || profileForm.invalid" 
+            title="Guardar los cambios en tu perfil">
             {{ loading ? 'Guardando...' : 'Guardar Cambios' }}
           </button>
-          <button type="button" class="logout-btn" (click)="signOut()">
+          <button type="button" class="logout-btn" (click)="signOut()" 
+            title="Cerrar sesión y volver a la pantalla de login">
             Cerrar Sesión
           </button>
         </div>

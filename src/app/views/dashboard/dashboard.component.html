@@ -14,11 +14,16 @@
                     (ngModelChange)="searchTerm.set($event)">
                 <span class="material-icons">search</span>
             </div>
-            <button class="add-game-btn" routerLink="/add-game">
+            <button class="add-game-btn" routerLink="/add-game" title="Añadir un nuevo juego a tu biblioteca">
                 <span class="material-icons">add</span>
                 Añadir Juego
             </button>
-            <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()">
+            <button class="platinum-btn" routerLink="/platinum-trophies" title="Ver todos tus trofeos de platino obtenidos">
+                <span class="material-icons">emoji_events</span>
+              Platinos
+            </button>
+            <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()" 
+                    [attr.title]="selectMode() ? 'Cancelar selección múltiple' : 'Activar modo de selección múltiple para eliminar varios juegos'">
                 <span class="material-icons">{{ selectMode() ? 'close' : 'check_box' }}</span>
                 {{ selectMode() ? 'Cancelar' : 'Selección múltiple' }}
             </button>
@@ -34,7 +39,7 @@
                     <div class="user-email">{{ currentUser()?.email }}</div>
                 </div>
                 <hr class="menu-divider">
-                <button class="menu-item" (click)="logout()">
+                <button class="menu-item" (click)="logout()" title="Cerrar sesión y salir de la aplicación">
                     <span class="material-icons">logout</span>
                     Cerrar Sesión
                 </button>
@@ -53,7 +58,7 @@
     <div class="error-state">
         <span class="material-icons">error</span>
         <p>{{ error() }}</p>
-        <button class="btn" (click)="ngOnInit()">Reintentar</button>
+        <button class="btn" (click)="ngOnInit()" title="Reintentar cargar los juegos">Reintentar</button>
     </div>
     }
 
@@ -94,10 +99,10 @@
         <div class="section-header">
             <h2>Todos los juegos</h2>
             <div class="view-controls">
-                <button class="view-btn" [class.active]="viewMode() === 'grid'" (click)="viewMode.set('grid')">
+                <button class="view-btn" [class.active]="viewMode() === 'grid'" (click)="viewMode.set('grid')" title="Ver juegos en cuadrícula">
                     <span class="material-icons">grid_view</span>
                 </button>
-                <button class="view-btn" [class.active]="viewMode() === 'list'" (click)="viewMode.set('list')">
+                <button class="view-btn" [class.active]="viewMode() === 'list'" (click)="viewMode.set('list')" title="Ver juegos en lista">
                     <span class="material-icons">view_list</span>
                 </button>
             </div>
@@ -108,24 +113,27 @@
         <div class="empty-state">
             <span class="material-icons">videogame_asset</span>
             <p>No se encontraron juegos que coincidan con tu búsqueda</p>
-            <button class="btn" (click)="resetFilters()">Reiniciar filtros</button>
+            <button class="btn" (click)="resetFilters()" title="Limpiar todos los filtros aplicados">Reiniciar filtros</button>
         </div>
         }
 
         <!-- Multi-select controls -->
         @if (selectMode() && filteredGames().length > 0) {
         <div class="multi-select-bar">
-            <button class="multi-select-btn primary" (click)="selectAllFiltered()">
+            <button class="multi-select-btn primary" (click)="selectAllFiltered()" 
+                title="Seleccionar todos los juegos filtrados">
                 <span class="material-icons">select_all</span>
                 Seleccionar todos
             </button>
-            <button class="multi-select-btn" (click)="clearSelection()">
+            <button class="multi-select-btn" (click)="clearSelection()" 
+                title="Deseleccionar todos los juegos">
                 <span class="material-icons">deselect</span>
                 Limpiar selección
             </button>
             <span class="selected-count">{{ selectedGameIds().length }} seleccionados</span>
             <button class="multi-select-btn danger" [disabled]="selectedGameIds().length === 0"
-                (click)="openDeleteConfirm()">
+                (click)="openDeleteConfirm()" 
+                title="Eliminar permanentemente los juegos seleccionados">
                 <span class="material-icons">delete_forever</span>
                 Eliminar seleccionados
             </button>
@@ -189,8 +197,10 @@
             <p>¿Estás seguro de que quieres eliminar {{ selectedGameIds().length }} juego(s) seleccionado(s)?</p>
             <p class="warning">Esta acción no se puede deshacer.</p>
             <div class="modal-actions">
-                <button class="modal-btn" (click)="closeDeleteConfirm()">Cancelar</button>
-                <button class="modal-btn danger" [disabled]="deleteLoading()" (click)="deleteSelectedGames()">
+                <button class="modal-btn" (click)="closeDeleteConfirm()" 
+                    title="Cancelar la eliminación">Cancelar</button>
+                <button class="modal-btn danger" [disabled]="deleteLoading()" (click)="deleteSelectedGames()"
+                    title="Confirmar la eliminación de los juegos seleccionados">
                     @if (deleteLoading()) {
                     <span class="loading-spinner"></span>
                     } @else {

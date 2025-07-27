@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
 import { GameSearchComponent } from '../../components/game-search/game-search.component';
 
@@ -13,7 +13,8 @@ import { GameSearchComponent } from '../../components/game-search/game-search.co
   imports: [
     CommonModule,
     FormsModule,
-    GameSearchComponent
+    GameSearchComponent,
+    RouterLink
   ]
 })
 export class AddGameComponent {

@@ -1,6 +1,6 @@
 <div class="game-detail-container">
   <div class="back-button">
-    <button routerLink="/dashboard" class="back-btn">
+    <button routerLink="/dashboard" class="back-btn" title="Volver a la biblioteca de juegos">
       <span class="material-icons">arrow_back</span>
       Volver
     </button>
@@ -16,7 +16,7 @@
     <span class="material-icons error-icon">error_outline</span>
     <h2>¡Oops!</h2>
     <p>{{ error() }}</p>
-    <button routerLink="/dashboard" class="btn">Volver a la biblioteca</button>
+    <button routerLink="/dashboard" class="btn" title="Volver a la biblioteca de juegos">Volver a la biblioteca</button>
   </div>
   } @else if (game() && !loading() && !error()) {
   <div class="game-detail">
@@ -24,11 +24,19 @@
       <div class="game-header-content">
         <div class="game-title-container">
           <h1>{{ game()?.name }}</h1>
-          <div class="favorite-container" [class.is-favorite]="game()?.favorite">
-            <button type="button" class="favorite-button" (click)="toggleFavorite()"
-              [attr.aria-label]="favoriteTitle()">
-              <span class="material-icons favorite-icon">{{favoriteIcon()}}</span>
-            </button>
+          <div class="game-actions-header">
+            <div class="favorite-container" [class.is-favorite]="game()?.favorite">
+              <button type="button" class="favorite-button" (click)="toggleFavorite()"
+                [attr.aria-label]="favoriteTitle()" [attr.title]="favoriteTitle()">
+                <span class="material-icons favorite-icon">{{favoriteIcon()}}</span>
+              </button>
+            </div>
+            <div class="platinum-container" [class.is-platinum]="game()?.platinum">
+              <button type="button" class="platinum-button" (click)="togglePlatinum()"
+                [attr.aria-label]="platinumTitle()" [attr.title]="platinumTitle()">
+                <span class="material-icons platinum-icon">{{platinumIcon()}}</span>
+              </button>
+            </div>
           </div>
         </div>
         <div class="game-metadata">
@@ -72,6 +80,18 @@
               <span class="detail-value">{{ game()?.releaseDate | date: 'dd MMMM, yyyy' }}</span>
             </div>
             }
+            @if (game()?.platinum) {
+            <div class="detail-item platinum-detail">
+              <span class="detail-label">Estado Platino:</span>
+              <span class="detail-value platinum-badge">
+                <span class="material-icons">emoji_events</span>
+                ¡Platino conseguido!
+                @if (game()?.platinum_date) {
+                <span class="platinum-date">({{ game()?.platinum_date | date: 'dd/MM/yyyy' }})</span>
+                }
+              </span>
+            </div>
+            }
           </div>
         </div>
 
@@ -96,12 +116,14 @@
         </div>
 
         <div class="game-actions">
-          <button class="action-btn secondary" (click)="updateGameReviewAndScore()">
+          <button class="action-btn secondary" (click)="updateGameReviewAndScore()" 
+            title="Guardar la puntuación y reseña del juego">
             <span class="material-icons">save</span>
             Actualizar valoración 
           </button>
           @if (review() || score()) {
-            <button class="action-btn danger" (click)="removeGameReviewAndScore()">
+            <button class="action-btn danger" (click)="removeGameReviewAndScore()" 
+              title="Eliminar la puntuación y reseña del juego">
               <span class="material-icons">delete</span>
               Eliminar valoración 
             </button>

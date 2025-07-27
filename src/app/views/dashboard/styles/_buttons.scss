@@ -12,6 +12,23 @@
   }
 }
 
+.platinum-btn {
+  @include mix.button-base;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #1a1a2e;
+  margin-left: 0.5rem;
+
+  &:hover {
+    background: linear-gradient(135deg, #ffed4e, #ffd700);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+  }
+
+  .material-icons {
+    color: #1a1a2e;
+  }
+}
+
 .logout-btn {
   @include mix.button-base;
   background: linear-gradient(90deg, vars.$primary-color, vars.$primary-dark);

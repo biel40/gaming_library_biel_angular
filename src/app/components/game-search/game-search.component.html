@@ -12,7 +12,8 @@
         placeholder="Escribe el nombre del juego..." 
         (keyup.enter)="searchGames()"
       >
-      <button (click)="searchGames()" [disabled]="isLoading">
+      <button (click)="searchGames()" [disabled]="isLoading" 
+        title="Buscar juegos con el nombre ingresado">
         <span class="material-icons">search</span>
       </button>
     </div>
@@ -57,6 +58,7 @@
               (click)="saveGameToLibrary(game, $event)"
               [disabled]="isSavingGame(game.id)"
               [class.saving]="isSavingGame(game.id)"
+              title="Añadir este juego a tu biblioteca personal"
             >
               @if (isSavingGame(game.id)) {
                 <span class="material-icons loading">hourglass_empty</span>
@@ -78,7 +80,8 @@
   <div class="selected-game">
     <div class="selected-header">
       <h4>Juego Seleccionado</h4>
-      <button class="clear-btn" (click)="clearSelection()">
+      <button class="clear-btn" (click)="clearSelection()" 
+        title="Limpiar la selección actual">
         <span class="material-icons">close</span>
       </button>
     </div>

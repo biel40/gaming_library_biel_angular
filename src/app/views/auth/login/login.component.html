@@ -30,7 +30,8 @@
             }
           </div>
 
-          <button type="submit" class="submit-btn" [disabled]="loading">
+          <button type="submit" class="submit-btn" [disabled]="loading" 
+            title="Enviar instrucciones de recuperación de contraseña a tu email">
             {{ loading ? 'Enviando...' : 'Enviar Instrucciones' }}
           </button>
           
@@ -86,7 +87,8 @@
             }
           </div>
 
-          <button type="submit" class="submit-btn" [disabled]="loading">
+          <button type="submit" class="submit-btn" [disabled]="loading" 
+            title="Iniciar sesión con tu email y contraseña">
             {{ loading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
           </button>
         </form>
@@ -156,7 +158,8 @@
             }
           </div>
 
-          <button type="submit" class="submit-btn" [disabled]="loading">
+          <button type="submit" class="submit-btn" [disabled]="loading" 
+            title="Crear una nueva cuenta con tu email y contraseña">
             {{ loading ? 'Registrando...' : 'Registrarse' }}
           </button>
         </form>

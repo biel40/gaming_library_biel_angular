@@ -29,6 +29,8 @@ export interface Videogame {
   favorite?: boolean
   score?: number
   review?: string
+  platinum?: boolean
+  platinum_date?: Date
 }
 
 @Injectable({
@@ -434,5 +436,83 @@ export class SupabaseService {
     return await this._supabaseClient.auth.updateUser({
       password: newPassword
     });
+  }
+
+  /**
+   * Toggle the platinum status of a game
+   * @param gameId The ID of the game to toggle platinum status
+   * @returns Promise<Videogame> - the updated game
+   */
+  public async togglePlatinum(gameId: string): Promise<Videogame> {
+    // First get the current game to check its platinum status
+    const { data: currentGame, error: fetchError } = await this._supabaseClient
+      .from('videogames')
+      .select('*')
+      .eq('id', gameId)
+      .single();
+
+    if (fetchError) {
+      throw fetchError;
+    }
+
+    const newPlatinumStatus = !currentGame.platinum;
+    const updateData: any = { 
+      platinum: newPlatinumStatus,
+      platinum_date: newPlatinumStatus ? new Date().toISOString() : null
+    };
+
+    const { data, error } = await this._supabaseClient
+      .from('videogames')
+      .update(updateData)
+      .eq('id', gameId)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
+
+  /**
+   * Get all games with platinum trophies
+   * @returns Promise<Videogame[]> - array of games with platinum status
+   */
+  public async getPlatinumGames(): Promise<Videogame[]> {
+    const { data, error } = await this._supabaseClient
+      .from('videogames')
+      .select('*')
+      .eq('platinum', true)
+      .order('platinum_date', { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return data || [];
+  }
+
+  /**
+   * Update the platinum date of a game
+   * @param gameId The ID of the game to update
+   * @param date The new platinum date
+   * @returns Promise<Videogame> - the updated game
+   */
+  public async updatePlatinumDate(gameId: string, date: Date): Promise<Videogame> {
+    const { data, error } = await this._supabaseClient
+      .from('videogames')
+      .update({
+        platinum_date: date.toISOString()
+      })
+      .eq('id', gameId)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
   }
 }

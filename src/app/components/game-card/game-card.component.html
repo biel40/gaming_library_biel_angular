@@ -14,7 +14,8 @@
         <p class="card-release-date">Fecha de lanzamiento: {{ gameReleaseDate() | date: 'dd/MM/yyyy' }}</p>
       </div>
       
-      <button type="button" [routerLink]="!selectMode() ? ['/game', gameId()] : null" class="btn" [class.disabled]="selectMode()" [attr.disabled]="selectMode() ? true : null">
+      <button type="button" [routerLink]="!selectMode() ? ['/game', gameId()] : null" class="btn" [class.disabled]="selectMode()" [attr.disabled]="selectMode() ? true : null"
+        [attr.title]="selectMode() ? 'Modo selección activo - haz clic en la tarjeta para seleccionar' : 'Ver detalles completos del juego'">
         Ver Detalles
       </button>
     </div>

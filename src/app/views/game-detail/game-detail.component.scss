@@ -116,11 +116,24 @@
     z-index: 2;
   }
 
-  h1 {
-    margin: 0 0 1rem;
-    font-size: 2rem;
-    font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  .game-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    
+    h1 {
+      margin: 0 0 1rem;
+      font-size: 2rem;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      flex: 1;
+    }
+
+    .game-actions-header {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
   }
 
   .game-metadata {
@@ -214,6 +227,27 @@
     .detail-value {
       font-size: 1rem;
       color: #2c3e50;
+    }
+
+    &.platinum-detail {
+      .detail-value.platinum-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #ffd700;
+        font-weight: 600;
+
+        .material-icons {
+          font-size: 1.2rem;
+        }
+
+        .platinum-date {
+          font-size: 0.875rem;
+          color: #666;
+          font-weight: normal;
+          margin-left: 0.5rem;
+        }
+      }
     }
   }
 }
@@ -448,6 +482,55 @@
       }
 
       .favorite-text {
+        transition: all 0.3s ease;
+      }
+    }
+  }
+
+  .platinum-container {
+    margin-left: 1rem;
+
+    &.is-platinum {
+      .platinum-button {
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        border-color: #ffd700;
+        color: #1a1a2e;
+
+        .platinum-icon {
+          color: #1a1a2e;
+          transform: scale(1.1);
+        }
+
+        &:hover {
+          background: linear-gradient(135deg, #ffed4e, #ffd700);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+        }
+      }
+    }
+
+    .platinum-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 30px;
+      padding: 0.5rem 1rem;
+      color: rgba(255, 215, 0, 0.8);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: rgba(255, 215, 0, 0.1);
+        color: #ffd700;
+        border-color: #ffd700;
+        transform: translateY(-2px);
+      }
+
+      .platinum-icon {
         transition: all 0.3s ease;
       }
     }

@@ -1,0 +1,205 @@
+<div class="platinum-trophies">
+    <!-- Notification component -->
+    @if (showNotification()) {
+    <div class="notification" [ngClass]="notificationType()">
+        <span class="material-icons">{{ notificationType() === 'success' ? 'check_circle' : 'error' }}</span>
+        <p>{{ notificationMessage() }}</p>
+    </div>
+    }
+
+    <header class="platinum-header">
+        <div class="header-left">
+            <button class="back-btn" routerLink="/dashboard" title="Regresar al panel principal">
+                <span class="material-icons">arrow_back</span>
+                Volver
+            </button>
+            <div class="header-title">
+                <h1>
+                    <span class="material-icons platinum-icon">emoji_events</span>
+                    Trofeos de platino
+                </h1>
+                <p class="header-subtitle">Tu colección de logros de Platino</p>
+            </div>
+        </div>
+
+        <div class="user-avatar" (click)="toggleUserMenu()" title="Abrir menú de usuario">
+            <div class="avatar-circle">
+                <span class="avatar-initials">{{ userInitials() }}</span>
+            </div>
+            <div class="user-menu" [class.show]="showUserMenu()">
+                <div class="user-info">
+                    <div class="user-name">{{ userDisplayName() }}</div>
+                    <div class="user-email">{{ currentUser()?.email }}</div>
+                </div>
+                <hr class="menu-divider">
+                <button class="menu-item" (click)="logout()" title="Cerrar sesión y salir de la aplicación">
+                    <span class="material-icons">logout</span>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    @if (isLoading()) {
+    <div class="loading-state">
+        <span class="material-icons">hourglass_empty</span>
+        <p>Cargando trofeos de platino...</p>
+    </div>
+    }
+
+    @if (error()) {
+    <div class="error-state">
+        <span class="material-icons">error</span>
+        <p>{{ error() }}</p>
+        <button class="btn" (click)="ngOnInit()"
+            title="Intentar cargar los trofeos de platino nuevamente">Reintentar</button>
+    </div>
+    }
+
+    @if (!isLoading() && !error()) {
+    <div class="platinum-stats">
+        <div class="stat-card" title="Número total de juegos que has completado al 100%">
+            <div class="stat-icon">
+                <span class="material-icons">emoji_events</span>
+            </div>
+            <div class="stat-content">
+                <h3>{{ platinumCount() }}</h3>
+                <p>Trofeos de Platino</p>
+            </div>
+        </div>
+
+        <div class="stat-card" title="Año en el que obtuviste más trofeos de platino">
+            <div class="stat-icon">
+                <span class="material-icons">calendar_today</span>
+            </div>
+            <div class="stat-content">
+                <h3>{{ bestPlatinumYear().count > 0 ? bestPlatinumYear().year : '---' }}</h3>
+                <p>Mejor Año</p>
+                @if (bestPlatinumYear().count > 0) {
+                <small>{{ bestPlatinumYear().count }} platino{{ bestPlatinumYear().count !== 1 ? 's' : '' }}</small>
+                }
+            </div>
+        </div>
+    </div>
+
+    <section class="platinum-games-section">
+        @if (platinumGames().length > 0) {
+        <div class="section-header">
+            <h2>Juegos con trofeo de platino conseguido</h2>
+            <p>{{ platinumCount() }} juego{{ platinumCount() !== 1 ? 's' : '' }} completado{{ platinumCount() !== 1 ?
+                's' : '' }} al 100%</p>
+        </div>
+
+        <div class="platinum-games-grid">
+            @for (game of platinumGames(); track game.id) {
+            <div class="platinum-game-card">
+                <div class="game-image-container">
+                    <img [src]="game.image_url" [alt]="game.name" class="game-image">
+                    <div class="platinum-badge"
+                        [attr.title]="'Trofeo de Platino obtenido' + (game.platinum_date ? ' el ' + (game.platinum_date | date: 'dd/MM/yyyy') : '')">
+                        <span class="material-icons">emoji_events</span>
+                    </div>
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">{{ game.name }}</h3>
+                    <div class="game-meta">
+                        <span class="game-genre">{{ game.genre }}</span>
+                        <span class="game-platform">{{ game.platform }}</span>
+                    </div>
+                    @if (game.platinum_date) {
+                    <div class="platinum-date">
+                        <span class="material-icons">event</span>
+                        <span>{{ game.platinum_date | date: 'dd/MM/yyyy' }}</span>
+                        <button class="edit-date-btn" (click)="openDateEditModal(game)"
+                            title="Editar fecha de obtención del platino">
+                            <span class="material-icons">edit</span>
+                        </button>
+                    </div>
+                    }
+                    @if (game.score && game.score > 0) {
+                    <div class="game-rating">
+                        <p>Tu puntuación personal: {{ game.score }}</p>
+                        <div class="stars">
+                            @for (star of [1,2,3,4,5]; track star) {
+                            <span class="material-icons star" [class.filled]="star <= game.score">star</span>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+                <div class="game-actions">
+                    <button class="detail-btn" [routerLink]="['/game', game.id]"
+                        [attr.title]="'Ver detalles completos de ' + game.name">
+                        <span class="material-icons">visibility</span>
+                        Ver Detalles
+                    </button>
+                </div>
+            </div>
+            }
+        </div>
+        } @else {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <span class="material-icons">emoji_events</span>
+            </div>
+            <h2>¡Aún no tienes trofeos de platino!</h2>
+            <p>Completa tus juegos al 100% para desbloquear tus primeros trofeos de platino.</p>
+            <p>Puedes marcar un juego como Platino desde la página de detalles del juego.</p>
+            <button class="btn primary" routerLink="/dashboard"
+                title="Ir al panel principal para explorar tu biblioteca de juegos">
+                <span class="material-icons">gamepad</span>
+                Explorar Juegos
+            </button>
+        </div>
+        }
+    </section>
+    }
+
+    <!-- Date Edit Modal -->
+    @if (showDateModal()) {
+    <div class="modal-overlay" (click)="closeDateEditModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Editar fecha de obtención del platino</h3>
+                <button class="modal-close" (click)="closeDateEditModal()" title="Cerrar modal">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                @if (editingGame()) {
+                <div class="game-info">
+                    <img [src]="editingGame()!.image_url" [alt]="editingGame()!.name" class="game-thumb">
+                    <div class="game-details">
+                        <h4>{{ editingGame()!.name }}</h4>
+                        <p>{{ editingGame()!.platform }}</p>
+                    </div>
+                </div>
+
+                <div class="date-input-group">
+                    <label for="platinumDate">Fecha de obtención del platino:</label>
+                    <input type="date" id="platinumDate" [(ngModel)]="newPlatinumDate" [disabled]="isUpdatingDate()"
+                        class="date-input">
+                </div>
+                }
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn secondary" (click)="closeDateEditModal()" [disabled]="isUpdatingDate()"
+                    title="Cancelar edición">
+                    Cancelar
+                </button>
+                <button class="btn primary" (click)="updatePlatinumDate()"
+                    [disabled]="isUpdatingDate() || !newPlatinumDate()" title="Guardar nueva fecha">
+                    @if (isUpdatingDate()) {
+                    <span class="material-icons loading">hourglass_empty</span>
+                    } @else {
+                    <span class="material-icons">save</span>
+                    }
+                    {{ isUpdatingDate() ? 'Guardando...' : 'Guardar' }}
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+</div>

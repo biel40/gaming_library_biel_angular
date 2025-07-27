@@ -24,7 +24,7 @@ export class GameCardComponent {
 
   // Computed signals for template bindings
   readonly favoriteIcon = computed(() => this._game()?.favorite ? 'star' : 'star_border');
-  readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Remove from favorites' : 'Add to favorites');
+  readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos');
   readonly gameId = computed(() => this._game()?.id);
   readonly gameName = computed(() => this._game()?.name);
   readonly gameDescription = computed(() => {
