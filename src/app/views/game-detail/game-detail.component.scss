@@ -536,3 +536,64 @@
     }
   }
 }
+
+// Read-only user styles
+.read-only-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(52, 152, 219, 0.1);
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: #3498db;
+
+  .material-icons {
+    font-size: 1.2rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+}
+
+.game-rating.read-only {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+// Disabled button and element styles
+button.disabled,
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+  pointer-events: none;
+
+  &:hover {
+    transform: none !important;
+    background-color: transparent !important;
+    color: inherit !important;
+    border-color: inherit !important;
+  }
+}
+
+.star.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+
+  &:hover {
+    color: inherit !important;
+    transform: none !important;
+  }
+}
+
+textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+  color: #666;
+}
