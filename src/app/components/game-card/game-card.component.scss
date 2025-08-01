@@ -13,7 +13,7 @@
 .card {
     max-width: 320px;
     width: 100%;
-    height: 500px; // Altura fija para todas las cards
+    height: 500px;
     border: none;
     border-radius: 16px;
     background: white;
@@ -24,25 +24,25 @@
     position: relative;
     transform-style: preserve-3d;
     perspective: 1000px;
-    cursor: pointer; // Make it clear this is clickable
+    cursor: pointer;
     display: flex;
-    flex-direction: column; // Para organizar el contenido verticalmente
-    
+    flex-direction: column;
+
     @media (max-width: 767px) {
         max-width: 90%;
         margin: 0 auto;
-        height: 480px; // Altura ligeramente menor en móviles
+        height: 480px;
     }
-    
+
     &.select-mode {
         cursor: default;
-        
+
         &:hover {
             transform: translateY(0);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         }
     }
-    
+
     .favorite-button {
         position: absolute;
         top: 12px;
@@ -59,12 +59,12 @@
         z-index: 10;
         transition: all 0.2s ease;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        
+
         &:hover {
             transform: scale(1.1);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
-        
+
         .material-icons {
             font-size: 22px;
             background: linear-gradient(90deg, #3498db, #2980b9);
@@ -74,9 +74,9 @@
             filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.2));
         }
     }
-    
+
     &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
@@ -85,7 +85,7 @@
         background: linear-gradient(
             135deg,
             rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.3) 45%, 
+            rgba(255, 255, 255, 0.3) 45%,
             rgba(255, 255, 255, 0.7) 50%,
             rgba(255, 255, 255, 0.3) 55%,
             rgba(255, 255, 255, 0) 100%
@@ -97,28 +97,28 @@
         z-index: 2;
         transition: opacity 0.5s ease;
     }
-    
+
     &:hover {
         transform: translateY(-10px) rotateX(5deg) rotateY(-5deg);
-        box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.1), 
-                  -5px -5px 30px rgba(255, 255, 255, 0.05), 
-                  0 0 20px rgba(52, 152, 219, 0.25);
+        box-shadow:
+            20px 20px 30px rgba(0, 0, 0, 0.1),
+            -5px -5px 30px rgba(255, 255, 255, 0.05),
+            0 0 20px rgba(52, 152, 219, 0.25);
         border: 2px solid transparent;
         background-clip: padding-box;
-        background-image: linear-gradient(white, white), 
-                        linear-gradient(to right, #3498db, #2980b9);
+        background-image: linear-gradient(white, white), linear-gradient(to right, #3498db, #2980b9);
         background-origin: border-box;
         background-clip: content-box, border-box;
-        
+
         &::before {
             opacity: 1;
             animation: shineEffect 1.5s infinite;
         }
-        
+
         .card-img {
             transform: scale(1.08) translateZ(20px);
         }
-        
+
         .card-body {
             transform: translateZ(15px);
         }
@@ -127,14 +127,14 @@
 
 .card-img {
     width: 100%;
-    height: 180px; // Altura fija para todas las imágenes
+    height: 180px;
     object-fit: cover;
     display: block;
     transition: transform 0.5s ease;
     transform: translateZ(0);
     position: relative;
     z-index: 1;
-    flex-shrink: 0; // Evita que la imagen se reduzca
+    flex-shrink: 0;
 }
 
 .card-body {
@@ -143,38 +143,55 @@
     transition: transform 0.5s ease;
     position: relative;
     z-index: 1;
-    flex: 1; // Ocupa el espacio restante
+    flex: 1;
     display: flex;
     flex-direction: column;
-    
+
     .card-title {
         margin: 0 0 12px;
         font-size: 1.5rem;
         font-weight: 600;
         color: #2c3e50;
         line-height: 1.2;
-        flex-shrink: 0; // No se reduce
+        flex-shrink: 0;
     }
-    
+
     .card-description {
         font-size: 0.95rem;
         color: #5f6368;
         margin-bottom: 16px;
         line-height: 1.5;
+        height: 4.5rem;
+        position: relative;
+        overflow: hidden;
         display: -webkit-box;
+        -webkit-box-orient: vertical;
         -webkit-line-clamp: 3;
         line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        flex-grow: 1; // Permite que la descripción crezca
-        height: 4.5rem; // Altura fija para 3 líneas (1.5rem * 3)
-        text-align: justify; // Justifica el texto para mejor apariencia
-    }
-    
-    .card-info {
-        flex-shrink: 0; // No se reduce
-        margin-bottom: 16px;
+        word-break: break-word;
         
+        @media (max-width: 767px) {
+            height: 3rem;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+        }
+        
+        @supports not (-webkit-line-clamp: 3) {
+            display: block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-height: 4.5rem;
+            
+            @media (max-width: 767px) {
+                max-height: 3rem;
+            }
+        }
+    }
+
+    .card-info {
+        flex-shrink: 0;
+        margin-bottom: 16px;
+
         .card-genre,
         .card-platform,
         .card-release-date {
@@ -190,10 +207,10 @@
             }
         }
     }
-    
+
     .btn {
-        margin-top: auto; // Empuja el botón hacia abajo
-        flex-shrink: 0; // No se reduce
+        margin-top: auto;
+        flex-shrink: 0;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -217,11 +234,11 @@
         &:active {
             transform: translateY(0);
         }
-        
+
         &.disabled {
             background-color: #bdc3c7;
             cursor: not-allowed;
-            
+
             &:hover {
                 background-color: #bdc3c7;
                 transform: none;
