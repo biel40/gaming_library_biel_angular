@@ -169,6 +169,10 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            max-width: 100%;
+            width: 100%;
+            display: block;
+            line-height: 1.2;
           }
 
           .game-meta {
@@ -314,6 +318,12 @@
           color: #e0e0e0;
           margin: 0 0 0.75rem 0;
           font-size: 1.25rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 100%;
+          width: 100%;
+          display: block;
         }
 
         .selected-description {
@@ -324,6 +334,7 @@
           opacity: 0.8;
           display: -webkit-box;
           -webkit-line-clamp: 3;
+          line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
         }

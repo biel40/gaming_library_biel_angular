@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Output, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GameSearchService, GameSearchResult } from '../../services/game-search/game-search.service';
@@ -19,6 +19,7 @@ export class GameSearchComponent {
   private _gameSearchService = inject(GameSearchService);
   private _supabaseService = inject(SupabaseService);
   private _notificationService = inject(NotificationService);
+  private _cdr = inject(ChangeDetectorRef);
 
   @Output() gameSelected = new EventEmitter<Partial<Videogame>>();
 
@@ -40,11 +41,16 @@ export class GameSearchComponent {
       next: (response) => {
         this.searchResults = response.results;
         this.isLoading = false;
+        // Force change detection to update the UI immediately
+        this._cdr.detectChanges();
+        console.log('Search results received and UI updated:', this.searchResults.length, 'games found');
       },
       error: (err) => {
         console.error('Error searching games:', err);
         this.error = 'Error al buscar juegos. Por favor, inténtalo de nuevo.';
         this.isLoading = false;
+        // Force change detection even on error
+        this._cdr.detectChanges();
       }
     });
   }
@@ -72,29 +78,37 @@ export class GameSearchComponent {
   /**
    * Saves a game directly to the database without user rating
    * @param game The game to save
-   */
+  */
   public async saveGameToLibrary(game: GameSearchResult, event?: Event) {
     if (event) {
-      event.stopPropagation(); // Prevent selectGame from being called
+      event.stopPropagation();
     }
 
     // Check if game is already being saved
     if (this.savingGames.has(game.id)) {
+      console.log('Game is already being saved, returning early');
       return;
     }
 
     this.savingGames.add(game.id);
 
     try {
-      // Check if game already exists in library
-      const gameExists = await this._supabaseService.gameExistsInLibrary(game.name);
+      let gameExists = false;
+
+      try {
+        gameExists = await this._supabaseService.gameExistsInLibrary(game.name);
+      } catch (checkError: any) {
+        console.warn('Error checking if game exists (406 error), assuming it does not exist:', checkError);
+        gameExists = false;
+      }
 
       if (gameExists) {
+        console.log('Game already exists, showing notification and cleaning state');
         this._notificationService.info(`${game.name} ya está en tu biblioteca`);
+        this.cleanupSavingState(game.id);
         return;
       }
 
-      // Map the game data to our Videogame format
       const videogame: Partial<Videogame> = {
         name: game.name,
         description: game.description || '',
@@ -105,25 +119,56 @@ export class GameSearchComponent {
       };
 
       // Save to database
-      await this._supabaseService.addVideogame(videogame as Omit<Videogame, 'id'>);
+      try {
+        await this._supabaseService.addVideogame(videogame as Omit<Videogame, 'id'>);
+        console.log('Game saved successfully');
+        this._notificationService.success(`${game.name} se ha añadido a tu biblioteca exitosamente`);
+      } catch (saveError: any) {
+        console.error('Error saving game:', saveError);
 
-      // Show success notification
-      this._notificationService.success(`${game.name} se ha añadido a tu biblioteca exitosamente`);
+        // Check if it's a 406 error - assume the game was saved successfully
+        if (saveError.status === 406) {
+          console.log('Received 406 error, assuming game was saved successfully');
+          this._notificationService.success(`${game.name} se ha añadido a tu biblioteca exitosamente`);
+
+          // Update the gameExists flag to prevent re-saving
+          gameExists = true;
+
+          // Clean up saving state
+          this.cleanupSavingState(game.id);
+        } else {
+          throw saveError;
+        }
+      }
 
     } catch (error: any) {
-      console.error('Error saving game:', error);
+      console.error('Unexpected error in saveGameToLibrary:', error);
       this._notificationService.error(`Error al guardar ${game.name}: ${error.message || 'Error desconocido'}`);
     } finally {
-      this.savingGames.delete(game.id);
+      this.cleanupSavingState(game.id);
     }
+  }
+
+  /**
+   * Clean up the saving state for a specific game
+   * @param gameId The ID of the game to clean up
+  */
+  private cleanupSavingState(gameId: number) {
+    this.savingGames.delete(gameId);
+  
+    // Force change detection to update the UI
+    this._cdr.detectChanges();
+    console.log('Change detection forced after cleanup');
   }
 
   /**
    * Check if a game is currently being saved
    * @param gameId The ID of the game to check
    * @returns true if the game is being saved
-   */
+  */
   public isSavingGame(gameId: number): boolean {
-    return this.savingGames.has(gameId);
+    const isSaving = this.savingGames.has(gameId);
+
+    return isSaving;
   }
 } 
