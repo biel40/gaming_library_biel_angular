@@ -149,7 +149,8 @@
               <div class="star-rating">
                 @for (star of [1,2,3,4,5]; track star) {
                 <span class="material-icons star" [class.filled]="score() && star <= score()"
-                  (click)="setScore(star)">star</span>
+                  (click)="setScore(star)"
+                  (keydown)="setScore(star)">star</span>
                 }
               </div>
             </div>
