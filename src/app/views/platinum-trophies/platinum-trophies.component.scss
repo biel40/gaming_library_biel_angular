@@ -40,7 +40,8 @@ $transition: all 0.3s ease;
   padding: 2rem;
 
   // Componentes compartidos
-  .notification, .read-only-notice {
+  .notification,
+  .read-only-notice {
     position: fixed;
     top: 2rem;
     right: 2rem;
@@ -52,13 +53,22 @@ $transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     animation: slideIn 0.3s ease-out;
 
-    .material-icons { font-size: 1.5rem; }
-    p { margin: 0; font-weight: 500; }
+    .material-icons {
+      font-size: 1.5rem;
+    }
+    p {
+      margin: 0;
+      font-weight: 500;
+    }
   }
 
   .notification {
-    &.success { background: linear-gradient(135deg, #4caf50, #45a049); }
-    &.error { background: linear-gradient(135deg, #f44336, #d32f2f); }
+    &.success {
+      background: linear-gradient(135deg, #4caf50, #45a049);
+    }
+    &.error {
+      background: linear-gradient(135deg, #f44336, #d32f2f);
+    }
   }
 
   .read-only-notice {
@@ -66,7 +76,10 @@ $transition: all 0.3s ease;
     position: static;
     margin-bottom: 2rem;
     box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
-    .material-icons, p { color: white; }
+    .material-icons,
+    p {
+      color: white;
+    }
   }
 
   // Header
@@ -95,7 +108,9 @@ $transition: all 0.3s ease;
         transform: translateY(-2px);
       }
 
-      .material-icons { font-size: 1.2rem; }
+      .material-icons {
+        font-size: 1.2rem;
+      }
     }
 
     .header-title h1 {
@@ -105,7 +120,9 @@ $transition: all 0.3s ease;
       gap: 1rem;
       color: $primary-color;
 
-      .platinum-icon { font-size: 3rem; }
+      .platinum-icon {
+        font-size: 3rem;
+      }
     }
 
     .header-subtitle {
@@ -127,7 +144,9 @@ $transition: all 0.3s ease;
         justify-content: center;
         transition: transform 0.3s ease;
 
-        &:hover { transform: scale(1.1); }
+        &:hover {
+          transform: scale(1.1);
+        }
 
         .avatar-initials {
           font-weight: 600;
@@ -194,7 +213,9 @@ $transition: all 0.3s ease;
               color: white;
             }
 
-            .material-icons { font-size: 1.2rem; }
+            .material-icons {
+              font-size: 1.2rem;
+            }
           }
         }
       }
@@ -202,7 +223,8 @@ $transition: all 0.3s ease;
   }
 
   // Estados de carga y error
-  .loading-state, .error-state {
+  .loading-state,
+  .error-state {
     text-align: center;
     padding: 4rem 2rem;
 
@@ -371,7 +393,8 @@ $transition: all 0.3s ease;
           margin-bottom: 0.75rem;
           flex-wrap: wrap;
 
-          .genre-badge, .platform-badge {
+          .genre-badge,
+          .platform-badge {
             background: $white-10;
             color: rgba(255, 255, 255, 0.8);
             padding: 0.3rem 0.8rem;
@@ -416,7 +439,9 @@ $transition: all 0.3s ease;
           min-width: 130px;
           justify-content: center;
 
-          .material-icons { font-size: 18px; }
+          .material-icons {
+            font-size: 18px;
+          }
 
           &:hover:not(.disabled) {
             transform: translateY(-1px);
@@ -515,8 +540,12 @@ $transition: all 0.3s ease;
           box-shadow: 0 20px 40px rgba(255, 215, 0, 0.4);
           border-color: rgba(255, 215, 0, 0.6);
 
-          .game-image { transform: scale(1.05); }
-          .platinum-badge { transform: scale(1.1); }
+          .game-image {
+            transform: scale(1.05);
+          }
+          .platinum-badge {
+            transform: scale(1.1);
+          }
         }
 
         .game-image-container {
@@ -581,7 +610,9 @@ $transition: all 0.3s ease;
             margin-bottom: 1rem;
             color: rgba(255, 255, 255, 0.7);
 
-            .material-icons { font-size: 1.2rem; }
+            .material-icons {
+              font-size: 1.2rem;
+            }
 
             .edit-date-btn {
               @include button-base;
@@ -603,7 +634,9 @@ $transition: all 0.3s ease;
                 color: rgba(255, 255, 255, 0.2);
               }
 
-              .material-icons { font-size: 1rem; }
+              .material-icons {
+                font-size: 1rem;
+              }
             }
           }
 
@@ -618,7 +651,9 @@ $transition: all 0.3s ease;
                 font-size: 1.2rem;
                 color: rgba(255, 255, 255, 0.3);
 
-                &.filled { color: $primary-color; }
+                &.filled {
+                  color: $primary-color;
+                }
               }
             }
           }
@@ -646,7 +681,9 @@ $transition: all 0.3s ease;
               transform: translateY(-2px);
             }
 
-            .material-icons { font-size: 1.2rem; }
+            .material-icons {
+              font-size: 1.2rem;
+            }
           }
         }
       }
@@ -701,24 +738,42 @@ $transition: all 0.3s ease;
       pointer-events: none;
     }
 
-    .material-icons { font-size: 1.2rem; }
+    .material-icons {
+      font-size: 1.2rem;
+    }
   }
 }
 
 // Animaciones
 @keyframes slideIn {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 // Estados de focus
@@ -736,7 +791,7 @@ $transition: all 0.3s ease;
 @media (max-width: 1200px) {
   .platinum-trophies {
     padding: 1.5rem;
-    
+
     .platinum-games-section .platinum-games-grid {
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 1.5rem;
@@ -763,10 +818,14 @@ $transition: all 0.3s ease;
 
       .header-title h1 {
         font-size: 1.8rem;
-        .platinum-icon { font-size: 2.2rem; }
+        .platinum-icon {
+          font-size: 2.2rem;
+        }
       }
 
-      .header-subtitle { font-size: 1rem; }
+      .header-subtitle {
+        font-size: 1rem;
+      }
     }
 
     .platinum-stats {
@@ -775,8 +834,13 @@ $transition: all 0.3s ease;
 
       .stat-card {
         padding: 1rem;
-        .stat-icon { width: 50px; height: 50px; }
-        .stat-content h3 { font-size: 1.5rem; }
+        .stat-icon {
+          width: 50px;
+          height: 50px;
+        }
+        .stat-content h3 {
+          font-size: 1.5rem;
+        }
       }
     }
 
@@ -793,12 +857,18 @@ $transition: all 0.3s ease;
         .target-icon {
           width: 36px;
           height: 36px;
-          .material-icons { font-size: 20px; }
+          .material-icons {
+            font-size: 20px;
+          }
         }
 
         .target-info {
-          h3 { font-size: 1.3rem; }
-          p { font-size: 0.9rem; }
+          h3 {
+            font-size: 1.3rem;
+          }
+          p {
+            font-size: 0.9rem;
+          }
         }
       }
 
@@ -824,7 +894,8 @@ $transition: all 0.3s ease;
             justify-content: center;
             gap: 0.5rem;
 
-            .genre-badge, .platform-badge {
+            .genre-badge,
+            .platform-badge {
               font-size: 0.75rem;
               padding: 0.25rem 0.6rem;
             }
@@ -854,9 +925,15 @@ $transition: all 0.3s ease;
 
       .no-target-content {
         padding: 1.5rem 1rem;
-        .material-icons { font-size: 2.5rem; }
-        h4 { font-size: 1.2rem; }
-        p { font-size: 0.9rem; }
+        .material-icons {
+          font-size: 2.5rem;
+        }
+        h4 {
+          font-size: 1.2rem;
+        }
+        p {
+          font-size: 0.9rem;
+        }
       }
     }
 
@@ -865,8 +942,13 @@ $transition: all 0.3s ease;
         margin-bottom: 1.5rem;
         text-align: center;
 
-        h2 { font-size: 1.5rem; margin-bottom: 0.75rem; }
-        p { font-size: 1rem; }
+        h2 {
+          font-size: 1.5rem;
+          margin-bottom: 0.75rem;
+        }
+        p {
+          font-size: 1rem;
+        }
       }
 
       .platinum-games-grid {
@@ -881,38 +963,67 @@ $transition: all 0.3s ease;
               height: 2.5rem;
               top: 0.75rem;
               right: 0.75rem;
-              .material-icons { font-size: 1.25rem; }
+              .material-icons {
+                font-size: 1.25rem;
+              }
             }
           }
 
           .game-info {
             padding: 1.25rem;
-            .game-title { font-size: 1.3rem; margin-bottom: 0.75rem; }
-            .game-meta { gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
-            .platinum-date { margin-bottom: 0.75rem; font-size: 0.9rem; }
-            .game-rating { margin-bottom: 0.75rem; }
+            .game-title {
+              font-size: 1.3rem;
+              margin-bottom: 0.75rem;
+            }
+            .game-meta {
+              gap: 0.75rem;
+              margin-bottom: 0.75rem;
+              flex-wrap: wrap;
+            }
+            .platinum-date {
+              margin-bottom: 0.75rem;
+              font-size: 0.9rem;
+            }
+            .game-rating {
+              margin-bottom: 0.75rem;
+            }
           }
 
           .game-actions {
             padding: 0 1.25rem 1.25rem;
-            .detail-btn { padding: 0.75rem 1.25rem; font-size: 0.9rem; }
+            .detail-btn {
+              padding: 0.75rem 1.25rem;
+              font-size: 0.9rem;
+            }
           }
         }
       }
 
       .empty-state {
         padding: 3rem 1rem;
-        .empty-icon .material-icons { font-size: 4rem; margin-bottom: 1.5rem; }
-        h2 { font-size: 1.5rem; margin-bottom: 1rem; }
-        p { font-size: 1rem; }
+        .empty-icon .material-icons {
+          font-size: 4rem;
+          margin-bottom: 1.5rem;
+        }
+        h2 {
+          font-size: 1.5rem;
+          margin-bottom: 1rem;
+        }
+        p {
+          font-size: 1rem;
+        }
       }
     }
 
     .read-only-notice {
       padding: 0.875rem 1rem;
       margin-bottom: 1.5rem;
-      .material-icons { font-size: 1.25rem; }
-      p { font-size: 0.9rem; }
+      .material-icons {
+        font-size: 1.25rem;
+      }
+      p {
+        font-size: 0.9rem;
+      }
     }
   }
 }
@@ -921,7 +1032,9 @@ $transition: all 0.3s ease;
   .platinum-trophies {
     .platinum-header .header-title h1 {
       font-size: 1.5rem;
-      .platinum-icon { font-size: 1.8rem; }
+      .platinum-icon {
+        font-size: 1.8rem;
+      }
     }
 
     .platinum-target-section .target-game-card {
@@ -943,8 +1056,13 @@ $transition: all 0.3s ease;
 
     .platinum-stats {
       .stat-card {
-        .stat-icon { width: 40px; height: 40px; }
-        .stat-content h3 { font-size: 1.2rem; }
+        .stat-icon {
+          width: 40px;
+          height: 40px;
+        }
+        .stat-content h3 {
+          font-size: 1.2rem;
+        }
       }
     }
   }
