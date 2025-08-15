@@ -57,8 +57,37 @@
 
       <div class="game-info">
         <div class="game-section">
-          <h2>Descripción</h2>
-          <p class="game-description">{{ game()?.description }}</p>
+          <div class="section-header">
+            <h2>Descripción</h2>
+            @if (!isReadOnlyUser() && !isEditingDescription()) {
+            <button class="edit-btn" (click)="startEditingDescription()" title="Editar descripción">
+              <span class="material-icons">edit</span>
+            </button>
+            }
+          </div>
+          @if (isEditingDescription()) {
+          <div class="description-edit">
+            <textarea 
+              [ngModel]="description()" 
+              (ngModelChange)="setDescription($event)"
+              placeholder="Escribe la descripción del juego..." 
+              class="description-field"
+              rows="4">
+            </textarea>
+            <div class="edit-actions">
+              <button class="action-btn primary" (click)="updateGameDescription()" title="Guardar descripción">
+                <span class="material-icons">save</span>
+                Guardar
+              </button>
+              <button class="action-btn secondary" (click)="cancelEditingDescription()" title="Cancelar edición">
+                <span class="material-icons">cancel</span>
+                Cancelar
+              </button>
+            </div>
+          </div>
+          } @else {
+          <p class="game-description" [class.editable]="!isReadOnlyUser()">{{ game()?.description }}</p>
+          }
         </div>
 
         <div class="game-section">
@@ -98,20 +127,29 @@
         </div>
 
         <div class="game-section">
-          <h2>Mi Valoración</h2>
+          <div class="section-header">
+            <h2>Mi Valoración</h2>
+            @if (!isReadOnlyUser() && !isEditingReview() && (game()?.review || game()?.score)) {
+            <button class="edit-btn" (click)="startEditingReview()" title="Editar valoración">
+              <span class="material-icons">edit</span>
+            </button>
+            }
+          </div>
           @if (isReadOnlyUser()) {
           <div class="read-only-notice">
             <span class="material-icons">info</span>
             <p>Modo de test: Solo lectura. Inicia sesión con otra cuenta para modificar valoraciones.</p>
           </div>
           }
-          <div class="game-rating" [class.read-only]="isReadOnlyUser()">
+          
+          @if (isEditingReview()) {
+          <div class="review-edit">
             <div class="score-input" [attr.data-score]="score()">
               <label for="gameScore">Puntuación:</label>
               <div class="star-rating">
                 @for (star of [1,2,3,4,5]; track star) {
                 <span class="material-icons star" [class.filled]="score() && star <= score()"
-                  [class.disabled]="isReadOnlyUser()" (click)="!isReadOnlyUser() && setScore(star)">star</span>
+                  (click)="setScore(star)">star</span>
                 }
               </div>
             </div>
@@ -119,25 +157,59 @@
               <label for="gameReview">Mi Review:</label>
               <textarea id="gameReview" [ngModel]="review()" (ngModelChange)="setReview($event)"
                 placeholder="Escribe tu review sobre el juego..." class="review-field"
-                [disabled]="isReadOnlyUser()"></textarea>
+                rows="4"></textarea>
+            </div>
+            <div class="edit-actions">
+              <button class="action-btn primary" (click)="saveReviewChanges()" title="Guardar valoración">
+                <span class="material-icons">save</span>
+                Guardar
+              </button>
+              <button class="action-btn secondary" (click)="cancelEditingReview()" title="Cancelar edición">
+                <span class="material-icons">cancel</span>
+                Cancelar
+              </button>
+              @if (review() || score()) {
+              <button class="action-btn danger" (click)="removeReviewFromEditMode()" title="Eliminar valoración">
+                <span class="material-icons">delete</span>
+                Eliminar
+              </button>
+              }
             </div>
           </div>
-        </div>
-
-        <div class="game-actions">
-          <button class="action-btn secondary" (click)="updateGameReviewAndScore()"
-            title="Guardar la puntuación y reseña del juego" [disabled]="isReadOnlyUser()"
-            [class.disabled]="isReadOnlyUser()">
-            <span class="material-icons">save</span>
-            Actualizar valoración
-          </button>
-          @if (review() || score()) {
-          <button class="action-btn danger" (click)="removeGameReviewAndScore()"
-            title="Eliminar la puntuación y reseña del juego" [disabled]="isReadOnlyUser()"
-            [class.disabled]="isReadOnlyUser()">
-            <span class="material-icons">delete</span>
-            Eliminar valoración
-          </button>
+          } @else {
+          <div class="review-display" [class.read-only]="isReadOnlyUser()">
+            @if (game()?.score || game()?.review) {
+            <div class="current-rating">
+              @if (game()?.score) {
+              <div class="score-display">
+                <span class="label">Puntuación:</span>
+                <div class="star-rating">
+                  @for (star of [1,2,3,4,5]; track star) {
+                  <span class="material-icons star" [class.filled]="game()?.score && star <= game()!.score!">star</span>
+                  }
+                </div>
+                <span class="score-number">({{ game()?.score }}/5)</span>
+              </div>
+              }
+              @if (game()?.review) {
+              <div class="review-display-text">
+                <span class="label">Mi Review:</span>
+                <p class="review-content">{{ game()?.review }}</p>
+              </div>
+              }
+            </div>
+            } @else {
+            <div class="no-rating">
+              <p>Aún no has valorado este juego.</p>
+              @if (!isReadOnlyUser()) {
+              <button class="action-btn primary" (click)="startEditingReview()" title="Añadir valoración">
+                <span class="material-icons">star</span>
+                Añadir valoración
+              </button>
+              }
+            </div>
+            }
+          </div>
           }
         </div>
       </div>

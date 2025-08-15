@@ -1,8 +1,21 @@
-<div class="card" [routerLink]="!selectMode() ? ['/game', gameId()] : null" [class.select-mode]="selectMode()">
+<div class="card" [routerLink]="!selectMode() ? ['/game', gameId()] : null" [class.select-mode]="selectMode()" [class.platinum-target]="isPlatinumTarget()">
     <button type="button" class="favorite-button" (click)="toggleFavorite($event)" [title]="favoriteTitle()"
       [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()">
       <span class="material-icons">{{favoriteIcon()}}</span>
     </button>
+    
+    <button type="button" class="platinum-target-button" (click)="togglePlatinumTarget($event)" [title]="platinumTargetTitle()"
+      [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()" [class.active]="isPlatinumTarget()">
+      <span class="material-icons">{{platinumTargetIcon()}}</span>
+    </button>
+    
+    @if (isPlatinumTarget()) {
+    <div class="platinum-target-badge">
+      <span class="material-icons">flag</span>
+      <span class="badge-text">Objetivo Platino</span>
+    </div>
+    }
+    
     <img [src]="gameImageUrl()" [alt]="gameName()" class="card-img">
     
     <div class="card-body">

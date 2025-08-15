@@ -10,6 +10,15 @@
     }
 }
 
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 16px rgba(255, 215, 0, 0.6);
+    }
+}
+
 .card {
     max-width: 320px;
     width: 100%;
@@ -47,7 +56,7 @@
         position: absolute;
         top: 12px;
         right: 12px;
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.9);
         border: none;
         border-radius: 50%;
         width: 36px;
@@ -60,7 +69,7 @@
         transition: all 0.2s ease;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
-        &:hover {
+        &:hover:not(.disabled) {
             transform: scale(1.1);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
@@ -72,6 +81,111 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.2));
+        }
+    }
+
+    .platinum-target-button {
+        position: absolute;
+        top: 12px;
+        right: 56px;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+        &:hover:not(.disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+        }
+
+        &.active {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+
+            .material-icons {
+                color: #1a1a2e;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        .material-icons {
+            font-size: 22px;
+            color: #ffd700;
+            transition: color 0.3s ease;
+        }
+    }
+
+    .platinum-target-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: #1a1a2e;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+        animation: pulseGlow 2s ease-in-out infinite;
+
+        .material-icons {
+            font-size: 14px;
+        }
+
+        .badge-text {
+            white-space: nowrap;
+        }
+    }
+
+    // Platinum target card styling
+    &.platinum-target {
+        border: 2px solid rgba(255, 215, 0, 0.4);
+        box-shadow: 
+            0 8px 16px rgba(0, 0, 0, 0.1),
+            0 0 20px rgba(255, 215, 0, 0.2);
+
+        &:hover {
+            box-shadow:
+                20px 20px 30px rgba(0, 0, 0, 0.1),
+                -5px -5px 30px rgba(255, 255, 255, 0.05),
+                0 0 25px rgba(255, 215, 0, 0.4);
+            border-color: rgba(255, 215, 0, 0.6);
+        }
+
+        // Mejora el contraste del texto sobre la imagen
+        .card-body {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            
+            .card-title {
+                color: #1a1a2e;
+                font-weight: 600;
+                text-shadow: none;
+            }
+            
+            .card-description {
+                color: #2c3e50;
+            }
+            
+            .card-info {
+                .card-genre,
+                .card-platform,
+                .card-release-date {
+                    color: #34495e;
+                }
+            }
         }
     }
 
@@ -254,17 +368,55 @@
 }
 
 .favorite-button.disabled,
-.favorite-button:disabled {
+.favorite-button:disabled,
+.platinum-target-button.disabled,
+.platinum-target-button:disabled {
     opacity: 0.5;
     cursor: not-allowed !important;
     pointer-events: none;
 
     &:hover {
-        background: rgba(255, 255, 255, 0.8) !important;
+        background: rgba(255, 255, 255, 0.9) !important;
         transform: none !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
     }
 
     .material-icons {
-        color: inherit !important;
+        color: #ccc !important;
+        background: none !important;
+        -webkit-text-fill-color: #ccc !important;
+    }
+}
+
+// Enhanced mobile responsiveness for platinum target
+@media (max-width: 767px) {
+    .card {
+        .platinum-target-button {
+            right: 52px;
+            width: 32px;
+            height: 32px;
+
+            .material-icons {
+                font-size: 18px;
+            }
+        }
+
+        .platinum-target-badge {
+            padding: 3px 6px;
+            font-size: 0.7rem;
+
+            .material-icons {
+                font-size: 12px;
+            }
+        }
+
+        .favorite-button {
+            width: 32px;
+            height: 32px;
+
+            .material-icons {
+                font-size: 18px;
+            }
+        }
     }
 }

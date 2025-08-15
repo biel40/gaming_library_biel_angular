@@ -88,6 +88,52 @@
         </div>
     </div>
 
+    <!-- Platinum Target Section -->
+    <section class="platinum-target-section">
+        <div class="target-header">
+            <div class="target-icon">
+                <span class="material-icons">flag</span>
+            </div>
+            <div class="target-info">
+                <h3>Objetivo de Platino</h3>
+                <p>Tu próximo desafío para conseguir el 100%</p>
+            </div>
+        </div>
+
+        @if (platinumTargetGame()) {
+        <div class="target-game-card">
+            <img [src]="platinumTargetGame()!.image_url" [alt]="platinumTargetGame()!.name" class="target-game-image">
+            <div class="target-game-info">
+                <h4>{{ platinumTargetGame()!.name }}</h4>
+                <div class="target-game-meta">
+                    <span class="genre-badge">{{ platinumTargetGame()!.genre }}</span>
+                    <span class="platform-badge">{{ platinumTargetGame()!.platform }}</span>
+                </div>
+                <p class="target-description">{{ platinumTargetGame()!.description }}</p>
+            </div>
+            <div class="target-actions">
+                <button class="view-details-btn" [routerLink]="['/game', platinumTargetGame()!.id]" 
+                        title="Ver detalles completos del juego objetivo">
+                    <span class="material-icons">visibility</span>
+                    Ver Detalles
+                </button>
+                <button class="remove-target-btn" (click)="removePlatinumTarget()" 
+                        [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()"
+                        title="Quitar este juego como objetivo de platino">
+                    <span class="material-icons">flag_circle</span>
+                    Quitar Objetivo
+                </button>
+            </div>
+        </div>
+        } @else {
+        <div class="no-target-content">
+            <span class="material-icons">outlined_flag</span>
+            <h4>Sin objetivo definido</h4>
+            <p>Marca un juego como objetivo desde las tarjetas del dashboard para enfocarte en conseguir tu próximo platino.</p>
+        </div>
+        }
+    </section>
+
     <section class="platinum-games-section">
         @if (platinumGames().length > 0) {
         <div class="section-header">

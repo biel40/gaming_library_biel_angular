@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
@@ -17,10 +17,14 @@ import { User } from '@supabase/supabase-js';
     FormsModule
   ]
 })
-export class PlatinumTrophiesComponent implements OnInit {
+export class PlatinumTrophiesComponent implements OnInit, OnDestroy {
   private _supabaseService: SupabaseService = inject(SupabaseService);
   private _userService: UserService = inject(UserService);
   private _router: Router = inject(Router);
+
+  // Event listeners for cleanup
+  private _clickListener?: (event: Event) => void;
+  private _keydownListener?: (event: KeyboardEvent) => void;
 
   // Signals for state management
   public platinumGames = signal<Videogame[]>([]);
@@ -42,6 +46,10 @@ export class PlatinumTrophiesComponent implements OnInit {
   public editingGame = signal<Videogame | null>(null);
   public newPlatinumDate = signal<string>('');
   public isUpdatingDate = signal(false);
+
+  // Platinum target functionality
+  public platinumTargetGame = signal<Videogame | null>(null);
+  public loadingPlatinumTarget = signal(false);
 
   // Computed properties
   public userDisplayName = computed(() => {
@@ -94,14 +102,55 @@ export class PlatinumTrophiesComponent implements OnInit {
     return { year: bestYear, count: maxCount };
   });
 
+  /**
+   * Check if the current device is a mobile device
+   */
+  private isMobileDevice(): boolean {
+    return window.innerWidth <= 768;
+  }
+
+  /**
+   * Detect if the user prefers reduced motion
+   */
+  private prefersReducedMotion(): boolean {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
   constructor() {
     // Close user menu when clicking outside
-    document.addEventListener('click', (event) => {
+    this._clickListener = (event: Event) => {
       const target = event.target as HTMLElement;
       if (!target.closest('.user-menu') && !target.closest('.user-avatar')) {
         this.showUserMenu.set(false);
       }
-    });
+    };
+    document.addEventListener('click', this._clickListener);
+
+    // Add escape key handler for modal
+    this._keydownListener = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (this.showDateModal()) {
+          this.closeDateEditModal();
+        }
+        if (this.showUserMenu()) {
+          this.showUserMenu.set(false);
+        }
+      }
+    };
+    document.addEventListener('keydown', this._keydownListener);
+  }
+
+  ngOnDestroy() {
+    // Clean up event listeners
+    if (this._clickListener) {
+      document.removeEventListener('click', this._clickListener);
+    }
+    if (this._keydownListener) {
+      document.removeEventListener('keydown', this._keydownListener);
+    }
+    
+    // Restore body scroll in case modal was open
+    document.body.style.overflow = '';
   }
 
   async ngOnInit() {
@@ -131,6 +180,9 @@ export class PlatinumTrophiesComponent implements OnInit {
       // Load platinum games
       const games = await this._supabaseService.getPlatinumGames();
       this.platinumGames.set(games);
+
+      // Load current platinum target
+      await this.loadPlatinumTarget();
 
     } catch (err) {
       console.error('Error loading platinum games:', err);
@@ -174,23 +226,27 @@ export class PlatinumTrophiesComponent implements OnInit {
   }
 
   /**
-   * Show success notification
+   * Show success notification with mobile-optimized timing
    */
   private showSuccessNotification(message: string) {
     this.notificationMessage.set(message);
     this.notificationType.set('success');
     this.showNotification.set(true);
-    setTimeout(() => this.showNotification.set(false), 3000);
+    // Longer timeout for mobile devices for better UX
+    const timeout = this.isMobileDevice() ? 4000 : 3000;
+    setTimeout(() => this.showNotification.set(false), timeout);
   }
 
   /**
-   * Show error notification
+   * Show error notification with mobile-optimized timing
    */
   private showErrorNotification(message: string) {
     this.notificationMessage.set(message);
     this.notificationType.set('error');
     this.showNotification.set(true);
-    setTimeout(() => this.showNotification.set(false), 3000);
+    // Longer timeout for mobile devices for better UX
+    const timeout = this.isMobileDevice() ? 4000 : 3000;
+    setTimeout(() => this.showNotification.set(false), timeout);
   }
 
   /**
@@ -216,6 +272,11 @@ export class PlatinumTrophiesComponent implements OnInit {
     }
     
     this.showDateModal.set(true);
+
+    // Prevent body scroll on mobile when modal is open
+    if (this.isMobileDevice()) {
+      document.body.style.overflow = 'hidden';
+    }
   }
 
   /**
@@ -226,6 +287,11 @@ export class PlatinumTrophiesComponent implements OnInit {
     this.editingGame.set(null);
     this.newPlatinumDate.set('');
     this.isUpdatingDate.set(false);
+
+    // Restore body scroll on mobile
+    if (this.isMobileDevice()) {
+      document.body.style.overflow = '';
+    }
   }
 
   /**
@@ -266,6 +332,70 @@ export class PlatinumTrophiesComponent implements OnInit {
       this.showErrorNotification('Error al actualizar la fecha de platino');
     } finally {
       this.isUpdatingDate.set(false);
+    }
+  }
+
+  /**
+   * Load the current platinum target game
+   */
+  private async loadPlatinumTarget(): Promise<void> {
+    try {
+      this.loadingPlatinumTarget.set(true);
+      const targetGame = await this._supabaseService.getCurrentPlatinumTarget();
+      this.platinumTargetGame.set(targetGame);
+    } catch (error) {
+      console.error('Error loading platinum target:', error);
+      this.platinumTargetGame.set(null);
+    } finally {
+      this.loadingPlatinumTarget.set(false);
+    }
+  }
+
+  /**
+   * Remove the current platinum target
+   */
+  public async removePlatinumTarget(): Promise<void> {
+    const currentTarget = this.platinumTargetGame();
+    if (!currentTarget?.id) return;
+
+    if (this._isReadOnlyUser()) {
+      this.showErrorNotification('No puedes modificar objetivos en modo de solo lectura');
+      return;
+    }
+
+    try {
+      await this._supabaseService.removePlatinumTarget(currentTarget.id);
+      this.platinumTargetGame.set(null);
+      
+      this.showSuccessNotification('Objetivo de platino eliminado correctamente');
+    } catch (error) {
+      console.error('Error removing platinum target:', error);
+      this.showErrorNotification('Error al eliminar el objetivo de platino');
+    }
+  }
+
+  /**
+   * Set a game as platinum target
+   */
+  public async setPlatinumTarget(game: Videogame): Promise<void> {
+    if (!game.id) return;
+
+    if (this._isReadOnlyUser()) {
+      this.showErrorNotification('No puedes modificar objetivos en modo de solo lectura');
+      return;
+    }
+
+    try {
+      const updatedGame = await this._supabaseService.setPlatinumTarget(game.id);
+      this.platinumTargetGame.set({
+        ...game,
+        platinum_target: true
+      });
+      
+      this.showSuccessNotification(`"${game.name}" marcado como objetivo de platino`);
+    } catch (error) {
+      console.error('Error setting platinum target:', error);
+      this.showErrorNotification('Error al establecer el objetivo de platino');
     }
   }
 }

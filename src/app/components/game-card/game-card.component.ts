@@ -1,4 +1,4 @@
-import { Component, Input, signal, computed, inject, OnInit } from "@angular/core";
+import { Component, Input, Output, EventEmitter, signal, computed, inject, OnInit } from "@angular/core";
 import { Videogame, SupabaseService } from "../../services/supabase/supabase.service";
 import { NotificationService } from "../../services/notification/notification.service";
 import { CommonModule } from "@angular/common";
@@ -24,6 +24,8 @@ export class GameCardComponent implements OnInit {
 
   @Input() selectMode = signal(false);
 
+  @Output() platinumTargetChanged = new EventEmitter<Videogame>();
+
   // Computed signals for template bindings
   readonly favoriteIcon = computed(() => this._game()?.favorite ? 'star' : 'star_border');
   readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos');
@@ -42,6 +44,11 @@ export class GameCardComponent implements OnInit {
   readonly gameReleaseDate = computed(() => this._game()?.releaseDate);
   readonly gameImageUrl = computed(() => this._game()?.image_url);
   readonly isReadOnlyUser = computed(() => this._isReadOnlyUser());
+  readonly isPlatinumTarget = computed(() => this._game()?.platinum_target || false);
+  readonly platinumTargetIcon = computed(() => this.isPlatinumTarget() ? 'flag' : 'outlined_flag');
+  readonly platinumTargetTitle = computed(() => 
+    this.isPlatinumTarget() ? 'Quitar como objetivo de platino' : 'Marcar como objetivo de platino'
+  );
 
   private _supabaseService: SupabaseService = inject(SupabaseService);
   private _notificationService: NotificationService = inject(NotificationService);
@@ -102,6 +109,54 @@ export class GameCardComponent implements OnInit {
     if (currentGame) {
       // Toggle the favorite status through the service
       this._supabaseService.toggleFavorite(currentGame);
+    }
+  }
+
+  /**
+   * Toggle platinum target status for this game
+   * @param event The click event
+   */
+  async togglePlatinumTarget(event: MouseEvent): Promise<void> {
+    // Prevent navigation to game details when clicking the flag
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (this._isReadOnlyUser()) {
+      this._notificationService.info('No tienes permisos para modificar objetivos de platino en modo solo lectura.');
+      return;
+    }
+
+    const currentGame = this._game();
+    if (!currentGame?.id) return;
+
+    try {
+      let updatedGame: Videogame;
+      
+      if (this.isPlatinumTarget()) {
+        // Remove platinum target
+        updatedGame = await this._supabaseService.removePlatinumTarget(currentGame.id);
+        this._notificationService.success(`"${currentGame.name}" ya no es tu objetivo de platino`);
+      } else {
+        // Set as platinum target
+        updatedGame = await this._supabaseService.setPlatinumTarget(currentGame.id);
+        this._notificationService.success(`"${currentGame.name}" marcado como objetivo de platino`);
+      }
+
+      // Update the local game data
+      this._game.set({
+        ...currentGame,
+        platinum_target: updatedGame.platinum_target
+      });
+
+      // Emit the event to notify parent components
+      this.platinumTargetChanged.emit({
+        ...currentGame,
+        platinum_target: updatedGame.platinum_target
+      });
+
+    } catch (error) {
+      console.error('Error toggling platinum target:', error);
+      this._notificationService.error('Error al actualizar el objetivo de platino');
     }
   }
 }

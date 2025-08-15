@@ -198,9 +198,147 @@
     padding-bottom: 0.5rem;
   }
 
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    h2 {
+      margin: 0;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 0.5rem;
+      flex: 1;
+    }
+
+    .edit-btn {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      color: #3498db;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+      margin-left: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      height: 40px;
+
+      &:hover {
+        background-color: #3498db;
+        color: white;
+        border-color: #3498db;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      .material-icons {
+        font-size: 1.1rem;
+      }
+    }
+  }
+
   .game-description {
     line-height: 1.7;
     color: #555;
+
+    &.editable {
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: rgba(52, 152, 219, 0.05);
+        padding: 0.5rem;
+        border-radius: 4px;
+      }
+    }
+  }
+
+  .description-edit {
+    animation: slideIn 0.3s ease-out;
+
+    .description-field {
+      width: 100%;
+      min-height: 120px;
+      padding: 1rem;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #555;
+      resize: vertical;
+      transition: all 0.2s ease;
+      background-color: #fff;
+
+      &:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        background-color: #fafbfc;
+      }
+
+      &::placeholder {
+        color: #adb5bd;
+        font-style: italic;
+      }
+    }
+
+    .edit-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+
+      .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+
+        &.primary {
+          background: #27ae60;
+          color: white;
+
+          &:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+          }
+        }
+
+        &.secondary {
+          background: #95a5a6;
+          color: white;
+
+          &:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
+          }
+        }
+
+        .material-icons {
+          font-size: 1.1rem;
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
   }
 }
 
@@ -432,6 +570,239 @@
   }
 }
 
+// Review edit mode styles
+.review-edit {
+  animation: slideIn 0.3s ease-out;
+
+  .score-input,
+  .review-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+
+    label {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 1rem;
+    }
+
+    .star-rating {
+      display: flex;
+      gap: 5px;
+
+      .star {
+        font-size: 1.8rem;
+        color: #e0e0e0;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: scale(1.2);
+          color: #f39c12;
+        }
+
+        &.filled {
+          color: #f1c40f;
+        }
+      }
+    }
+
+    .review-field {
+      width: 100%;
+      min-height: 120px;
+      padding: 1rem;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #555;
+      resize: vertical;
+      transition: all 0.2s ease;
+      background-color: #fff;
+
+      &:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        background-color: #fafbfc;
+      }
+
+      &::placeholder {
+        color: #adb5bd;
+        font-style: italic;
+      }
+    }
+  }
+
+  .edit-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+
+      &.primary {
+        background: #27ae60;
+        color: white;
+
+        &:hover {
+          background: #219a52;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+      }
+
+      &.secondary {
+        background: #95a5a6;
+        color: white;
+
+        &:hover {
+          background: #7f8c8d;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
+        }
+      }
+
+      &.danger {
+        background: #e74c3c;
+        color: white;
+
+        &:hover {
+          background: #c0392b;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+      }
+
+      .material-icons {
+        font-size: 1.1rem;
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// Review display mode styles
+.review-display {
+  margin-top: 1rem;
+
+  .current-rating {
+    .score-display {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+
+      .label {
+        font-weight: 600;
+        color: #2c3e50;
+        min-width: 100px;
+      }
+
+      .star-rating {
+        display: flex;
+        gap: 3px;
+
+        .star {
+          font-size: 1.5rem;
+          color: #e0e0e0;
+
+          &.filled {
+            color: #f1c40f;
+          }
+        }
+      }
+
+      .score-number {
+        font-weight: 600;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+      }
+    }
+
+    .review-display-text {
+      .label {
+        font-weight: 600;
+        color: #2c3e50;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      .review-content {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #3498db;
+        line-height: 1.7;
+        color: #555;
+        margin: 0;
+        font-style: italic;
+      }
+    }
+  }
+
+  .no-rating {
+    text-align: center;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #e9ecef;
+
+    p {
+      color: #7f8c8d;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.primary {
+        background: #3498db;
+        color: white;
+
+        &:hover {
+          background: #2980b9;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+      }
+
+      .material-icons {
+        font-size: 1.1rem;
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
 .game-title-container {
   display: flex;
   align-items: center;
@@ -596,4 +967,16 @@ textarea:disabled {
   cursor: not-allowed;
   background-color: #f5f5f5;
   color: #666;
+}
+
+// Animation for description edit mode
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

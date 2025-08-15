@@ -22,6 +22,9 @@ export class GameDetailComponent implements OnInit {
   private _error = signal<string | null>(null);
   private _score: WritableSignal<number> = signal<number>(0);
   private _review: WritableSignal<string> = signal<string>('');
+  private _description: WritableSignal<string> = signal<string>('');
+  private _isEditingDescription = signal<boolean>(false);
+  private _isEditingReview = signal<boolean>(false);
   private _isReadOnlyUser = signal<boolean>(false);
 
   // Computed signals
@@ -30,6 +33,9 @@ export class GameDetailComponent implements OnInit {
   readonly error = computed(() => this._error());
   readonly score = computed(() => this._score());
   readonly review = computed(() => this._review());
+  readonly description = computed(() => this._description());
+  readonly isEditingDescription = computed(() => this._isEditingDescription());
+  readonly isEditingReview = computed(() => this._isEditingReview());
   readonly isReadOnlyUser = computed(() => this._isReadOnlyUser());
   readonly favoriteIcon = computed(() => this._game()?.favorite ? 'star' : 'star_border');
   readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos');
@@ -77,6 +83,7 @@ export class GameDetailComponent implements OnInit {
       if (game) {
         this._score.set(game.score || 0);
         this._review.set(game.review || '');
+        this._description.set(game.description || '');
       }
 
       if (!this._game()) {
@@ -212,6 +219,158 @@ export class GameDetailComponent implements OnInit {
       return;
     }
     this._review.set(review);
+  }
+
+  /**
+   * Start editing the review
+   */
+  public startEditingReview(): void {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar reseñas en modo solo lectura');
+      return;
+    }
+    this._isEditingReview.set(true);
+  }
+
+  /**
+   * Cancel editing the review
+   */
+  public cancelEditingReview(): void {
+    const currentGame = this._game();
+    if (currentGame) {
+      this._review.set(currentGame.review || '');
+      this._score.set(currentGame.score || 0);
+    }
+    this._isEditingReview.set(false);
+  }
+
+  /**
+   * Update the game review and score (for edit mode)
+   */
+  public async saveReviewChanges(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar valoraciones en modo solo lectura');
+      return;
+    }
+
+    const currentGame = this._game();
+    if (!currentGame || !currentGame.id) return;
+
+    try {
+      await this.supabaseService.updateGameReview(currentGame.id, this._review());
+      await this.supabaseService.updateGameScore(currentGame.id, this._score());
+      this.notificationService.success('Valoración guardada correctamente');
+
+      // Update the local game object
+      const updatedGame = { ...currentGame };
+      updatedGame.review = this._review();
+      updatedGame.score = this._score();
+      this._game.set(updatedGame);
+
+      // Exit editing mode
+      this._isEditingReview.set(false);
+    } catch (err) {
+      this._error.set('Error al actualizar la reseña');
+      this.notificationService.error('Error al guardar la valoración');
+      console.error(err);
+    }
+  }
+
+  /**
+   * Remove the game review and score (for edit mode)
+   */
+  public async removeReviewFromEditMode(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para eliminar valoraciones en modo solo lectura');
+      return;
+    }
+
+    const currentGame = this._game();
+    if (!currentGame || !currentGame.id) return;
+
+    try {
+      await this.supabaseService.removeGameReviewAndScore(currentGame.id);
+      this.notificationService.success('Valoración eliminada correctamente');
+
+      // Update the local game object
+      const updatedGame = { ...currentGame };
+      updatedGame.review = '';
+      updatedGame.score = 0;
+      this._game.set(updatedGame);
+
+      // Reset the local signals and exit editing mode
+      this._review.set('');
+      this._score.set(0);
+      this._isEditingReview.set(false);
+    } catch (err) {
+      this._error.set('Error al eliminar la valoración');
+      this.notificationService.error('Error al eliminar la valoración');
+      console.error(err);
+    }
+  }
+
+  /**
+   * Start editing the description
+   */
+  public startEditingDescription(): void {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar descripciones en modo solo lectura');
+      return;
+    }
+    this._isEditingDescription.set(true);
+  }
+
+  /**
+   * Cancel editing the description
+   */
+  public cancelEditingDescription(): void {
+    const currentGame = this._game();
+    if (currentGame) {
+      this._description.set(currentGame.description || '');
+    }
+    this._isEditingDescription.set(false);
+  }
+
+  /**
+   * Set the game description text
+   * @param description The description text to set
+   */
+  public setDescription(description: string): void {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar descripciones en modo solo lectura');
+      return;
+    }
+    this._description.set(description);
+  }
+
+  /**
+   * Update the game description
+   */
+  public async updateGameDescription(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar descripciones en modo solo lectura');
+      return;
+    }
+
+    const currentGame = this._game();
+    if (!currentGame || !currentGame.id) return;
+
+    try {
+      await this.supabaseService.updateGameDescription(currentGame.id, this._description());
+      this.notificationService.success('Descripción actualizada correctamente');
+
+      // Update the local game object
+      const updatedGame = { ...currentGame };
+      updatedGame.description = this._description();
+      this._game.set(updatedGame);
+
+      // Exit editing mode
+      this._isEditingDescription.set(false);
+    } catch (err) {
+      this._error.set('Error al actualizar la descripción');
+      this.notificationService.error('Error al guardar la descripción');
+      console.error(err);
+    }
   }
 
   /**

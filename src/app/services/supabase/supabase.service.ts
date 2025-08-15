@@ -31,6 +31,7 @@ export interface Videogame {
   review?: string
   platinum?: boolean
   platinum_date?: Date
+  platinum_target?: boolean
 }
 
 @Injectable({
@@ -61,7 +62,7 @@ export class SupabaseService {
       const { data } = await this._supabaseClient.auth.getSession();
       this._session.set(data.session);
     }
-    
+
     return this._session();
   }
 
@@ -206,7 +207,8 @@ export class SupabaseService {
       releaseDate: new Date(item.release_date),
       image_url: item.image_url,
       platform: item.platform,
-      favorite: this.isFavorite(item.id)
+      favorite: this.isFavorite(item.id),
+      platinum_target: item.platinum_target || false
     }));
 
     this._videogames.set(videogames);
@@ -234,7 +236,8 @@ export class SupabaseService {
       image_url: data.image_url,
       platform: data.platform,
       score: data.score,
-      review: data.review
+      review: data.review,
+      platinum_target: data.platinum_target || false
     };
 
     // Check if game is favorite
@@ -276,6 +279,22 @@ export class SupabaseService {
   }
 
   /**
+   * Update the description for a specific game
+   * @param gameId The ID of the game to update
+   * @param description The new description text
+   */
+  public async updateGameDescription(gameId: string, description: string): Promise<void> {
+    const { error } = await this._supabaseClient
+      .from('videogames')
+      .update({ description })
+      .eq('id', gameId);
+
+    if (error) {
+      throw error;
+    }
+  }
+
+  /**
    * Remove the review and score for a specific game
    * @param gameId The ID of the game to update
    */
@@ -288,6 +307,89 @@ export class SupabaseService {
     if (error) {
       throw error;
     }
+  }
+
+  /**
+   * Set a game as platinum target (only one game can be target at a time)
+   * @param gameId The ID of the game to set as platinum target
+   * @returns Promise<Videogame> - the updated game
+   */
+  public async setPlatinumTarget(gameId: string): Promise<Videogame> {
+    // First, remove platinum_target from all other games
+    await this._supabaseClient
+      .from('videogames')
+      .update({ platinum_target: false })
+      .neq('id', gameId);
+
+    // Then set the target game
+    const { data, error } = await this._supabaseClient
+      .from('videogames')
+      .update({ platinum_target: true })
+      .eq('id', gameId)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
+
+  /**
+   * Remove platinum target from a game
+   * @param gameId The ID of the game to remove as platinum target
+   * @returns Promise<Videogame> - the updated game
+   */
+  public async removePlatinumTarget(gameId: string): Promise<Videogame> {
+    const { data, error } = await this._supabaseClient
+      .from('videogames')
+      .update({ platinum_target: false })
+      .eq('id', gameId)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
+
+  /**
+   * Get the current platinum target game
+   * @returns Promise<Videogame | null> - the current target game or null if none
+   */
+  public async getCurrentPlatinumTarget(): Promise<Videogame | null> {
+    const { data, error } = await this._supabaseClient
+      .from('videogames')
+      .select('*')
+      .eq('platinum_target', true)
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+      throw error;
+    }
+
+    if (!data) {
+      return null;
+    }
+
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      genre: data.genre,
+      releaseDate: new Date(data.release_date),
+      image_url: data.image_url,
+      platform: data.platform,
+      score: data.score,
+      review: data.review,
+      platinum: data.platinum,
+      platinum_date: data.platinum_date,
+      platinum_target: data.platinum_target,
+      favorite: this.isFavorite(data.id || '')
+    };
   }
 
   // Store favorites in localStorage since we don't want to modify the database
