@@ -29,7 +29,7 @@
             </button>
         </div>
 
-        <div class="user-avatar" (click)="toggleUserMenu()">
+        <div class="user-avatar" (click)="toggleUserMenu()" (keydown)="toggleUserMenu()">
             <div class="avatar-circle">
                 <span class="avatar-initials">{{ userInitials() }}</span>
             </div>
@@ -66,7 +66,7 @@
     <div class="filters">
         <div class="filter-chips">
             @for (genre of uniqueGenres(); track genre) {
-            <div class="filter-chip" [class.active]="activeGenre() === genre" (click)="filterByGenre(genre)">{{ genre }}
+            <div class="filter-chip" [class.active]="activeGenre() === genre" (click)="filterByGenre(genre)" (keydown)="filterByGenre(genre)">{{ genre }}
             </div>
             }
         </div>
@@ -146,7 +146,7 @@
             @for (game of filteredGames(); track $index) {
             <div class="game-card-wrapper" [class.selected]="isSelected(game.id)">
                 @if (selectMode()) {
-                <label class="select-checkbox" (click)="$event.stopPropagation()">
+                <label class="select-checkbox" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
                     <input type="checkbox" [checked]="isSelected(game.id)"
                         (change)="toggleSelectGame(game.id); $event.stopPropagation()">
                     <span class="checkmark"></span>
@@ -164,7 +164,7 @@
             @for (game of filteredGames(); track $index) {
             <div class="list-item" [class.selected]="isSelected(game.id)">
                 @if (selectMode()) {
-                <label class="select-checkbox list-checkbox" (click)="$event.stopPropagation()">
+                <label class="select-checkbox list-checkbox" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
                     <input type="checkbox" [checked]="isSelected(game.id)"
                         (change)="toggleSelectGame(game.id); $event.stopPropagation()">
                     <span class="checkmark"></span>
