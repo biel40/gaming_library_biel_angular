@@ -5,6 +5,7 @@
 // Filters section
 .filters {
   margin: 1.5rem 0;
+  position: relative;
   
   // Animación para los filtros
   opacity: 0;
@@ -29,12 +30,11 @@
     transition: all 0.2s ease;
     box-shadow: vars.$box-shadow-sm;
     
-    // Animación individual para cada chip
+    // Animación individual para cada chip (sin transform para evitar conflictos con z-index)
     opacity: 0;
-    transform: scale(0.9);
     animation: chipFadeIn 1.5s ease forwards;
     
-    @for $i from 1 through 10 {
+    @for $i from 1 through 40 {
       &:nth-child(#{$i}) {
         animation-delay: #{0.6 + $i * 0.05}s;
       }
@@ -42,7 +42,6 @@
     
     &:hover {
       background: color.scale(vars.$bg-light, $lightness: -5%);
-      transform: translateY(-2px) scale(1.05);
     }
     
     &.active {
@@ -53,15 +52,13 @@
   }
 }
 
-// Animación para los chips de filtro
+// Animación para los chips de filtro (solo opacity para evitar problemas con z-index)
 @keyframes chipFadeIn {
   from {
     opacity: 0;
-    transform: scale(0.9);
   }
   to {
     opacity: 1;
-    transform: scale(1);
   }
 }
 

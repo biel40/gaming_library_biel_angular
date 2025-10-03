@@ -39,7 +39,7 @@
                     <div class="user-email">{{ currentUser()?.email }}</div>
                 </div>
                 <hr class="menu-divider">
-                <button class="menu-item" (click)="logout()" title="Cerrar sesión y salir de la aplicación">
+                <button class="menu-item" (click)="logout(); $event.stopPropagation()" title="Cerrar sesión y salir de la aplicación">
                     <span class="material-icons">logout</span>
                     Cerrar Sesión
                 </button>
@@ -66,8 +66,9 @@
     <div class="filters">
         <div class="filter-chips">
             @for (genre of uniqueGenres(); track genre) {
-            <div class="filter-chip" [class.active]="activeGenre() === genre" (click)="filterByGenre(genre)" (keydown)="filterByGenre(genre)">{{ genre }}
-            </div>
+            <button type="button" class="filter-chip" [class.active]="activeGenre() === genre" (click)="filterByGenre(genre)" (keydown.enter)="filterByGenre(genre)" tabindex="0">
+                {{ genre }}
+            </button>
             }
         </div>
     </div>

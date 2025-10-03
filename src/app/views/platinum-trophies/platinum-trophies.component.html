@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <div class="user-avatar" (click)="toggleUserMenu()" title="Abrir menú de usuario">
+        <button class="user-avatar" (click)="toggleUserMenu()" title="Abrir menú de usuario">
             <div class="avatar-circle">
                 <span class="avatar-initials">{{ userInitials() }}</span>
             </div>
@@ -37,7 +37,7 @@
                     Cerrar Sesión
                 </button>
             </div>
-        </div>
+        </button>
     </header>
 
     @if (isLoading()) {
@@ -58,10 +58,10 @@
 
     @if (!isLoading() && !error()) {
     @if (isReadOnlyUser()) {
-      <div class="read-only-notice">
+    <div class="read-only-notice">
         <span class="material-icons">info</span>
         <p>Modo de test: Solo lectura. Inicia sesión con otra cuenta para modificar fechas de platino.</p>
-      </div>
+    </div>
     }
     <div class="platinum-stats">
         <div class="stat-card" title="Número total de juegos que has completado al 100%">
@@ -112,14 +112,13 @@
                 <p class="target-description">{{ platinumTargetGame()!.description }}</p>
             </div>
             <div class="target-actions">
-                <button class="view-details-btn" [routerLink]="['/game', platinumTargetGame()!.id]" 
-                        title="Ver detalles completos del juego objetivo">
+                <button class="view-details-btn" [routerLink]="['/game', platinumTargetGame()!.id]"
+                    title="Ver detalles completos del juego objetivo">
                     <span class="material-icons">visibility</span>
                     Ver Detalles
                 </button>
-                <button class="remove-target-btn" (click)="removePlatinumTarget()" 
-                        [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()"
-                        title="Quitar este juego como objetivo de platino">
+                <button class="remove-target-btn" (click)="removePlatinumTarget()" [disabled]="isReadOnlyUser()"
+                    [class.disabled]="isReadOnlyUser()" title="Quitar este juego como objetivo de platino">
                     <span class="material-icons">flag_circle</span>
                     Quitar Objetivo
                 </button>
@@ -129,7 +128,8 @@
         <div class="no-target-content">
             <span class="material-icons">outlined_flag</span>
             <h4>Sin objetivo definido</h4>
-            <p>Marca un juego como objetivo desde las tarjetas del dashboard para enfocarte en conseguir tu próximo platino.</p>
+            <p>Marca un juego como objetivo desde las tarjetas del dashboard para enfocarte en conseguir tu próximo
+                platino.</p>
         </div>
         }
     </section>
@@ -162,9 +162,8 @@
                     <div class="platinum-date">
                         <span class="material-icons">event</span>
                         <span>{{ game.platinum_date | date: 'dd/MM/yyyy' }}</span>
-                        <button class="edit-date-btn" (click)="openDateEditModal(game)"
-                            [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()"
-                            title="Editar fecha de obtención del platino">
+                        <button class="edit-date-btn" (click)="openDateEditModal(game)" [disabled]="isReadOnlyUser()"
+                            [class.disabled]="isReadOnlyUser()" title="Editar fecha de obtención del platino">
                             <span class="material-icons">edit</span>
                         </button>
                     </div>
@@ -210,8 +209,8 @@
 
     <!-- Date Edit Modal -->
     @if (showDateModal()) {
-    <div class="modal-overlay" (click)="closeDateEditModal()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-overlay" (click)="closeDateEditModal()" (keydown)="closeDateEditModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()" (keydown)="closeDateEditModal()">
             <div class="modal-header">
                 <h3>Editar fecha de obtención del platino</h3>
                 <button class="modal-close" (click)="closeDateEditModal()" title="Cerrar modal">
@@ -231,22 +230,19 @@
 
                 <div class="date-input-group">
                     <label for="platinumDate">Fecha de obtención del platino:</label>
-                    <input type="date" id="platinumDate" [(ngModel)]="newPlatinumDate" 
-                        [disabled]="isUpdatingDate() || isReadOnlyUser()"
-                        class="date-input">
+                    <input type="date" id="platinumDate" [(ngModel)]="newPlatinumDate"
+                        [disabled]="isUpdatingDate() || isReadOnlyUser()" class="date-input">
                 </div>
                 }
             </div>
 
             <div class="modal-actions">
-                <button class="btn secondary" (click)="closeDateEditModal()" 
-                    [disabled]="isUpdatingDate()"
+                <button class="btn secondary" (click)="closeDateEditModal()" [disabled]="isUpdatingDate()"
                     title="Cancelar edición">
                     Cancelar
                 </button>
                 <button class="btn primary" (click)="updatePlatinumDate()"
-                    [disabled]="isUpdatingDate() || !newPlatinumDate() || isReadOnlyUser()" 
-                    title="Guardar nueva fecha">
+                    [disabled]="isUpdatingDate() || !newPlatinumDate() || isReadOnlyUser()" title="Guardar nueva fecha">
                     @if (isUpdatingDate()) {
                     <span class="material-icons loading">hourglass_empty</span>
                     } @else {

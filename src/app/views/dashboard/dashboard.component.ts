@@ -350,22 +350,35 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     public async logout(): Promise<void> {
         try {
+            // Close the user menu immediately
+            this.showUserMenu.set(false);
+            
             // Sign out and clear session
             await this._supabaseService.signOut();
             
             // Clear user information
             this.currentUser.set(null);
             this._userService.clearUser();
+            this.isAuthenticated.set(false);
             
+            // Show success notification
             this.notificationMessage.set('Sesión cerrada correctamente');
             this.notificationType.set('success');
             this.showNotification.set(true);
             
-            this._router.navigate(['/login']);
+            // Wait a bit before navigating to show the notification
+            setTimeout(() => {
+                this._router.navigate(['/login']);
+            }, 500);
         } catch (error) {
             this.notificationMessage.set('Error al cerrar sesión');
             this.notificationType.set('error');
             this.showNotification.set(true);
+            
+            // Auto-hide error notification
+            setTimeout(() => {
+                this.showNotification.set(false);
+            }, 3000);
         }
     }
 }  

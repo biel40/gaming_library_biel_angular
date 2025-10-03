@@ -43,7 +43,7 @@
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-    z-index: 1000;
+    z-index: 9999;
     border: 1px solid vars.$border-color;
     
     &.show {
