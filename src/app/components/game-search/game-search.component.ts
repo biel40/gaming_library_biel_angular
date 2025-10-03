@@ -49,6 +49,7 @@ export class GameSearchComponent {
         console.error('Error searching games:', err);
         this.error = 'Error al buscar juegos. Por favor, inténtalo de nuevo.';
         this.isLoading = false;
+
         // Force change detection even on error
         this._cdr.detectChanges();
       }
@@ -155,10 +156,7 @@ export class GameSearchComponent {
   */
   private cleanupSavingState(gameId: number) {
     this.savingGames.delete(gameId);
-  
-    // Force change detection to update the UI
     this._cdr.detectChanges();
-    console.log('Change detection forced after cleanup');
   }
 
   /**

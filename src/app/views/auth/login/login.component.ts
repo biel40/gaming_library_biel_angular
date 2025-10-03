@@ -168,8 +168,6 @@ export class LoginComponent implements OnInit {
           id: userId,
           name: name
         };
-
-        console.log('Creating profile: ', profile);
         
         const { error: profileError } = await this.supabaseService.insertProfile(profile);
         

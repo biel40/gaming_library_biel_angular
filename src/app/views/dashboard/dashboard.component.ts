@@ -209,23 +209,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     constructor() {
-        effect(() => {
-            const filtered = this.filteredGames();
-            this.calculateItemsPerPage();
-        });
-
-        effect(() => {
-            const searchTerm = this.searchTerm();
-            const activeGenre = this.activeGenre();
-            const filteredCount = this.filteredGames().length;
-            const totalGames = this.games().length;
-
-            console.log(`Filtering: searchTerm="${searchTerm}", activeGenre="${activeGenre}", filtered=${filteredCount}/${totalGames}`);
-        });
-
         this._resizeListener = () => this.calculateItemsPerPage();
         
-        // Close user menu when clicking outside
         document.addEventListener('click', (event) => {
             const target = event.target as HTMLElement;
             if (!target.closest('.user-menu') && !target.closest('.user-avatar')) {
@@ -265,7 +250,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
             }
         } catch (err) {
-            console.error('Error loading games:', err);
             this.error.set('Error loading games. Please try again later.');
         } finally {
             this.isLoading.set(false);
@@ -379,7 +363,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             
             this._router.navigate(['/login']);
         } catch (error) {
-            console.error('Error al cerrar sesión:', error);
             this.notificationMessage.set('Error al cerrar sesión');
             this.notificationType.set('error');
             this.showNotification.set(true);
