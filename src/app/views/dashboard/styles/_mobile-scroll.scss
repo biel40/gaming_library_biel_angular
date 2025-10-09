@@ -1,0 +1,181 @@
+@use 'variables' as vars;
+
+// Optimizaciones específicas para scroll suave en móviles
+.dashboard {
+  // Habilita la aceleración por hardware para el scroll
+  -webkit-overflow-scrolling: touch;
+  
+  // Mejora el rendimiento del scroll en dispositivos táctiles
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+  
+  // Optimizaciones de rendimiento
+  will-change: scroll-position;
+  transform: translateZ(0); // Fuerza la aceleración por hardware
+  
+  // Específico para dispositivos táctiles
+  @media (pointer: coarse) {
+    // Mejora la respuesta táctil
+    touch-action: pan-y;
+    
+    // Reduce el momentum scrolling en iOS
+    -webkit-overflow-scrolling: touch;
+    
+    // Optimiza el repintado durante el scroll
+    contain: layout style paint;
+  }
+}
+
+// Optimizaciones para elementos que se mueven durante el scroll
+.game-grid,
+.game-list,
+.favorites-grid {
+  // Mejora el rendimiento durante el scroll
+  will-change: transform;
+  transform: translateZ(0);
+  
+  // Reduce el repintado de elementos
+  contain: layout style;
+  
+  @media (max-width: 767px) {
+    // Optimizaciones específicas para móviles
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    
+    // Mejora la fluidez en la animación de los elementos
+    .game-card-wrapper,
+    .list-item {
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      perspective: 1000px;
+    }
+  }
+}
+
+// Optimizaciones para las transiciones en móviles
+@media (max-width: 767px) {
+  .dashboard {
+    // Reduce la complejidad de las animaciones en móviles
+    .dashboard-header {
+      animation-duration: 0.8s; // Reduce la duración
+      will-change: transform, opacity;
+    }
+    
+    .favorites,
+    .all-games {
+      animation-duration: 0.6s; // Más rápido en móviles
+      will-change: transform, opacity;
+    }
+    
+    // Optimiza las transiciones de los botones
+    button,
+    .filter-chip,
+    .view-btn {
+      transition-duration: 0.15s; // Transiciones más rápidas
+      will-change: transform, background-color;
+      transform: translateZ(0);
+    }
+    
+    // Mejora el rendimiento de los filtros
+    .filter-chips {
+      will-change: scroll-position;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      
+      .filter-chip {
+        backface-visibility: hidden;
+        transform: translateZ(0);
+      }
+    }
+  }
+}
+
+// Optimizaciones específicas para el scroll horizontal de filtros
+.filter-chips {
+  // Mejora el scroll horizontal en móviles
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+  
+  @media (max-width: 767px) {
+    // Padding para mejor UX en móviles
+    padding: 0 1rem;
+    margin: 0 -1rem;
+    
+    // Mejora la fluidez del scroll horizontal
+    scroll-snap-type: x proximity;
+    
+    .filter-chip {
+      scroll-snap-align: center;
+      // Evita el parpadeo durante el scroll
+      -webkit-font-smoothing: antialiased;
+      backface-visibility: hidden;
+    }
+  }
+}
+
+// Mejoras para el modal en móviles
+.modal-overlay {
+  @media (max-width: 767px) {
+    // Mejora el rendimiento del backdrop blur
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    will-change: backdrop-filter;
+    
+    .modal-content {
+      // Optimiza las animaciones del modal
+      will-change: transform, opacity;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+  }
+}
+
+// Optimizaciones específicas para iOS
+@supports (-webkit-touch-callout: none) {
+  .dashboard {
+    // Mejora el scroll en iOS
+    -webkit-overflow-scrolling: touch;
+    
+    // Reduce el bounce effect que puede causar lag
+    overscroll-behavior: none;
+    
+    // Optimiza el rendering en iOS
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
+  }
+}
+
+// Optimizaciones para dispositivos con pantallas de alta densidad
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .dashboard {
+    // Mejora el rendering en pantallas retina
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+    .game-grid img,
+    .list-img img {
+      // Optimiza las imágenes en pantallas de alta densidad
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
+  }
+}
+
+// Reduce las animaciones en dispositivos de gama baja
+@media (prefers-reduced-motion: no-preference) and (max-width: 767px) {
+  .dashboard {
+    // Mantiene las animaciones pero más suaves
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    
+    * {
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+}

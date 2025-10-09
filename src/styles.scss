@@ -16,6 +16,16 @@ html, body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    
+    // Optimizaciones para scroll suave en móviles
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    
+    // Mejora el rendimiento en dispositivos táctiles
+    @media (pointer: coarse) {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
 }
 
 /* Remove default margin */

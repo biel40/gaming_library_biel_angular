@@ -99,6 +99,10 @@
   margin-bottom: 2rem;
   align-items: start;
   
+  // Optimizaciones de rendimiento
+  will-change: contents;
+  contain: layout style;
+  
   @media (max-width: 1200px) {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
@@ -108,6 +112,11 @@
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
     place-items: center;
+    
+    // Optimizaciones específicas para móviles
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-overflow-scrolling: touch;
   }
   
   @media (max-width: 480px) {
@@ -121,11 +130,20 @@
     transform: translateY(20px);
     animation: fadeInUp 1.6s ease forwards;
     
+    // Optimizaciones de rendimiento
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    
     // Retraso escalonado
     @for $i from 1 through 10 {
       &:nth-child(#{$i}) {
         animation-delay: #{$i * 0.1}s;
       }
+    }
+    
+    // Optimizaciones para móviles
+    @media (max-width: 767px) {
+      animation-duration: 1.2s; // Más rápido en móviles
     }
   }
 }
@@ -139,6 +157,11 @@
   align-items: start; // Alinea los elementos al inicio para mantener consistencia
   min-height: 100%;
   
+  // Optimizaciones de rendimiento para scroll suave
+  will-change: contents;
+  contain: layout style;
+  transform: translateZ(0);
+  
   @media (max-width: 1200px) {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
@@ -150,6 +173,11 @@
     place-items: center;
     min-height: 50vh;
     align-content: center;
+    
+    // Optimizaciones específicas para móviles
+    backface-visibility: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
   
   @media (max-width: 480px) {
@@ -168,6 +196,11 @@
     display: flex;
     justify-content: center;
     
+    // Optimizaciones de rendimiento
+    will-change: transform, box-shadow;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    
     // Animación fade-in
     opacity: 0;
     transform: translateY(20px);
@@ -180,9 +213,24 @@
       }
     }
     
+    @media (max-width: 767px) {
+      // Optimizaciones específicas para móviles
+      animation-duration: 1.2s; // Más rápido en móviles
+      transition-duration: 0.2s;
+      
+      // Mejora la respuesta táctil
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    
     &:hover {
       transform: translateY(-5px);
       box-shadow: vars.$box-shadow-lg;
+      
+      @media (max-width: 767px) {
+        // Efecto más sutil en móviles
+        transform: translateY(-3px);
+      }
     }
   }
 }
@@ -206,6 +254,17 @@
   gap: 1rem;
   margin-bottom: 2rem;
   
+  // Optimizaciones de rendimiento
+  will-change: contents;
+  contain: layout style;
+  
+  @media (max-width: 767px) {
+    // Optimizaciones específicas para móviles
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  
   .list-item {
     @include mix.flex(row, center, flex-start);
     background-color: vars.$white;
@@ -214,9 +273,27 @@
     box-shadow: vars.$box-shadow-sm;
     transition: all 0.3s ease;
     
+    // Optimizaciones de rendimiento
+    will-change: transform, box-shadow;
+    backface-visibility: hidden;
+    
+    @media (max-width: 767px) {
+      // Transiciones más rápidas en móviles
+      transition-duration: 0.2s;
+      
+      // Mejora la respuesta táctil
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    
     &:hover {
       transform: translateX(5px);
       box-shadow: vars.$box-shadow-md;
+      
+      @media (max-width: 767px) {
+        // Efecto más sutil en móviles
+        transform: translateX(3px);
+      }
     }
     
     .list-img {

@@ -17,6 +17,33 @@
     @include mix.flex(row, center, flex-start, 0.75rem);
     flex-wrap: wrap;
     margin-bottom: 1rem;
+    
+    // Optimizaciones para móviles
+    @media (max-width: 767px) {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0 1rem;
+      margin: 0 -1rem 1rem -1rem;
+      
+      // Mejoras para scroll suave horizontal
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      scroll-behavior: smooth;
+      scroll-snap-type: x proximity;
+      
+      // Oculta la scrollbar pero mantiene la funcionalidad
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      
+      // Optimizaciones de rendimiento
+      will-change: scroll-position;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
   }
   
   .filter-chip {
@@ -30,6 +57,10 @@
     transition: all 0.2s ease;
     box-shadow: vars.$box-shadow-sm;
     
+    // Optimizaciones de rendimiento
+    will-change: background-color, box-shadow;
+    backface-visibility: hidden;
+    
     // Animación individual para cada chip (sin transform para evitar conflictos con z-index)
     opacity: 0;
     animation: chipFadeIn 1.5s ease forwards;
@@ -38,6 +69,20 @@
       &:nth-child(#{$i}) {
         animation-delay: #{0.6 + $i * 0.05}s;
       }
+    }
+    
+    // Optimizaciones específicas para móviles
+    @media (max-width: 767px) {
+      flex-shrink: 0;
+      white-space: nowrap;
+      scroll-snap-align: center;
+      
+      // Transiciones más rápidas en móviles
+      transition-duration: 0.15s;
+      
+      // Mejora la respuesta táctil
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     
     &:hover {

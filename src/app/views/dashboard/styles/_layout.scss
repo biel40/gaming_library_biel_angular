@@ -10,9 +10,24 @@
   box-sizing: border-box;
   position: relative;
   
+  // Optimizaciones básicas de rendimiento
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  
   // Animación inicial para el dashboard
   opacity: 0;
   animation: fadeIn 1.8s ease forwards;
+  
+  // Mejoras específicas para móviles
+  @media (max-width: 767px) {
+    // Optimiza el scroll en móviles
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    contain: layout style paint;
+    
+    // Reduce la duración de animaciones en móviles para mejor rendimiento
+    animation-duration: 1.2s;
+  }
 }
 
 // Animación para el header

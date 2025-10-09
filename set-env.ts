@@ -6,7 +6,6 @@ config();
 const targetPath = './src/app/environments/environment.ts';
 const targetPathProd = './src/app/environments/environment.prod.ts';
 
-// Ensure the directory exists
 mkdirSync('./src/app/environments', { recursive: true });
 
 const envConfigFile = `export const environment = {

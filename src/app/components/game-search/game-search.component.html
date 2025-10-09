@@ -6,14 +6,9 @@
 
   <div class="search-form">
     <div class="search-input">
-      <input 
-        type="text" 
-        [(ngModel)]="searchQuery" 
-        placeholder="Escribe el nombre del juego..." 
-        (keyup.enter)="searchGames()"
-      >
-      <button (click)="searchGames()" [disabled]="isLoading" 
-        title="Buscar juegos con el nombre ingresado">
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Escribe el nombre del juego..."
+        (keyup.enter)="searchGames()">
+      <button (click)="searchGames()" [disabled]="isLoading" title="Buscar juegos con el nombre ingresado">
         <span class="material-icons">search</span>
       </button>
     </div>
@@ -38,7 +33,8 @@
     <h4>Resultados de búsqueda</h4>
     <div class="results-grid">
       @for (game of searchResults; track game.id) {
-      <div class="game-card" [class.selected]="selectedGame?.id === game.id" (click)="selectGame(game)">
+      <button type="button" class="game-card" [class.selected]="selectedGame?.id === game.id" (click)="selectGame(game)"
+        (keydown.enter)="selectGame(game)">
         <div class="game-image">
           <img [src]="game.background_image" [alt]="game.name">
         </div>
@@ -53,24 +49,19 @@
             }
           </div>
           <div class="game-actions">
-            <button 
-              class="save-btn" 
-              (click)="saveGameToLibrary(game, $event)"
-              [disabled]="isSavingGame(game.id)"
-              [class.saving]="isSavingGame(game.id)"
-              title="Añadir este juego a tu biblioteca personal"
-            >
+            <button class="save-btn" (click)="saveGameToLibrary(game, $event)" [disabled]="isSavingGame(game.id)"
+              [class.saving]="isSavingGame(game.id)" title="Añadir este juego a tu biblioteca personal">
               @if (isSavingGame(game.id)) {
-                <span class="material-icons loading">hourglass_empty</span>
-                <span>Guardando...</span>
+              <span class="material-icons loading">hourglass_empty</span>
+              <span>Guardando...</span>
               } @else {
-                <span class="material-icons">library_add</span>
-                <span>Guardar en biblioteca</span>
+              <span class="material-icons">library_add</span>
+              <span>Guardar en biblioteca</span>
               }
             </button>
           </div>
         </div>
-      </div>
+      </button>
       }
     </div>
   </div>
@@ -80,8 +71,7 @@
   <div class="selected-game">
     <div class="selected-header">
       <h4>Juego Seleccionado</h4>
-      <button class="clear-btn" (click)="clearSelection()" 
-        title="Limpiar la selección actual">
+      <button class="clear-btn" (click)="clearSelection()" title="Limpiar la selección actual">
         <span class="material-icons">close</span>
       </button>
     </div>
@@ -116,4 +106,4 @@
     </div>
   </div>
   }
-</div> 
+</div>
