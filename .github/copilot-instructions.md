@@ -2,13 +2,14 @@
 
 ## Project Architecture
 
-This is a **standalone Angular 19** gaming library application using **signals**, **Supabase**, and a **modular SCSS architecture**. Key architectural patterns:
+This is a **standalone Angular 19** gaming library application using **signals**, **Supabase**, and a **modular SCSS architecture**.
 
 ### Signal-Based State Management
 - All components use Angular signals (`signal()`, `computed()`) instead of traditional observables
 - State updates via `.set()` and `.update()` methods
 - Computed properties for derived state: `readonly userDisplayName = computed(() => { ... })`
 - No Zone.js dependency - uses `provideExperimentalZonelessChangeDetection()`
+- Try to avoid comments - code should be self-explanatory where possible.
 
 ### Standalone Components Pattern
 Every component is standalone with explicit imports:
