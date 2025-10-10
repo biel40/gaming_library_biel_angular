@@ -32,6 +32,13 @@
                 <span class="material-icons favorite-icon">{{favoriteIcon()}}</span>
               </button>
             </div>
+            <div class="currently-playing-container" [class.is-playing]="game()?.currently_playing">
+              <button type="button" class="currently-playing-button" (click)="toggleCurrentlyPlaying()"
+                [attr.aria-label]="currentlyPlayingTitle()" [attr.title]="currentlyPlayingTitle()" [disabled]="isReadOnlyUser()"
+                [class.disabled]="isReadOnlyUser()">
+                <span class="material-icons currently-playing-icon">{{currentlyPlayingIcon()}}</span>
+              </button>
+            </div>
             <div class="platinum-container" [class.is-platinum]="game()?.platinum">
               <button type="button" class="platinum-button" (click)="togglePlatinum()"
                 [attr.aria-label]="platinumTitle()" [attr.title]="platinumTitle()" [disabled]="isReadOnlyUser()"
@@ -121,6 +128,65 @@
                 <span class="platinum-date">({{ game()?.platinum_date | date: 'dd/MM/yyyy' }})</span>
                 }
               </span>
+            </div>
+            }
+          </div>
+        </div>
+
+        <div class="game-section">
+          <div class="section-header">
+            <h2>Progreso del Juego</h2>
+            @if (!isReadOnlyUser() && !isEditingHours()) {
+            <button class="edit-btn" (click)="startEditingHours()" title="Editar horas jugadas">
+              <span class="material-icons">edit</span>
+            </button>
+            }
+          </div>
+          
+          <div class="progress-details">
+            @if (game()?.currently_playing) {
+            <div class="detail-item currently-playing-detail">
+              <span class="detail-label">Estado:</span>
+              <span class="detail-value currently-playing-badge">
+                <span class="material-icons">play_arrow</span>
+                Jugando actualmente
+              </span>
+            </div>
+            }
+            
+            <div class="detail-item hours-detail">
+              <span class="detail-label">Horas jugadas:</span>
+              @if (!isEditingHours()) {
+              <span class="detail-value hours-value">
+                {{ formatHours(game()?.hours_played || 0) }}
+              </span>
+              } @else {
+              <div class="hours-edit-container">
+                <input type="number" 
+                       min="0" 
+                       step="0.5"
+                       [ngModel]="hoursPlayed()"
+                       (ngModelChange)="updateHoursValue($event)"
+                       class="hours-input"
+                       placeholder="0">
+                <div class="hours-actions">
+                  <button class="save-btn" (click)="saveHours()" title="Guardar horas">
+                    <span class="material-icons">check</span>
+                  </button>
+                  <button class="cancel-btn" (click)="cancelEditingHours()" title="Cancelar">
+                    <span class="material-icons">close</span>
+                  </button>
+                </div>
+              </div>
+              }
+            </div>
+            
+            @if (game()?.currently_playing) {
+            <div class="currently-playing-actions">
+              <a routerLink="/currently-playing" class="view-all-btn">
+                <span class="material-icons">list</span>
+                Ver todos los juegos en progreso
+              </a>
             </div>
             }
           </div>

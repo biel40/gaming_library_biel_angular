@@ -6,6 +6,7 @@ import { LoginComponent } from "./views/auth/login/login.component";
 import { ProfileComponent } from "./views/profile/profile.component";
 import { ResetPasswordComponent } from "./views/auth/reset-password/reset-password.component";
 import { PlatinumTrophiesComponent } from "./views/platinum-trophies/platinum-trophies.component";
+import { CurrentlyPlayingComponent } from "./views/currently-playing/currently-playing.component";
 import { authGuard } from "./guards/auth.guard";
 
 export const routes: Routes = [
@@ -17,4 +18,5 @@ export const routes: Routes = [
     { path: 'add-game', component: AddGameComponent, canActivate: [authGuard] },
     { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
     { path: 'platinum-trophies', component: PlatinumTrophiesComponent, canActivate: [authGuard] },
+    { path: 'currently-playing', component: CurrentlyPlayingComponent, canActivate: [authGuard] },
 ];

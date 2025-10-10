@@ -26,6 +26,8 @@ export class GameDetailComponent implements OnInit {
   private _isEditingDescription = signal<boolean>(false);
   private _isEditingReview = signal<boolean>(false);
   private _isReadOnlyUser = signal<boolean>(false);
+  private _hoursPlayed: WritableSignal<number> = signal<number>(0);
+  private _isEditingHours = signal<boolean>(false);
 
   // Computed signals
   readonly game = computed(() => this._game());
@@ -41,6 +43,10 @@ export class GameDetailComponent implements OnInit {
   readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos');
   readonly platinumIcon = computed(() => this._game()?.platinum ? 'emoji_events' : 'emoji_events');
   readonly platinumTitle = computed(() => this._game()?.platinum ? 'Quitar Platino' : 'Marcar como Platino');
+  readonly hoursPlayed = computed(() => this._hoursPlayed());
+  readonly isEditingHours = computed(() => this._isEditingHours());
+  readonly currentlyPlayingIcon = computed(() => this._game()?.currently_playing ? 'pause' : 'play_arrow');
+  readonly currentlyPlayingTitle = computed(() => this._game()?.currently_playing ? 'Dejar de jugar' : 'Jugando actualmente');
 
   constructor(
     private route: ActivatedRoute,
@@ -84,6 +90,7 @@ export class GameDetailComponent implements OnInit {
         this._score.set(game.score || 0);
         this._review.set(game.review || '');
         this._description.set(game.description || '');
+        this._hoursPlayed.set(game.hours_played || 0);
       }
 
       if (!this._game()) {
@@ -401,6 +408,114 @@ export class GameDetailComponent implements OnInit {
       this._error.set('Error al actualizar el estado de Platineado');
       this.notificationService.error('Error al actualizar el Platineado');
       console.error(err);
+    }
+  }
+
+  /**
+   * Toggle the currently playing status of the current game
+   */
+  public async toggleCurrentlyPlaying(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar juegos en modo solo lectura');
+      return;
+    }
+
+    const currentGame = this._game();
+    
+    if (!currentGame || !currentGame.id) return;
+
+    try {
+      const newStatus = !currentGame.currently_playing;
+      await this.supabaseService.updateGameCurrentlyPlaying(currentGame.id, newStatus);
+
+      // Update local state
+      this._game.set({
+        ...currentGame,
+        currently_playing: newStatus
+      });
+
+      // Show notification
+      const message = newStatus
+        ? `${currentGame.name} añadido a juegos en progreso`
+        : `${currentGame.name} eliminado de juegos en progreso`;
+      this.notificationService.success(message);
+
+    } catch (err) {
+      console.error('Error toggling currently playing status:', err);
+      this.notificationService.error('Error al actualizar el estado del juego');
+    }
+  }
+
+  /**
+   * Start editing the hours played
+   */
+  public startEditingHours(): void {
+    if (this._isReadOnlyUser()) return;
+    this._isEditingHours.set(true);
+  }
+
+  /**
+   * Cancel editing the hours played
+   */
+  public cancelEditingHours(): void {
+    const currentGame = this._game();
+    if (currentGame) {
+      this._hoursPlayed.set(currentGame.hours_played || 0);
+    }
+    this._isEditingHours.set(false);
+  }
+
+  /**
+   * Save the updated hours played
+   */
+  public async saveHours(): Promise<void> {
+    if (this._isReadOnlyUser()) return;
+
+    const currentGame = this._game();
+    const newHours = this._hoursPlayed();
+    
+    if (!currentGame || !currentGame.id) return;
+
+    if (newHours < 0) {
+      this.notificationService.error('Las horas no pueden ser negativas');
+      return;
+    }
+
+    try {
+      await this.supabaseService.updateGameHoursPlayed(currentGame.id, newHours);
+
+      // Update local state
+      this._game.set({
+        ...currentGame,
+        hours_played: newHours
+      });
+
+      this.notificationService.success('Horas actualizadas correctamente');
+      this._isEditingHours.set(false);
+
+    } catch (err) {
+      console.error('Error updating hours played:', err);
+      this.notificationService.error('Error al actualizar las horas jugadas');
+    }
+  }
+
+  /**
+   * Update hours value from input
+   */
+  public updateHoursValue(value: number): void {
+    this._hoursPlayed.set(value);
+  }
+
+  /**
+   * Format hours for display
+   */
+  public formatHours(hours: number): string {
+    if (hours < 1) {
+      return '< 1h';
+    } else if (hours === 1) {
+      return '1 hora';
+    } else {
+      return `${hours} horas`;
     }
   }
 }

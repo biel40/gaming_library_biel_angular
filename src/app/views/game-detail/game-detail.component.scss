@@ -902,6 +902,56 @@
       }
 
       .platinum-icon {
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+    }
+  }
+
+  .currently-playing-container {
+    margin-left: 1rem;
+
+    &.is-playing {
+      .currently-playing-button {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        border-color: #4CAF50;
+        color: white;
+
+        .currently-playing-icon {
+          color: white;
+          transform: scale(1.1);
+        }
+
+        &:hover {
+          background: linear-gradient(135deg, #45a049, #3d8b40);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+      }
+    }
+
+    .currently-playing-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      border-radius: 30px;
+      padding: 0.5rem 1rem;
+      color: rgba(76, 175, 80, 0.8);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: rgba(76, 175, 80, 0.1);
+        color: #4CAF50;
+        border-color: #4CAF50;
+        transform: translateY(-2px);
+      }
+
+      .platinum-icon {
         transition: all 0.3s ease;
       }
     }
@@ -967,6 +1017,128 @@ textarea:disabled {
   cursor: not-allowed;
   background-color: #f5f5f5;
   color: #666;
+}
+
+// Progress Section Styles
+.progress-details {
+  .currently-playing-detail {
+    .currently-playing-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+
+      .material-icons {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .hours-detail {
+    .hours-value {
+      font-weight: 600;
+      color: #3498db;
+      font-size: 1.1rem;
+    }
+
+    .hours-edit-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .hours-input {
+        width: 120px;
+        padding: 0.5rem 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #3498db;
+          box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+      }
+
+      .hours-actions {
+        display: flex;
+        gap: 0.5rem;
+
+        .save-btn, .cancel-btn {
+          padding: 0.5rem;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 36px;
+          height: 36px;
+
+          .material-icons {
+            font-size: 1.1rem;
+          }
+        }
+
+        .save-btn {
+          background: #4CAF50;
+          color: white;
+
+          &:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+          }
+        }
+
+        .cancel-btn {
+          background: #f44336;
+          color: white;
+
+          &:hover {
+            background: #d32f2f;
+            transform: translateY(-1px);
+          }
+        }
+      }
+    }
+  }
+
+  .currently-playing-actions {
+    margin-top: 1.5rem;
+    text-align: center;
+
+    .view-all-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #3498db, #2980b9);
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 25px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+        background: linear-gradient(135deg, #2980b9, #1f6391);
+      }
+
+      .material-icons {
+        font-size: 1.1rem;
+      }
+    }
+  }
 }
 
 // Animation for description edit mode

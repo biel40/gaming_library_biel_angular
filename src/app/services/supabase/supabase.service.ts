@@ -32,6 +32,8 @@ export interface Videogame {
   platinum?: boolean
   platinum_date?: Date
   platinum_target?: boolean
+  currently_playing?: boolean
+  hours_played?: number
 }
 
 @Injectable({
@@ -208,7 +210,9 @@ export class SupabaseService {
       image_url: item.image_url,
       platform: item.platform,
       favorite: this.isFavorite(item.id),
-      platinum_target: item.platinum_target || false
+      platinum_target: item.platinum_target || false,
+      currently_playing: item.currently_playing || false,
+      hours_played: item.hours_played || 0
     }));
 
     this._videogames.set(videogames);
@@ -237,7 +241,9 @@ export class SupabaseService {
       platform: data.platform,
       score: data.score,
       review: data.review,
-      platinum_target: data.platinum_target || false
+      platinum_target: data.platinum_target || false,
+      currently_playing: data.currently_playing || false,
+      hours_played: data.hours_played || 0
     };
 
     // Check if game is favorite
@@ -307,6 +313,95 @@ export class SupabaseService {
     if (error) {
       throw error;
     }
+  }
+
+  /**
+   * Update the currently playing status for a specific game
+   * @param gameId The ID of the game to update
+   * @param currentlyPlaying The new currently playing status
+   */
+  public async updateGameCurrentlyPlaying(gameId: string, currentlyPlaying: boolean): Promise<void> {
+    const { error } = await this._supabaseClient
+      .from('videogames')
+      .update({ currently_playing: currentlyPlaying })
+      .eq('id', gameId);
+
+    if (error) {
+      throw error;
+    }
+
+    // Update the local state
+    const currentGames = this._videogames();
+    const updatedGames = currentGames.map(game =>
+      game.id === gameId
+        ? { ...game, currently_playing: currentlyPlaying }
+        : game
+    );
+    this._videogames.set(updatedGames);
+  }
+
+  /**
+   * Update the hours played for a specific game
+   * @param gameId The ID of the game to update
+   * @param hoursPlayed The new hours played value
+   */
+  public async updateGameHoursPlayed(gameId: string, hoursPlayed: number): Promise<void> {
+    const { error } = await this._supabaseClient
+      .from('videogames')
+      .update({ hours_played: hoursPlayed })
+      .eq('id', gameId);
+
+    if (error) {
+      throw error;
+    }
+
+    // Update the local state
+    const currentGames = this._videogames();
+    const updatedGames = currentGames.map(game =>
+      game.id === gameId
+        ? { ...game, hours_played: hoursPlayed }
+        : game
+    );
+    this._videogames.set(updatedGames);
+  }
+
+  /**
+   * Get all games that are currently being played
+   * @returns Promise<Videogame[]> - Array of games currently being played
+   */
+  public async getCurrentlyPlayingGames(): Promise<Videogame[]> {
+    const { data, error } = await this._supabaseClient
+      .from('videogames')
+      .select()
+      .eq('currently_playing', true)
+      .order('hours_played', { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data) {
+      return [];
+    }
+
+    // Map the data to Videogame model
+    const games: Videogame[] = data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      genre: item.genre,
+      releaseDate: new Date(item.release_date),
+      image_url: item.image_url,
+      platform: item.platform,
+      favorite: this.isFavorite(item.id),
+      platinum_target: item.platinum_target || false,
+      currently_playing: item.currently_playing || false,
+      hours_played: item.hours_played || 0,
+      score: item.score,
+      review: item.review
+    }));
+
+    return games;
   }
 
   /**
