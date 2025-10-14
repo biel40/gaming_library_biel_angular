@@ -23,8 +23,9 @@
       flex-wrap: nowrap;
       overflow-x: auto;
       overflow-y: hidden;
-      padding: 0 1rem;
-      margin: 0 -1rem 1rem -1rem;
+      padding: 0.5rem 0.5rem 0.5rem 0;
+      margin: 0 0 1rem 0;
+      gap: 0.5rem;
       
       // Mejoras para scroll suave horizontal
       -webkit-overflow-scrolling: touch;
@@ -56,6 +57,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: vars.$box-shadow-sm;
+    border: 1px solid transparent;
     
     // Optimizaciones de rendimiento
     will-change: background-color, box-shadow;
@@ -75,7 +77,9 @@
     @media (max-width: 767px) {
       flex-shrink: 0;
       white-space: nowrap;
-      scroll-snap-align: center;
+      scroll-snap-align: start;
+      padding: 0.5rem 0.875rem;
+      font-size: 0.85rem;
       
       // Transiciones más rápidas en móviles
       transition-duration: 0.15s;
@@ -87,12 +91,14 @@
     
     &:hover {
       background: color.scale(vars.$bg-light, $lightness: -5%);
+      border-color: vars.$primary-color;
     }
     
     &.active {
       background: linear-gradient(90deg, vars.$primary-color, vars.$primary-dark);
       color: vars.$white;
       box-shadow: vars.$box-shadow-md;
+      border-color: vars.$primary-dark;
     }
   }
 }

@@ -37,6 +37,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public isAuthenticated = signal(false);
     public currentUser = signal<User | null>(null);
     public showUserMenu = signal(false);
+    public showMobileMenu = signal(false);
     public games = signal<Videogame[]>([]);
     public searchTerm = signal('');
     public activeGenre = signal('All');
@@ -78,6 +79,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public closeUserMenu() {
         this.showUserMenu.set(false);
+    }
+
+    public toggleMobileMenu() {
+        this.showMobileMenu.set(!this.showMobileMenu());
+        if (this.showMobileMenu()) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+
+    public closeMobileMenu() {
+        this.showMobileMenu.set(false);
+        document.body.style.overflow = '';
+    }
+
+    public navigateAndCloseMenu(path: string) {
+        this.closeMobileMenu();
+        this._router.navigate([path]);
     }
 
     public toggleSelectMode() {
@@ -216,6 +236,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!target.closest('.user-menu') && !target.closest('.user-avatar')) {
                 this.showUserMenu.set(false);
             }
+            if (!target.closest('.mobile-menu') && !target.closest('.hamburger-btn')) {
+                this.showMobileMenu.set(false);
+            }
         });
     }
 
@@ -263,6 +286,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         window.removeEventListener('resize', this._resizeListener);
+        document.body.style.overflow = '';
 
         if (this._favoriteSubscription) {
             this._favoriteSubscription.unsubscribe();

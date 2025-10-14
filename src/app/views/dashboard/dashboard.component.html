@@ -14,23 +14,35 @@
                     (ngModelChange)="searchTerm.set($event)">
                 <span class="material-icons">search</span>
             </div>
-            <button class="add-game-btn" routerLink="/add-game" title="Añadir un nuevo juego a tu biblioteca">
-                <span class="material-icons">add</span>
-                Añadir Juego
+
+            <!-- Hamburger button for mobile -->
+            <button class="hamburger-btn" (click)="toggleMobileMenu()" [class.active]="showMobileMenu()" 
+                    title="Menú de navegación">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
             </button>
-            <button class="currently-playing-btn" routerLink="/currently-playing" title="Ver juegos que estás jugando actualmente">
-                <span class="material-icons">play_arrow</span>
-                Jugando actualmente
-            </button>
-            <button class="platinum-btn" routerLink="/platinum-trophies" title="Ver todos tus trofeos de platino obtenidos">
-                <span class="material-icons">emoji_events</span>
-              Platinos
-            </button>
-            <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()" 
-                    [attr.title]="selectMode() ? 'Cancelar selección múltiple' : 'Activar modo de selección múltiple para eliminar varios juegos'">
-                <span class="material-icons">{{ selectMode() ? 'close' : 'check_box' }}</span>
-                {{ selectMode() ? 'Cancelar' : 'Selección múltiple' }}
-            </button>
+
+            <!-- Desktop buttons (hidden on mobile) -->
+            <div class="desktop-actions">
+                <button class="add-game-btn" routerLink="/add-game" title="Añadir un nuevo juego a tu biblioteca">
+                    <span class="material-icons">add</span>
+                    Añadir Juego
+                </button>
+                <button class="currently-playing-btn" routerLink="/currently-playing" title="Ver juegos que estás jugando actualmente">
+                    <span class="material-icons">play_arrow</span>
+                    Jugando actualmente
+                </button>
+                <button class="platinum-btn" routerLink="/platinum-trophies" title="Ver todos tus trofeos de platino obtenidos">
+                    <span class="material-icons">emoji_events</span>
+                    Platinos
+                </button>
+                <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()" 
+                        [attr.title]="selectMode() ? 'Cancelar selección múltiple' : 'Activar modo de selección múltiple para eliminar varios juegos'">
+                    <span class="material-icons">{{ selectMode() ? 'close' : 'check_box' }}</span>
+                    {{ selectMode() ? 'Cancelar' : 'Selección múltiple' }}
+                </button>
+            </div>
         </div>
 
         <div class="user-avatar" (click)="toggleUserMenu()" (keydown)="toggleUserMenu()">
@@ -50,6 +62,45 @@
             </div>
         </div>
     </header>
+
+    <!-- Mobile menu overlay -->
+    @if (showMobileMenu()) {
+    <button class="mobile-menu-overlay" (click)="closeMobileMenu()" aria-label="Cerrar menú"></button>
+    <nav class="mobile-menu" [class.show]="showMobileMenu()">
+        <div class="mobile-menu-header">
+            <h3>Menú</h3>
+            <button class="close-menu-btn" (click)="closeMobileMenu()" title="Cerrar menú">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <ul class="mobile-menu-list">
+            <li>
+                <button class="mobile-menu-item" (click)="navigateAndCloseMenu('/add-game')">
+                    <span class="material-icons">add</span>
+                    <span>Añadir Juego</span>
+                </button>
+            </li>
+            <li>
+                <button class="mobile-menu-item" (click)="navigateAndCloseMenu('/currently-playing')">
+                    <span class="material-icons">play_arrow</span>
+                    <span>Jugando actualmente</span>
+                </button>
+            </li>
+            <li>
+                <button class="mobile-menu-item" (click)="navigateAndCloseMenu('/platinum-trophies')">
+                    <span class="material-icons">emoji_events</span>
+                    <span>Platinos</span>
+                </button>
+            </li>
+            <li>
+                <button class="mobile-menu-item" [class.active]="selectMode()" (click)="toggleSelectMode(); closeMobileMenu()">
+                    <span class="material-icons">{{ selectMode() ? 'close' : 'check_box' }}</span>
+                    <span>{{ selectMode() ? 'Cancelar selección' : 'Selección múltiple' }}</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+    }
 
     @if (isLoading()) {
     <div class="loading-state">

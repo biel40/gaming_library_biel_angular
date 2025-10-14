@@ -30,15 +30,12 @@
   }
 }
 
-// Animación para el header
 .dashboard-header {
-  @include mix.flex(column, flex-start, flex-start, 0.75rem);
-  margin-bottom: 1.25rem;
+  @include mix.flex(column, flex-start, flex-start, 2rem);
+  margin-bottom: 2rem;
   width: 100%;
   position: relative;
   z-index: 100;
-  
-  // Animación slide-in desde arriba
   opacity: 0;
   transform: translateY(-20px);
   animation: slideInDown 1.6s ease forwards;
@@ -50,6 +47,7 @@
     @include mix.gradient-text(linear-gradient(90deg, vars.$accent-color, vars.$accent-light));
     text-shadow: 0 2px 4px rgba(255, 87, 34, 0.1);
     @include mix.truncate;
+    padding-right: 4rem;
   }
 
   .header-actions {
@@ -61,6 +59,7 @@
     .search-bar {
       position: relative;
       min-width: 250px;
+      flex: 1;
       
       input {
         width: 100%;
@@ -103,16 +102,69 @@
   }
   
   @media (max-width: 767px) {
-    width: 100%;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+    
+    h1 {
+      font-size: 1.35rem;
+      padding-right: 4.5rem;
+      width: 100%;
+    }
     
     .header-actions {
-      justify-content: center;
-      margin-top: 0.5rem;
+      @include mix.flex(row, center, space-between, 0.5rem);
+      width: 100%;
+      margin-top: 0;
+      
+      .search-bar {
+        flex: 1;
+        min-width: 0;
+        max-width: calc(100% - 50px);
+        
+        input {
+          width: 100%;
+          padding: 0.7rem 0.875rem 0.7rem 2.5rem;
+          font-size: 0.9rem;
+        }
+        
+        .material-icons {
+          font-size: 1.1rem;
+          left: 0.7rem;
+        }
+      }
     }
     
     .user-avatar {
-      top: 0.5rem;
-      right: 0.5rem;
+      top: 0;
+      right: 0;
+      z-index: 101;
+    }
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.875rem;
+    
+    h1 {
+      font-size: 1.25rem;
+      padding-right: 4rem;
+    }
+    
+    .header-actions {
+      gap: 0.5rem;
+      
+      .search-bar {
+        max-width: calc(100% - 48px);
+        
+        input {
+          padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+          font-size: 0.875rem;
+        }
+        
+        .material-icons {
+          font-size: 1rem;
+          left: 0.625rem;
+        }
+      }
     }
   }
 }

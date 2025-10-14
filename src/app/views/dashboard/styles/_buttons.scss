@@ -61,22 +61,14 @@
 }
 
 .select-btn {
-  @include mix.flex(row, center, center, 0.5rem);
+  @include mix.button-base;
   background: linear-gradient(90deg, vars.$primary-color, vars.$primary-dark);
-  color: vars.$white;
-  border: none;
-  border-radius: vars.$border-radius-md;
-  padding: 0.75rem 1.25rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
   margin-left: 0.5rem;
-  box-shadow: vars.$box-shadow-sm;
   
   &:hover {
-    box-shadow: vars.$box-shadow-md;
+    background: linear-gradient(90deg, vars.$primary-dark, vars.$primary-color);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
   }
   
   &.active {
@@ -88,6 +80,6 @@
   }
   
   .material-icons {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
   }
 }

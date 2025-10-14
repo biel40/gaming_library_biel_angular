@@ -27,7 +27,7 @@
 // Button mixins
 @mixin button-base {
   @include flex;
-  padding: 0.75rem 1.25rem;
+  padding: 1rem 1.25rem;
   color: vars.$white;
   border: none;
   border-radius: vars.$border-radius-md;

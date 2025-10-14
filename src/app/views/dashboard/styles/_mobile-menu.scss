@@ -1,0 +1,293 @@
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  min-width: 44px;
+  min-height: 44px;
+  position: relative;
+  z-index: 1001;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  border-radius: vars.$border-radius-sm;
+
+  .hamburger-line {
+    width: 24px;
+    height: 2.5px;
+    background: vars.$accent-color;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+  }
+
+  &.active {
+    .hamburger-line:nth-child(1) {
+      transform: translateY(7.5px) rotate(45deg);
+    }
+
+    .hamburger-line:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+
+    .hamburger-line:nth-child(3) {
+      transform: translateY(-7.5px) rotate(-45deg);
+    }
+  }
+
+  &:hover {
+    background: rgba(255, 87, 34, 0.08);
+    
+    .hamburger-line {
+      background: vars.$accent-light;
+    }
+  }
+
+  &:active {
+    background: rgba(255, 87, 34, 0.15);
+  }
+
+  @media (max-width: 767px) {
+    display: flex;
+  }
+  
+  @media (max-width: 480px) {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0.375rem;
+    
+    .hamburger-line {
+      width: 22px;
+      height: 2px;
+    }
+  }
+}
+
+.desktop-actions {
+  @include mix.flex(row, center, flex-start, 0.5rem);
+  flex-wrap: wrap;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  @media (max-width: 767px) {
+    display: block;
+  }
+}
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 300px;
+  height: 100vh;
+  background: linear-gradient(180deg, #2c2c2c 0%, #1a1a1a 100%);
+  box-shadow: -4px 0 30px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  border-left: 2px solid vars.$accent-color;
+
+  &.show {
+    right: 0;
+  }
+
+  @media (max-width: 767px) {
+    display: block;
+  }
+
+  @media (max-width: 480px) {
+    width: 280px;
+  }
+}
+
+.mobile-menu-header {
+  @include mix.flex(row, center, space-between);
+  padding: 1.5rem 1.25rem;
+  background: linear-gradient(135deg, vars.$accent-color 0%, #d84315 100%);
+  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+  position: relative;
+  
+  // Decorative element
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, vars.$accent-light, transparent);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: vars.$white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0.5px;
+  }
+
+  .close-menu-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    padding: 0.5rem;
+    color: vars.$white;
+    transition: all 0.3s ease;
+    border-radius: vars.$border-radius-sm;
+    backdrop-filter: blur(10px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(90deg) scale(1.1);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    &:active {
+      transform: rotate(90deg) scale(0.95);
+    }
+
+    .material-icons {
+      font-size: 1.5rem;
+      display: block;
+    }
+  }
+}
+
+.mobile-menu-list {
+  list-style: none;
+  padding: 1.5rem 0;
+  margin: 0;
+
+  li {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 1.5rem;
+      right: 1.5rem;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    }
+  }
+}
+
+.mobile-menu-item {
+  @include mix.flex(row, center, flex-start, 1rem);
+  width: 100%;
+  padding: 1.25rem 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #e0e0e0;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+  border-left: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
+  
+  // Gradient hover effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 87, 34, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .material-icons {
+    font-size: 1.4rem;
+    color: vars.$accent-light;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(255, 87, 34, 0.3));
+    z-index: 1;
+  }
+
+  span:not(.material-icons) {
+    flex: 1;
+    z-index: 1;
+  }
+
+  &:hover {
+    background: linear-gradient(90deg, rgba(255, 87, 34, 0.15), rgba(255, 87, 34, 0.05));
+    border-left-color: vars.$accent-color;
+    padding-left: 1.75rem;
+    color: vars.$white;
+    
+    &::before {
+      left: 100%;
+    }
+
+    .material-icons {
+      color: vars.$accent-color;
+      transform: scale(1.15) rotate(5deg);
+      filter: drop-shadow(0 2px 8px rgba(255, 87, 34, 0.5));
+    }
+  }
+
+  &:active {
+    background: rgba(255, 87, 34, 0.2);
+    transform: scale(0.98);
+  }
+
+  &.active {
+    background: linear-gradient(90deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.1));
+    border-left-color: vars.$error-color;
+    color: vars.$white;
+
+    .material-icons {
+      color: vars.$error-color;
+      filter: drop-shadow(0 2px 8px rgba(244, 67, 54, 0.5));
+    }
+
+    &:hover {
+      background: linear-gradient(90deg, rgba(244, 67, 54, 0.25), rgba(244, 67, 54, 0.15));
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
