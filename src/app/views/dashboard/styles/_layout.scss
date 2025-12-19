@@ -13,10 +13,11 @@
   // Optimizaciones básicas de rendimiento
   transform: translateZ(0);
   backface-visibility: hidden;
+  contain: layout style;
   
-  // Animación inicial para el dashboard
+  // Animación inicial para el dashboard - MÁS RÁPIDA
   opacity: 0;
-  animation: fadeIn 1.8s ease forwards;
+  animation: fadeIn 0.4s ease-out forwards;
   
   // Mejoras específicas para móviles
   @media (max-width: 767px) {
@@ -26,7 +27,7 @@
     contain: layout style paint;
     
     // Reduce la duración de animaciones en móviles para mejor rendimiento
-    animation-duration: 1.2s;
+    animation-duration: 0.3s;
   }
 }
 
@@ -38,7 +39,7 @@
   z-index: 100;
   opacity: 0;
   transform: translateY(-20px);
-  animation: slideInDown 1.6s ease forwards;
+  animation: slideInDown 0.35s ease-out forwards;
   
   h1 {
     margin: 0;
@@ -216,30 +217,30 @@
   }
 }
 
-// Animaciones para las secciones
+// Animaciones para las secciones - OPTIMIZADAS PARA CARGA RÁPIDA
 .favorites,
 .all-games {
   opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 1.8s ease forwards;
+  transform: translateY(15px);
+  animation: fadeInUp 0.35s ease-out forwards;
   
   .section-header {
     opacity: 0;
-    transform: translateX(-20px);
-    animation: slideInLeft 1.6s ease forwards;
-    animation-delay: 0.2s;
+    transform: translateX(-15px);
+    animation: slideInLeft 0.3s ease-out forwards;
+    animation-delay: 0.05s;
   }
 }
 
 .favorites {
-  animation-delay: 0.3s;
+  animation-delay: 0.1s;
 }
 
 .all-games {
-  animation-delay: 0.5s;
+  animation-delay: 0.15s;
 }
 
-// Keyframes para las animaciones
+// Keyframes para las animaciones - OPTIMIZADAS
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -252,32 +253,32 @@
 @keyframes slideInDown {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translate3d(0, -15px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes slideInLeft {
   from {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translate3d(-15px, 0, 0);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translate3d(0, 15px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }

@@ -7,11 +7,10 @@
   
   // Mejora el rendimiento del scroll en dispositivos táctiles
   overscroll-behavior: contain;
-  scroll-behavior: smooth;
   
-  // Optimizaciones de rendimiento
-  will-change: scroll-position;
-  transform: translateZ(0); // Fuerza la aceleración por hardware
+  // Optimizaciones de rendimiento - MEJORADAS
+  transform: translateZ(0);
+  will-change: auto; // Cambio: auto es más eficiente que scroll-position
   
   // Específico para dispositivos táctiles
   @media (pointer: coarse) {
@@ -26,12 +25,11 @@
   }
 }
 
-// Optimizaciones para elementos que se mueven durante el scroll
+// Optimizaciones para elementos que se mueven durante el scroll - MEJORADAS
 .game-grid,
 .game-list,
 .favorites-grid {
   // Mejora el rendimiento durante el scroll
-  will-change: transform;
   transform: translateZ(0);
   
   // Reduce el repintado de elementos
@@ -45,41 +43,35 @@
     // Mejora la fluidez en la animación de los elementos
     .game-card-wrapper,
     .list-item {
-      will-change: transform;
       transform: translateZ(0);
       backface-visibility: hidden;
-      perspective: 1000px;
     }
   }
 }
 
-// Optimizaciones para las transiciones en móviles
+// Optimizaciones para las transiciones en móviles - MÁS RÁPIDAS
 @media (max-width: 767px) {
   .dashboard {
     // Reduce la complejidad de las animaciones en móviles
     .dashboard-header {
-      animation-duration: 0.8s; // Reduce la duración
-      will-change: transform, opacity;
+      animation-duration: 0.25s;
     }
     
     .favorites,
     .all-games {
-      animation-duration: 0.6s; // Más rápido en móviles
-      will-change: transform, opacity;
+      animation-duration: 0.25s;
     }
     
-    // Optimiza las transiciones de los botones
+    // Optimiza las transiciones de los botones - MÁS RESPONSIVAS
     button,
     .filter-chip,
     .view-btn {
-      transition-duration: 0.15s; // Transiciones más rápidas
-      will-change: transform, background-color;
+      transition-duration: 0.1s;
       transform: translateZ(0);
     }
     
     // Mejora el rendimiento de los filtros
     .filter-chips {
-      will-change: scroll-position;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-x: contain;
       
