@@ -36,10 +36,11 @@
     min-width: 250px;
     width: 100%;
     height: 500px;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 16px;
-    background: white;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     overflow: hidden;
     transition: all 0.4s ease-out;
     margin: 0 auto;
@@ -49,16 +50,16 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    box-sizing: border-box; // Asegura que el padding no afecte el ancho
+    box-sizing: border-box;
 
     @media (max-width: 767px) {
-        max-width: 320px; // Mantiene el límite máximo también en móviles
+        max-width: 320px;
         margin: 0 auto;
         height: 480px;
     }
-    
+
     @media (max-width: 480px) {
-        max-width: 300px; // Ancho máximo para móviles muy pequeños
+        max-width: 300px;
     }
 
     &.select-mode {
@@ -74,8 +75,8 @@
         position: absolute;
         top: 12px;
         right: 12px;
-        background: rgba(255, 255, 255, 0.9);
-        border: none;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 50%;
         width: 36px;
         height: 36px;
@@ -85,20 +86,20 @@
         cursor: pointer;
         z-index: 10;
         transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(5px);
 
         &:hover:not(.disabled) {
             transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+            background: rgba(255, 215, 0, 0.2);
+            border-color: rgba(255, 215, 0, 0.5);
         }
 
         .material-icons {
             font-size: 22px;
-            background: linear-gradient(90deg, #3498db, #2980b9);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.2));
+            color: #ffd700;
+            filter: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.3));
         }
     }
 
@@ -106,8 +107,8 @@
         position: absolute;
         top: 12px;
         right: 56px;
-        background: rgba(255, 255, 255, 0.9);
-        border: none;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 50%;
         width: 36px;
         height: 36px;
@@ -117,7 +118,8 @@
         cursor: pointer;
         z-index: 10;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(5px);
 
         &:hover:not(.disabled) {
             transform: scale(1.1);
@@ -127,6 +129,7 @@
         &.active {
             background: linear-gradient(135deg, #ffd700, #ffed4e);
             box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+            border-color: #ffd700;
 
             .material-icons {
                 color: #1a1a2e;
@@ -182,26 +185,26 @@
             border-color: rgba(255, 215, 0, 0.6);
         }
 
-        // Mejora el contraste del texto sobre la imagen
         .card-body {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
+            background: rgba(30, 30, 45, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
             
             .card-title {
-                color: #1a1a2e;
+                color: #ffd700;
                 font-weight: 600;
-                text-shadow: none;
+                text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
             }
             
             .card-description {
-                color: #2c3e50;
+                color: rgba(255, 255, 255, 0.9);
             }
             
             .card-info {
                 .card-genre,
                 .card-platform,
                 .card-release-date {
-                    color: #34495e;
+                    color: rgba(255, 255, 255, 0.75);
                 }
             }
         }
@@ -282,31 +285,35 @@
     flex-direction: column;
     max-width: 100%;
     box-sizing: border-box;
-    overflow: hidden; // Previene que el contenido se desborde
+    overflow: hidden;
+    background: rgba(20, 20, 30, 0.85);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 
     .card-title {
         margin: 0 0 12px;
         font-size: 1.5rem;
         font-weight: 600;
-        color: #2c3e50;
+        color: #ffffff;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         line-height: 1.2;
         flex-shrink: 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 280px; // Ancho máximo específico para prevenir desbordamiento
+        max-width: 280px;
         width: 100%;
         display: block;
         
         @media (max-width: 767px) {
-            max-width: 100%; // En móviles usa el 100% del contenedor
-            font-size: 1.3rem; // Reduce ligeramente el tamaño en móviles
+            max-width: 100%;
+            font-size: 1.3rem;
         }
     }
 
     .card-description {
         font-size: 0.95rem;
-        color: #5f6368;
+        color: rgba(255, 255, 255, 0.85);
         margin-bottom: 16px;
         line-height: 1.5;
         height: 4.5rem;
@@ -346,7 +353,7 @@
         .card-platform,
         .card-release-date {
             font-size: 0.9rem;
-            color: #666;
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 8px;
             display: flex;
             align-items: center;

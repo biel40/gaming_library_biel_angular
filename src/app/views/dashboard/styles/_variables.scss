@@ -1,26 +1,55 @@
 @use 'sass:color';
 
-// Color variables
+// Dark theme background colors
+$bg-primary: #1a1a2e;
+$bg-secondary: #16213e;
+$bg-card: rgba(255, 255, 255, 0.1);
+$bg-card-hover: rgba(255, 255, 255, 0.15);
+
+// Accent colors
 $primary-color: #3498db;
 $primary-dark: #2980b9;
 $accent-color: #ff5722;
 $accent-light: #ff8a65;
+$accent-gold: #ffd700;
+$accent-gold-light: #ffed4e;
 $error-color: #f44336;
 $error-dark: #d32f2f;
-$text-dark: #2c3e50;
-$text-medium: #555;
-$text-light: #757575;
-$bg-light: #f5f5f5;
-$border-color: #e0e0e0;
-$white: #fff;
+$success-color: #4caf50;
 
-// Shadow variables
-$box-shadow-sm: 0 3px 10px rgba(0, 0, 0, 0.05);
-$box-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.1);
-$box-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+// Text colors (dark theme - light text on dark background)
+$text-dark: #ffffff;
+$text-medium: rgba(255, 255, 255, 0.9);
+$text-light: rgba(255, 255, 255, 0.7);
+$text-muted: rgba(255, 255, 255, 0.5);
+
+// Background and border colors
+$bg-light: rgba(255, 255, 255, 0.1);
+$border-color: rgba(255, 255, 255, 0.1);
+$white: #ffffff;
+
+// Transparency helpers
+$white-5: rgba(255, 255, 255, 0.05);
+$white-10: rgba(255, 255, 255, 0.1);
+$white-20: rgba(255, 255, 255, 0.2);
+$white-30: rgba(255, 255, 255, 0.3);
+$gold-10: rgba(255, 215, 0, 0.1);
+$gold-30: rgba(255, 215, 0, 0.3);
+
+// Shadow variables (stronger for dark theme)
+$box-shadow-sm: 0 3px 10px rgba(0, 0, 0, 0.3);
+$box-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+$box-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+$box-shadow-glow-gold: 0 4px 12px rgba(255, 215, 0, 0.4);
 
 // Border radius variables
 $border-radius-sm: 4px;
 $border-radius-md: 8px;
 $border-radius-lg: 10px;
 $border-radius-xl: 50px;
+
+// Gradients
+$gradient-bg: linear-gradient(135deg, $bg-primary 0%, $bg-secondary 100%);
+$gradient-gold: linear-gradient(135deg, $accent-gold, $accent-gold-light);
+$gradient-blue: linear-gradient(135deg, $primary-color, $primary-dark);
+$gradient-orange: linear-gradient(135deg, $accent-color, $accent-light);

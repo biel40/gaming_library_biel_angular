@@ -90,15 +90,16 @@
     }
     
     &:hover {
-      background: color.scale(vars.$bg-light, $lightness: -5%);
-      border-color: vars.$primary-color;
+      background: vars.$white-20;
+      border-color: vars.$accent-gold;
     }
-    
+
     &.active {
-      background: linear-gradient(90deg, vars.$primary-color, vars.$primary-dark);
-      color: vars.$white;
-      box-shadow: vars.$box-shadow-md;
-      border-color: vars.$primary-dark;
+      background: vars.$gradient-gold;
+      color: vars.$bg-primary;
+      box-shadow: vars.$box-shadow-glow-gold;
+      border-color: vars.$accent-gold;
+      font-weight: 600;
     }
   }
 }

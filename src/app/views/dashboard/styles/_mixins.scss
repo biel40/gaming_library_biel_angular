@@ -64,6 +64,6 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-  @include gradient-text(linear-gradient(90deg, vars.$primary-color, vars.$primary-dark));
+  @include gradient-text(linear-gradient(90deg, vars.$accent-gold, vars.$accent-gold-light));
   letter-spacing: 0.5px;
 }

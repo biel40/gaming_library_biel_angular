@@ -4,9 +4,9 @@
 // Loading state
 .loading-state {
   @include mix.state-base;
-  
+
   .material-icons {
-    color: vars.$primary-color;
+    color: vars.$accent-gold;
     animation: spin 1.5s linear infinite;
   }
 }
@@ -64,46 +64,49 @@
   right: 20px;
   padding: 1rem 1.5rem;
   border-radius: vars.$border-radius-md;
-  background-color: vars.$white;
+  background-color: vars.$bg-primary;
   color: vars.$text-dark;
   box-shadow: vars.$box-shadow-lg;
+  border: 1px solid vars.$border-color;
+  backdrop-filter: blur(10px);
   z-index: 1000;
   @include mix.flex(row, center, flex-start, 0.75rem);
   max-width: 350px;
   animation: slideInRight 0.3s ease, fadeOut 0.3s ease 4.7s;
-  
+
   &.success {
-    border-left: 4px solid #4caf50;
-    
+    border-left: 4px solid vars.$success-color;
+
     .material-icons {
-      color: #4caf50;
+      color: vars.$success-color;
     }
   }
-  
+
   &.error {
     border-left: 4px solid vars.$error-color;
-    
+
     .material-icons {
       color: vars.$error-color;
     }
   }
-  
+
   .notification-content {
     flex: 1;
-    
+
     h4 {
       margin: 0 0 0.25rem;
       font-size: 1rem;
       font-weight: 600;
+      color: vars.$white;
     }
-    
+
     p {
       margin: 0;
       font-size: 0.9rem;
       color: vars.$text-light;
     }
   }
-  
+
   .close-btn {
     background: none;
     border: none;
@@ -112,9 +115,9 @@
     padding: 0;
     font-size: 1.2rem;
     transition: all 0.2s ease;
-    
+
     &:hover {
-      color: vars.$text-dark;
+      color: vars.$white;
     }
   }
 }

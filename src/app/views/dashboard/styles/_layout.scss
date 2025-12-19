@@ -64,21 +64,21 @@
       input {
         width: 100%;
         padding: 0.75rem 1rem 0.75rem 2.5rem;
-        border: 1px solid vars.$bg-light;
+        border: 1px solid vars.$border-color;
         border-radius: vars.$border-radius-md;
         font-size: 0.95rem;
         transition: all 0.2s ease;
-        background-color: vars.$white;
+        background-color: vars.$white-10;
         color: vars.$text-dark;
-        
+
         &:focus {
           outline: none;
-          border-color: vars.$primary-color;
-          box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+          border-color: vars.$accent-gold;
+          box-shadow: 0 0 0 2px vars.$gold-10;
         }
-        
+
         &::placeholder {
-          color: vars.$text-light;
+          color: vars.$text-muted;
         }
       }
       
@@ -201,16 +201,16 @@
   cursor: pointer;
   color: vars.$text-light;
   transition: all 0.2s ease;
-  
+
   &:hover {
-    background: vars.$bg-light;
+    background: vars.$white-20;
   }
-  
+
   &.active {
-    color: vars.$primary-color;
-    background: rgba(52, 152, 219, 0.1);
+    color: vars.$accent-gold;
+    background: vars.$gold-10;
   }
-  
+
   .material-icons {
     font-size: 1.2rem;
   }

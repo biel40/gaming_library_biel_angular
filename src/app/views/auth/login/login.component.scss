@@ -9,10 +9,12 @@
 .login-card {
   width: 100%;
   max-width: 450px;
-  background: white;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
   border-radius: 10px;
   padding: 30px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   position: relative;
 
@@ -23,7 +25,7 @@
     left: 0;
     width: 100%;
     height: 5px;
-    background: linear-gradient(90deg, #3498db, #2980b9);
+    background: linear-gradient(90deg, #ffd700, #ffed4e);
   }
 }
 
@@ -35,16 +37,16 @@
     font-size: 2rem;
     margin-bottom: 10px;
     font-weight: 700;
-    background: linear-gradient(90deg, #ff5722, #ff8a65);
+    background: linear-gradient(90deg, #ffd700, #ffed4e);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 2px 4px rgba(255, 87, 34, 0.1);
+    text-shadow: 0 2px 4px rgba(255, 215, 0, 0.1);
   }
 
   p {
-    color: #555;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 1rem;
   }
 }
@@ -59,7 +61,7 @@
   label {
     display: block;
     margin-bottom: 8px;
-    color: #2c3e50;
+    color: #ffffff;
     font-size: 0.9rem;
     font-weight: 500;
   }
@@ -67,18 +69,18 @@
   input {
     width: 100%;
     padding: 12px 15px;
-    background: #f5f5f5;
-    border: 1px solid #e0e0e0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    color: #2c3e50;
+    color: #ffffff;
     font-size: 1rem;
     transition: all 0.3s ease;
     outline: none;
 
     &:focus {
-      border-color: #3498db;
-      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
-      background: white;
+      border-color: #ffd700;
+      box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+      background: rgba(255, 255, 255, 0.1);
     }
 
     &.invalid {
@@ -86,7 +88,7 @@
     }
 
     &::placeholder {
-      color: #999;
+      color: rgba(255, 255, 255, 0.5);
     }
   }
 }
@@ -100,10 +102,10 @@
 .submit-btn {
   width: 100%;
   padding: 14px;
-  background: #ff5722;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
   border: none;
   border-radius: 8px;
-  color: white;
+  color: #1a1a2e;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -111,9 +113,8 @@
   margin-top: 10px;
 
   &:hover {
-    background: #f4511e;
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 87, 34, 0.3);
   }
 
   &:disabled {
@@ -127,7 +128,7 @@
 .error-container {
   margin: 15px 0;
   padding: 10px;
-  background: rgba(231, 76, 60, 0.1);
+  background: rgba(231, 76, 60, 0.2);
   border-left: 3px solid #e74c3c;
   border-radius: 4px;
 
@@ -141,19 +142,19 @@
 .toggle-container, .forgot-password-container, .back-to-login {
   text-align: center;
   margin-top: 20px;
-  
+
   p {
-    color: #555;
+    color: rgba(255, 255, 255, 0.7);
     font-size: 0.9rem;
-    
+
     a {
-      color: #3498db;
+      color: #ffd700;
       text-decoration: none;
       font-weight: 600;
       transition: color 0.3s ease;
-      
+
       &:hover {
-        color: #2980b9;
+        color: #ffed4e;
         text-decoration: underline;
       }
     }
@@ -164,12 +165,12 @@
   text-align: center;
   margin-top: 20px;
   padding: 12px;
-  background: rgba(255, 193, 7, 0.1);
+  background: rgba(255, 193, 7, 0.2);
   border-left: 3px solid #ffc107;
   border-radius: 4px;
-  
+
   p {
-    color: #856404;
+    color: #ffc107;
     font-size: 0.9rem;
     margin: 0;
     font-style: italic;
@@ -178,15 +179,15 @@
 
 .back-to-login {
   margin-top: 15px;
-  
+
   a {
-    color: #3498db;
+    color: #ffd700;
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s ease;
-    
+
     &:hover {
-      color: #2980b9;
+      color: #ffed4e;
       text-decoration: underline;
     }
   }
@@ -194,7 +195,7 @@
 
 .forgot-password-container {
   margin-top: 10px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding-top: 15px;
 }
 
@@ -203,11 +204,11 @@
   .login-card {
     padding: 20px;
   }
-  
+
   .login-header h1 {
     font-size: 1.75rem;
   }
-  
+
   .submit-btn {
     padding: 12px;
   }
@@ -218,21 +219,9 @@
   position: relative;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
+
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  }
-}
-
-@keyframes holographic {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
   }
 }
