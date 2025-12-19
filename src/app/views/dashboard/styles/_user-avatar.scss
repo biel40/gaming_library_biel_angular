@@ -34,9 +34,9 @@
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
-    background: white;
+    background: vars.$bg-secondary;
     border-radius: vars.$border-radius-md;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
     min-width: 220px;
     padding: 0;
     opacity: 0;
@@ -44,7 +44,7 @@
     transform: translateY(-10px);
     transition: all 0.3s ease;
     z-index: 9999;
-    border: 1px solid vars.$border-color;
+    border: 1px solid vars.$white-20;
     
     &.show {
       opacity: 1;
@@ -62,21 +62,21 @@
       height: 0;
       border-left: 8px solid transparent;
       border-right: 8px solid transparent;
-      border-bottom: 8px solid white;
+      border-bottom: 8px solid vars.$bg-secondary;
     }
     
     .user-info {
       padding: 1rem;
-      border-bottom: 1px solid vars.$border-color;
-      
+      border-bottom: 1px solid vars.$white-10;
+
       .user-name {
         font-weight: 600;
         font-size: 0.95rem;
-        color: vars.$text-dark;
+        color: vars.$white;
         margin-bottom: 0.25rem;
         @include mix.truncate;
       }
-      
+
       .user-email {
         font-size: 0.8rem;
         color: vars.$text-light;
@@ -88,9 +88,9 @@
       margin: 0;
       border: none;
       height: 1px;
-      background: vars.$border-color;
+      background: vars.$white-10;
     }
-    
+
     .menu-item {
       width: 100%;
       padding: 0.75rem 1rem;
@@ -100,22 +100,22 @@
       cursor: pointer;
       @include mix.flex(row, center, flex-start, 0.75rem);
       font-size: 0.9rem;
-      color: vars.$text-dark;
+      color: vars.$white;
       transition: all 0.2s ease;
-      
+
       &:hover {
-        background: vars.$bg-light;
+        background: vars.$white-10;
       }
-      
+
       &:first-of-type {
-        border-top: 1px solid vars.$border-color;
+        border-top: 1px solid vars.$white-10;
       }
-      
+
       &:last-of-type {
         border-bottom-left-radius: vars.$border-radius-md;
         border-bottom-right-radius: vars.$border-radius-md;
       }
-      
+
       .material-icons {
         font-size: 1.1rem;
         color: vars.$text-light;
