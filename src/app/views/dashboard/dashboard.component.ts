@@ -6,6 +6,7 @@ import { RouterLink, Router } from '@angular/router';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
 import { UserService } from '../../services/user/user.service';
+import { GenreNormalizerService } from '../../services/genre-normalizer/genre-normalizer.service';
 import { User } from '@supabase/supabase-js';
 
 @Component({
@@ -29,6 +30,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private _supabaseService: SupabaseService = inject(SupabaseService);
     private _userService: UserService = inject(UserService);
     private _router: Router = inject(Router);
+    private _genreNormalizer: GenreNormalizerService = inject(GenreNormalizerService);
     private _resizeListener: () => void;
     private _favoriteSubscription: Subscription | null = null;
 
@@ -185,13 +187,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return games.filter(game => {
             const gameName = game.name || '';
             const gameDescription = game.description || '';
-            const gameGenre = game.genre || '';
+            const normalizedGenre = this._genreNormalizer.normalizeGenre(game.genre);
 
             const matchesSearch = !searchTerm ||
                 gameName.toLowerCase().includes(searchTerm) ||
                 gameDescription.toLowerCase().includes(searchTerm);
 
-            const matchesGenre = activeGenre === 'All' || gameGenre === activeGenre;
+            const matchesGenre = activeGenre === 'All' || normalizedGenre === activeGenre;
 
             return matchesSearch && matchesGenre;
         });
@@ -203,30 +205,28 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         const searchTerm = this.searchTerm().toLowerCase().trim();
 
         return games.filter(game => {
-            // Handle null/undefined values
             const gameName = game.name || '';
             const gameDescription = game.description || '';
-            const gameGenre = game.genre || '';
+            const normalizedGenre = this._genreNormalizer.normalizeGenre(game.genre);
 
             const matchesSearch = !searchTerm ||
                 gameName.toLowerCase().includes(searchTerm) ||
                 gameDescription.toLowerCase().includes(searchTerm);
 
-            const matchesGenre = activeGenre === 'All' || gameGenre === activeGenre;
+            const matchesGenre = activeGenre === 'All' || normalizedGenre === activeGenre;
 
             return matchesSearch && matchesGenre;
         });
     });
 
     public uniqueGenres = computed(() => {
-        const genres = new Set<string>();
-        this.games().forEach(game => {
-            if (game.genre) {
-                genres.add(game.genre);
-            }
-        });
-        return ['All', ...Array.from(genres).sort()];
+        const genres = this.games().map(game => game.genre);
+        return this._genreNormalizer.getUniqueNormalizedGenres(genres);
     });
+
+    public getNormalizedGenre(genre: string | undefined): string {
+        return this._genreNormalizer.normalizeGenre(genre);
+    }
 
     constructor() {
         this._resizeListener = () => this.calculateItemsPerPage();

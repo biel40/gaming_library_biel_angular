@@ -233,12 +233,14 @@
                     <h3>{{ game.name }}</h3>
                     <p class="list-description">{{ game.description }}</p>
                     <div class="list-meta">
-                        <span>{{ game.genre }}</span>
+                        <span>{{ getNormalizedGenre(game.genre) }}</span>
                         <span>{{ game.platform }}</span>
+                        @if (game.releaseDate) {
                         <span>{{ game.releaseDate | date: 'dd/MM/yyyy' }}</span>
+                        }
                     </div>
                 </div>
-                <button class="list-btn" routerLink="/dashboard">Ver Detalles</button>
+                <button class="list-btn" [routerLink]="['/game', game.id]" title="Ver detalles del juego">Ver Detalles</button>
             </div>
             }
         </div>

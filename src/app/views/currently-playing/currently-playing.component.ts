@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
 import { NotificationService } from '../../services/notification/notification.service';
+import { GenreNormalizerService } from '../../services/genre-normalizer/genre-normalizer.service';
 
 @Component({
   selector: 'app-currently-playing',
@@ -19,6 +20,7 @@ import { NotificationService } from '../../services/notification/notification.se
 export class CurrentlyPlayingComponent implements OnInit {
   private _supabaseService = inject(SupabaseService);
   private _notificationService = inject(NotificationService);
+  private _genreNormalizer = inject(GenreNormalizerService);
 
   private _currentlyPlayingGames = signal<Videogame[]>([]);
   private _loading = signal<boolean>(true);
@@ -57,7 +59,9 @@ export class CurrentlyPlayingComponent implements OnInit {
     
     // Filter by genre
     if (this._activeGenre() !== 'All') {
-      games = games.filter(game => game.genre === this._activeGenre());
+      games = games.filter(game => 
+        this._genreNormalizer.normalizeGenre(game.genre) === this._activeGenre()
+      );
     }
     
     // Filter by platform
@@ -110,10 +114,8 @@ export class CurrentlyPlayingComponent implements OnInit {
   
   // Unique values for filters
   readonly uniqueGenres = computed(() => {
-    const genres = this._currentlyPlayingGames()
-      .map(game => game.genre)
-      .filter(genre => genre && genre.trim() !== '');
-    return ['All', ...Array.from(new Set(genres))];
+    const genres = this._currentlyPlayingGames().map(game => game.genre);
+    return this._genreNormalizer.getUniqueNormalizedGenres(genres);
   });
   
   readonly uniquePlatforms = computed(() => {
