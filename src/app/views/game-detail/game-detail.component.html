@@ -51,7 +51,7 @@
         <div class="game-metadata">
           <span class="game-genre">{{ game()?.genre }}</span>
           <span class="game-platform">{{ game()?.platform }}</span>
-          <span class="game-release">{{ game()?.releaseDate | date: 'dd/MM/yyyy' }}</span>
+          <span class="game-release">{{ game()?.releaseDate | spanishDate:'short' }}</span>
         </div>
       </div>
     </div>
@@ -111,7 +111,7 @@
             @if (game()?.releaseDate) {
             <div class="detail-item">
               <span class="detail-label">Fecha de lanzamiento:</span>
-              <span class="detail-value">{{ game()?.releaseDate | date: 'dd MMMM, yyyy' }}</span>
+              <span class="detail-value">{{ game()?.releaseDate | spanishDate:'long' }}</span>
             </div>
             }
             @if (game()?.platinum) {
@@ -121,7 +121,7 @@
                 <span class="material-icons">emoji_events</span>
                 ¡Platino conseguido!
                 @if (game()?.platinum_date) {
-                <span class="platinum-date">({{ game()?.platinum_date | date: 'dd/MM/yyyy' }})</span>
+                <span class="platinum-date">({{ game()?.platinum_date | spanishDate:'short' }})</span>
                 }
               </span>
             </div>
@@ -142,7 +142,6 @@
           <div class="progress-details">
             @if (game()?.currently_playing) {
             <div class="detail-item currently-playing-detail">
-              <span class="detail-label">Estado:</span>
               <span class="detail-value currently-playing-badge">
                 <span class="material-icons">play_arrow</span>
                 Jugando actualmente

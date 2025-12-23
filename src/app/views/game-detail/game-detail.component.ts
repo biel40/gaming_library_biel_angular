@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
 import { NotificationService } from '../../services/notification/notification.service';
+import { SpanishDatePipe } from '../../pipes/spanish-date.pipe';
 
 @Component({
   selector: 'app-game-detail',
@@ -13,7 +14,8 @@ import { NotificationService } from '../../services/notification/notification.se
   imports: [
     CommonModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    SpanishDatePipe
   ]
 })
 export class GameDetailComponent implements OnInit {
@@ -390,7 +392,7 @@ export class GameDetailComponent implements OnInit {
     }
 
     const currentGame = this._game();
-    
+
     if (!currentGame || !currentGame.id) return;
 
     try {
@@ -421,7 +423,7 @@ export class GameDetailComponent implements OnInit {
     }
 
     const currentGame = this._game();
-    
+
     if (!currentGame || !currentGame.id) return;
 
     try {
@@ -473,7 +475,7 @@ export class GameDetailComponent implements OnInit {
 
     const currentGame = this._game();
     const newHours = this._hoursPlayed();
-    
+
     if (!currentGame || !currentGame.id) return;
 
     if (newHours < 0) {
