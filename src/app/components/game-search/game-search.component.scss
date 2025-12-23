@@ -36,15 +36,31 @@
         background: rgba(255, 255, 255, 0.05);
         color: #e0e0e0;
         font-size: 1rem;
-        transition: border-color 0.2s;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(4px);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 87, 34, 0.5);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+          transform: translateY(-1px);
+        }
 
         &:focus {
           outline: none;
+          background: rgba(255, 255, 255, 0.1);
           border-color: #ff5722;
+          box-shadow: 0 4px 15px rgba(255, 87, 34, 0.2);
+          transform: translateY(-1px);
         }
 
         &::placeholder {
           color: rgba(255, 255, 255, 0.5);
+          transition: color 0.3s ease;
+        }
+
+        &:focus::placeholder {
+          color: rgba(255, 255, 255, 0.7);
         }
       }
 

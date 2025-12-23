@@ -153,7 +153,11 @@ export class PlatinumTrophiesComponent implements OnInit, OnDestroy {
     document.body.style.overflow = '';
   }
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.initializePlatinumTrophies();
+  }
+
+  private async initializePlatinumTrophies() {
     try {
       this.isLoading.set(true);
       this.error.set(null);

@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
 import { GameSearchComponent } from '../../components/game-search/game-search.component';
+import { NotificationService } from '../../services/notification/notification.service';
 
 @Component({
   selector: 'app-add-game',
@@ -17,9 +18,13 @@ import { GameSearchComponent } from '../../components/game-search/game-search.co
     RouterLink
   ]
 })
-export class AddGameComponent {
+export class AddGameComponent implements OnInit {
   private _supabaseService = inject(SupabaseService);
   private _router = inject(Router);
+  private _notificationService = inject(NotificationService);
+
+  private _isReadOnlyUser = signal<boolean>(false);
+  public readonly isReadOnlyUser = computed(() => this._isReadOnlyUser());
 
   public game: Partial<Videogame> = {
     name: '',
@@ -35,6 +40,19 @@ export class AddGameComponent {
   public useSearch = true;
   public showManualForm = false;
 
+  ngOnInit() {
+    this.checkReadOnlyStatus();
+  }
+
+  private async checkReadOnlyStatus() {
+    try {
+      const isReadOnly = await this._supabaseService.isReadOnlyUser();
+      this._isReadOnlyUser.set(isReadOnly);
+    } catch (err) {
+      this._isReadOnlyUser.set(false);
+    }
+  }
+
   public onGameSelected(gameData: Partial<Videogame>) {
     this.game = { ...this.game, ...gameData };
   }
@@ -44,6 +62,11 @@ export class AddGameComponent {
   }
 
   public async onSubmit() {
+    if (this._isReadOnlyUser()) {
+      this._notificationService.error('No tienes permisos para añadir juegos');
+      return;
+    }
+
     try {
       this.isLoading = true;
       this.error = null;

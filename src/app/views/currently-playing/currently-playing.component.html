@@ -1,289 +1,300 @@
 <div class="currently-playing-container">
     <!-- Back Navigation Arrow -->
-    <div class="back-navigation">
-        <a routerLink="/dashboard" class="back-arrow-btn" title="Volver al Dashboard">
-            <span class="material-icons">arrow_back</span>
-        </a>
-    </div>
+    <a routerLink="/dashboard" class="back-arrow-btn" title="Volver al Dashboard">
+        <span class="material-icons">arrow_back</span>
+    </a>
 
-    <div class="header">
+    <!-- Header Section -->
+    <header class="header">
         <div class="title-section">
             <h1 class="page-title">
-                <span class="icon">⚡</span>
                 Jugando actualmente
             </h1>
-            <p class="page-subtitle">
-                Gestiona los juegos que estás jugando en este momento y lleva un registro de tus horas de juego
-            </p>
-        </div>
-
-        <div class="stats-section" *ngIf="hasGames()">
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <span class="stat-icon">🎮</span>
-                    <div class="stat-info">
-                        <span class="stat-number">{{ filteredGames().length }}</span>
-                        <span class="stat-label">mostrando</span>
-                    </div>
-                </div>
-                <div class="stat-divider">•</div>
-                <div class="stat-item">
+            @if (hasGames()) {
+            <div class="stats-pills">
+                <span class="stat-pill">
+                    <span class="stat-value">{{ filteredGames().length }}</span>
+                    <span class="stat-label">juegos</span>
+                </span>
+                <span class="stat-pill highlight">
                     <span class="stat-icon">⏱️</span>
-                    <div class="stat-info">
-                        <span class="stat-number">{{ totalHours() }}h</span>
-                        <span class="stat-label">jugadas</span>
-                    </div>
-                </div>
+                    <span class="stat-value">{{ totalHours() }}h</span>
+                    <span class="stat-label">jugadas</span>
+                </span>
             </div>
+            }
         </div>
 
-        <div class="header-actions">
-            <button class="refresh-btn" (click)="refreshGames()" [disabled]="loading()">
-                <span class="material-icons" [class.spinning]="loading()">refresh</span>
-                Actualizar
-            </button>
-
-            <a routerLink="/dashboard" class="back-to-dashboard-btn">
-                <span class="material-icons">dashboard</span>
-                Ir al Dashboard
-            </a>
-        </div>
-    </div>
+        <button class="refresh-btn" (click)="refreshGames()" [disabled]="loading()">
+            <span class="material-icons" [class.spinning]="loading()">refresh</span>
+            <span class="btn-text">Actualizar</span>
+        </button>
+    </header>
 
     <!-- Filters Section -->
-    <div *ngIf="!loading() && !error() && hasGames()" class="filters-section">
-        <div class="search-filter">
-            <div class="search-bar">
-                <input type="text" 
-                       placeholder="Buscar juegos..." 
-                       [ngModel]="searchTerm()"
-                       (ngModelChange)="updateSearchTerm($event)">
-                <span class="material-icons">search</span>
-            </div>
+    @if (!loading() && !error() && hasGames()) {
+    <section class="filters-section">
+        <div class="search-bar">
+            <span class="material-icons search-icon">search</span>
+            <input type="text" placeholder="Buscar juegos..." [ngModel]="searchTerm()"
+                (ngModelChange)="updateSearchTerm($event)">
+            @if (searchTerm()) {
+            <button class="clear-search" (click)="updateSearchTerm('')">
+                <span class="material-icons">close</span>
+            </button>
+            }
         </div>
 
-        <div class="filter-chips">
+        <div class="filter-groups">
+            <!-- Genre Filter -->
             <div class="filter-group">
-                <span class="filter-label">Género:</span>
-                <div class="chips-container">
-                    <button *ngFor="let genre of uniqueGenres()" 
-                            type="button" 
-                            class="filter-chip" 
-                            [class.active]="activeGenre() === genre" 
-                            (click)="filterByGenre(genre || 'All')">
+                <span class="filter-label">Género</span>
+                <div class="chips-scroll">
+                    @for (genre of uniqueGenres(); track genre) {
+                    <button type="button" class="filter-chip" [class.active]="activeGenre() === genre"
+                        (click)="filterByGenre(genre || 'All')">
                         {{ genre }}
                     </button>
+                    }
                 </div>
             </div>
 
-            <div class="filter-group" *ngIf="uniquePlatforms().length > 2">
-                <span class="filter-label">Plataforma:</span>
-                <div class="chips-container">
-                    <button *ngFor="let platform of uniquePlatforms()" 
-                            type="button" 
-                            class="filter-chip" 
-                            [class.active]="activePlatform() === platform" 
-                            (click)="filterByPlatform(platform || 'All')">
+            <!-- Platform Filter -->
+            @if (uniquePlatforms().length > 2) {
+            <div class="filter-group">
+                <span class="filter-label">Plataforma</span>
+                <div class="chips-scroll">
+                    @for (platform of uniquePlatforms(); track platform) {
+                    <button type="button" class="filter-chip" [class.active]="activePlatform() === platform"
+                        (click)="filterByPlatform(platform || 'All')">
                         {{ platform }}
                     </button>
+                    }
                 </div>
             </div>
-
-            <button *ngIf="getActiveFiltersCount() > 0" 
-                    class="reset-filters-btn" 
-                    (click)="resetFilters()">
-                <span class="material-icons">clear</span>
-                Limpiar filtros
-            </button>
+            }
         </div>
-    </div>
+
+        @if (getActiveFiltersCount() > 0) {
+        <button class="reset-filters-btn" (click)="resetFilters()">
+            <span class="material-icons">filter_alt_off</span>
+            Limpiar filtros ({{ getActiveFiltersCount() }})
+        </button>
+        }
+    </section>
+    }
 
     <!-- Loading State -->
-    <div *ngIf="loading()" class="loading-container">
+    @if (loading()) {
+    <div class="state-container loading">
         <div class="loading-spinner"></div>
         <p>Cargando juegos en progreso...</p>
     </div>
+    }
 
     <!-- Error State -->
-    <div *ngIf="error() && !loading()" class="error-container">
-        <div class="error-icon">⚠️</div>
+    @if (error() && !loading()) {
+    <div class="state-container error">
+        <span class="state-icon">⚠️</span>
         <h3>Error al cargar los datos</h3>
         <p>{{ error() }}</p>
-        <button class="retry-btn" (click)="refreshGames()">Reintentar</button>
+        <button class="action-btn" (click)="refreshGames()">
+            <span class="material-icons">refresh</span>
+            Reintentar
+        </button>
     </div>
+    }
 
-    <!-- Empty State -->
-    <div *ngIf="!loading() && !error() && !hasGames()" class="empty-state">
-        <div class="empty-icon">🎯</div>
+    <!-- Empty State - No games -->
+    @if (!loading() && !error() && !hasGames()) {
+    <div class="state-container empty">
+        <span class="state-icon">🎯</span>
         <h3>No hay juegos en progreso</h3>
         <p>Cuando marques un juego como "jugando actualmente" desde el detalle del juego, aparecerá aquí.</p>
-        <a routerLink="/dashboard" class="cta-button">
+        <a routerLink="/dashboard" class="action-btn primary">
+            <span class="material-icons">sports_esports</span>
             Ir a mi biblioteca
         </a>
     </div>
+    }
 
-    <!-- No filtered results state -->
-    <div *ngIf="!loading() && !error() && hasGames() && !hasFilteredGames()" class="empty-state">
-        <div class="empty-icon">🔍</div>
-        <h3>No se encontraron juegos</h3>
+    <!-- Empty State - No filtered results -->
+    @if (!loading() && !error() && hasGames() && !hasFilteredGames()) {
+    <div class="state-container empty">
+        <span class="state-icon">🔍</span>
+        <h3>Sin resultados</h3>
         <p>No hay juegos que coincidan con los filtros aplicados.</p>
-        <button class="cta-button" (click)="resetFilters()">
-            <span class="material-icons">clear</span>
+        <button class="action-btn" (click)="resetFilters()">
+            <span class="material-icons">filter_alt_off</span>
             Limpiar filtros
         </button>
     </div>
+    }
 
-    <!-- Games Grid -->
-    <div *ngIf="!loading() && !error() && hasFilteredGames()" class="games-container">
-        <!-- Single platform view (when only one platform or filtered to one) -->
-        <div *ngIf="!hasMultiplePlatforms()" class="games-grid">
-            <div *ngFor="let game of filteredGames()" class="game-item">
-                <!-- Game Image -->
-                <div class="game-image-container">
-                    <img [src]="game.image_url" [alt]="game.name" class="game-image"
+    <!-- Games Content -->
+    @if (!loading() && !error() && hasFilteredGames()) {
+    <main class="games-content">
+        <!-- Single platform view -->
+        @if (!hasMultiplePlatforms()) {
+        <div class="games-grid">
+            @for (game of filteredGames(); track game.id) {
+            <article class="game-card">
+                <div class="card-image">
+                    <img [src]="game.image_url" [alt]="game.name"
                         onerror="this.src='/assets/images/placeholder-game.png'">
-                    <div class="game-overlay">
-                        <button class="view-details-btn" [routerLink]="['/game', game.id]">
-                            <span class="material-icons">visibility</span>
-                            Ver
-                        </button>
-                    </div>
+                    <a class="quick-view" [routerLink]="['/game', game.id]">
+                        <span class="material-icons">visibility</span>
+                    </a>
                 </div>
 
-                <!-- Game Info -->
-                <div class="game-info">
-                    <h3 class="game-title">{{ game.name }}</h3>
-                    <div class="game-meta">
-                        <span class="genre" *ngIf="game.genre">{{ game.genre }}</span>
-                        <span class="platform" *ngIf="game.platform">{{ game.platform }}</span>
+                <div class="card-body">
+                    <h3 class="game-name">{{ game.name }}</h3>
+
+                    <div class="game-tags">
+                        @if (game.genre) {
+                        <span class="tag genre">{{ game.genre }}</span>
+                        }
+                        @if (game.platform) {
+                        <span class="tag platform">{{ game.platform }}</span>
+                        }
                     </div>
 
-                    <!-- Hours Played Section -->
-                    <div class="hours-section">
-                        <div class="hours-display" *ngIf="editingHours() !== game.id">
-                            <span class="hours-label">Horas jugadas:</span>
-                            <span class="hours-value">{{ formatHours(game.hours_played || 0) }}</span>
-                            <button *ngIf="!isReadOnlyUser()" class="edit-hours-btn"
-                                (click)="startEditingHours(game.id!, game.hours_played || 0)">
+                    <!-- Hours Section -->
+                    <div class="hours-tracker">
+                        @if (editingHours() !== game.id) {
+                        <div class="hours-display">
+                            <span class="hours-icon">⏱️</span>
+                            <span class="hours-text">
+                                <span class="hours-value">{{ formatHours(game.hours_played || 0) }}</span>
+                            </span>
+                            @if (!isReadOnlyUser()) {
+                            <button class="edit-btn" (click)="startEditingHours(game.id!, game.hours_played || 0)">
                                 <span class="material-icons">edit</span>
                             </button>
+                            }
                         </div>
-
-                        <div class="hours-edit" *ngIf="editingHours() === game.id">
-                            <label for="hours-input-{{ game.id }}">Horas jugadas:</label>
-                            <div class="hours-input-group">
-                                <input type="number" id="hours-input-{{ game.id }}" min="0" step="0.5"
-                                    [ngModel]="tempHours()" (ngModelChange)="updateTempHours($event)" class="hours-input">
-                                <div class="hours-actions">
-                                    <button class="save-btn" (click)="saveHours(game)">
-                                        <span class="material-icons">check</span>
-                                    </button>
-                                    <button class="cancel-btn" (click)="cancelEditingHours()">
-                                        <span class="material-icons">close</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="game-actions">
-                        <button *ngIf="!isReadOnlyUser()" class="stop-playing-btn" (click)="toggleCurrentlyPlaying(game)"
-                            title="Dejar de jugar">
-                            <span class="material-icons">stop</span>
-                            Pausar
-                        </button>
-
-                        <button class="view-detail-btn" [routerLink]="['/game', game.id]">
-                            <span class="material-icons">info</span>
-                            Ver
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Multiple platforms view (grouped by platform) -->
-        <div *ngIf="hasMultiplePlatforms()" class="platforms-container">
-            <div *ngFor="let platformGroup of gamesByPlatform()" class="platform-section">
-                <div class="platform-header">
-                    <div class="platform-info">
-                        <span class="platform-icon">{{ getPlatformIcon(platformGroup.platform) }}</span>
-                        <h3 class="platform-name">{{ platformGroup.platform }}</h3>
-                        <div class="platform-stats">
-                            <span class="platform-count">{{ platformGroup.games.length }} juego{{ platformGroup.games.length !== 1 ? 's' : '' }}</span>
-                            <span class="platform-divider">•</span>
-                            <span class="platform-hours">{{ formatHours(getPlatformHours(platformGroup.platform)) }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="games-grid platform-games">
-                    <div *ngFor="let game of platformGroup.games" class="game-item">
-                        <!-- Game Image -->
-                        <div class="game-image-container">
-                            <img [src]="game.image_url" [alt]="game.name" class="game-image"
-                                onerror="this.src='/assets/images/placeholder-game.png'">
-                            <div class="game-overlay">
-                                <button class="view-details-btn" [routerLink]="['/game', game.id]">
-                                    <span class="material-icons">visibility</span>
-                                    Ver detalles
+                        } @else {
+                        <div class="hours-edit">
+                            <input type="number" [id]="'hours-' + game.id" min="0" step="0.5" [ngModel]="tempHours()"
+                                (ngModelChange)="updateTempHours($event)" placeholder="Horas">
+                            <div class="edit-actions">
+                                <button class="save-btn" (click)="saveHours(game)">
+                                    <span class="material-icons">check</span>
+                                </button>
+                                <button class="cancel-btn" (click)="cancelEditingHours()">
+                                    <span class="material-icons">close</span>
                                 </button>
                             </div>
                         </div>
+                        }
+                    </div>
 
-                        <!-- Game Info -->
-                        <div class="game-info">
-                            <h3 class="game-title">{{ game.name }}</h3>
-                            <div class="game-meta">
-                                <span class="genre" *ngIf="game.genre">{{ game.genre }}</span>
+                    <!-- Actions -->
+                    <div class="card-actions">
+                        @if (!isReadOnlyUser()) {
+                        <button class="btn-pause" (click)="toggleCurrentlyPlaying(game)">
+                            <span class="material-icons">pause</span>
+                            Pausar
+                        </button>
+                        }
+                        <a class="btn-view" [routerLink]="['/game', game.id]">
+                            <span class="material-icons">info</span>
+                            Detalles
+                        </a>
+                    </div>
+                </div>
+            </article>
+            }
+        </div>
+        } @else {
+        <!-- Multiple platforms view -->
+        <div class="platforms-list">
+            @for (platformGroup of gamesByPlatform(); track platformGroup.platform) {
+            <section class="platform-group" [ngClass]="getPlatformClass(platformGroup.platform)">
+                <header class="platform-header">
+                    <img [src]="getPlatformIcon(platformGroup.platform)" [alt]="platformGroup.platform" class="platform-icon" [title]="platformGroup.platform">
+                    <h2 class="platform-name">{{ platformGroup.platform }}</h2>
+                    <div class="platform-meta">
+                        <span class="count">{{ platformGroup.games.length }} juego{{ platformGroup.games.length !== 1 ?
+                            's' : '' }}</span>
+                        <span class="divider">•</span>
+                        <span class="hours">{{ formatHours(getPlatformHours(platformGroup.platform)) }}</span>
+                    </div>
+                </header>
+
+                <div class="games-grid">
+                    @for (game of platformGroup.games; track game.id) {
+                    <article class="game-card">
+                        <div class="card-image">
+                            <img [src]="game.image_url" [alt]="game.name"
+                                onerror="this.src='/assets/images/placeholder-game.png'">
+                            <a class="quick-view" [routerLink]="['/game', game.id]">
+                                <span class="material-icons">visibility</span>
+                            </a>
+                        </div>
+
+                        <div class="card-body">
+                            <h3 class="game-name">{{ game.name }}</h3>
+
+                            <div class="game-tags">
+                                @if (game.genre) {
+                                <span class="tag genre">{{ game.genre }}</span>
+                                }
                             </div>
 
-                            <!-- Hours Played Section -->
-                            <div class="hours-section">
-                                <div class="hours-display" *ngIf="editingHours() !== game.id">
-                                    <span class="hours-label">Horas jugadas:</span>
-                                    <span class="hours-value">{{ formatHours(game.hours_played || 0) }}</span>
-                                    <button *ngIf="!isReadOnlyUser()" class="edit-hours-btn"
+                            <!-- Hours Section -->
+                            <div class="hours-tracker">
+                                @if (editingHours() !== game.id) {
+                                <div class="hours-display">
+                                    <span class="hours-icon">⏱️</span>
+                                    <span class="hours-text">
+                                        <span class="hours-value">{{ formatHours(game.hours_played || 0) }}</span>
+                                    </span>
+                                    @if (!isReadOnlyUser()) {
+                                    <button class="edit-btn"
                                         (click)="startEditingHours(game.id!, game.hours_played || 0)">
                                         <span class="material-icons">edit</span>
                                     </button>
+                                    }
                                 </div>
-
-                                <div class="hours-edit" *ngIf="editingHours() === game.id">
-                                    <label for="hours-input-{{ game.id }}">Horas jugadas:</label>
-                                    <div class="hours-input-group">
-                                        <input type="number" id="hours-input-{{ game.id }}" min="0" step="0.5"
-                                            [ngModel]="tempHours()" (ngModelChange)="updateTempHours($event)" class="hours-input">
-                                        <div class="hours-actions">
-                                            <button class="save-btn" (click)="saveHours(game)">
-                                                <span class="material-icons">check</span>
-                                            </button>
-                                            <button class="cancel-btn" (click)="cancelEditingHours()">
-                                                <span class="material-icons">close</span>
-                                            </button>
-                                        </div>
+                                } @else {
+                                <div class="hours-edit">
+                                    <input type="number" [id]="'hours-' + game.id" min="0" step="0.5"
+                                        [ngModel]="tempHours()" (ngModelChange)="updateTempHours($event)"
+                                        placeholder="Horas">
+                                    <div class="edit-actions">
+                                        <button class="save-btn" (click)="saveHours(game)">
+                                            <span class="material-icons">check</span>
+                                        </button>
+                                        <button class="cancel-btn" (click)="cancelEditingHours()">
+                                            <span class="material-icons">close</span>
+                                        </button>
                                     </div>
                                 </div>
+                                }
                             </div>
 
-                            <!-- Action Buttons -->
-                            <div class="game-actions">
-                                <button *ngIf="!isReadOnlyUser()" class="stop-playing-btn" (click)="toggleCurrentlyPlaying(game)"
-                                    title="Dejar de jugar">
-                                    <span class="material-icons">stop</span>
-                                   Pausar
+                            <!-- Actions -->
+                            <div class="card-actions">
+                                @if (!isReadOnlyUser()) {
+                                <button class="btn-pause" (click)="toggleCurrentlyPlaying(game)">
+                                    <span class="material-icons">pause</span>
+                                    Pausar
                                 </button>
-
-                                <button class="view-detail-btn" [routerLink]="['/game', game.id]">
+                                }
+                                <a class="btn-view" [routerLink]="['/game', game.id]">
                                     <span class="material-icons">info</span>
-                                    Ver
-                                </button>
+                                    Detalles
+                                </a>
                             </div>
                         </div>
-                    </div>
+                    </article>
+                    }
                 </div>
-            </div>
+            </section>
+            }
         </div>
-    </div>
+        }
+    </main>
+    }
 </div>

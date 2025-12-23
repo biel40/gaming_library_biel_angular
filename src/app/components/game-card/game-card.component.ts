@@ -55,8 +55,8 @@ export class GameCardComponent implements OnInit {
 
   constructor() { }
 
-  async ngOnInit(): Promise<void> {
-    await this.checkReadOnlyUser();
+  ngOnInit(): void {
+    this.checkReadOnlyUser();
   }
 
   private async checkReadOnlyUser(): Promise<void> {

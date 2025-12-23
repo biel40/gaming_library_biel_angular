@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -22,6 +22,9 @@ export class ProfileComponent implements OnInit {
   errorMessage = '';
   userId = '';
 
+  private _isReadOnlyUser = signal<boolean>(false);
+  public readonly isReadOnlyUser = computed(() => this._isReadOnlyUser());
+
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
@@ -39,6 +42,13 @@ export class ProfileComponent implements OnInit {
       return;
     }
     
+    try {
+      const isReadOnly = await this.supabaseService.isReadOnlyUser();
+      this._isReadOnlyUser.set(isReadOnly);
+    } catch (err) {
+      this._isReadOnlyUser.set(false);
+    }
+
     this.userId = session.user.id;
     this.loadProfile();
   }
@@ -77,6 +87,11 @@ export class ProfileComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this.errorMessage = 'No tienes permisos para actualizar el perfil';
+      return;
+    }
+
     if (this.profileForm.invalid) {
       this.errorMessage = 'Please fill in all required fields correctly';
       return;

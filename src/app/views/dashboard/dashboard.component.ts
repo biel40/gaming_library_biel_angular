@@ -57,6 +57,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public deleteLoading = signal(false);
 
     // Computed properties
+    public isReadOnly = computed(() => {
+        const user = this.currentUser();
+        return user?.email === 'test@testuser.com';
+    });
+
     public userDisplayName = computed(() => {
         const user = this.currentUser();
         if (!user) return '';
@@ -103,6 +108,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public toggleSelectMode() {
+        if (this.isReadOnly()) return;
+        
         this.selectMode.set(!this.selectMode());
         if (!this.selectMode()) this.selectedGameIds.set([]);
     }
@@ -242,7 +249,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    async ngOnInit() {
+    ngOnInit() {
+        this.initializeDashboard();
+    }
+
+    private async initializeDashboard() {
         try {
             this.isLoading.set(true);
             this.error.set(null);

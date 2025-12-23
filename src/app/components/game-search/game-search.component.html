@@ -49,8 +49,8 @@
             }
           </div>
           <div class="game-actions">
-            <button class="save-btn" (click)="saveGameToLibrary(game, $event)" [disabled]="isSavingGame(game.id)"
-              [class.saving]="isSavingGame(game.id)" title="Añadir este juego a tu biblioteca personal">
+            <button class="save-btn" (click)="saveGameToLibrary(game, $event)" [disabled]="isSavingGame(game.id) || isReadOnlyUser()"
+              [class.saving]="isSavingGame(game.id)" [attr.title]="isReadOnlyUser() ? 'No tienes permisos para añadir juegos' : 'Añadir este juego a tu biblioteca personal'">
               @if (isSavingGame(game.id)) {
               <span class="material-icons loading">hourglass_empty</span>
               <span>Guardando...</span>

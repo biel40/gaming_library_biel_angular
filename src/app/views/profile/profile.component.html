@@ -61,8 +61,8 @@
         }
 
         <div class="button-group">
-          <button type="submit" class="save-btn" [disabled]="loading || profileForm.invalid" 
-            title="Guardar los cambios en tu perfil">
+          <button type="submit" class="save-btn" [disabled]="loading || profileForm.invalid || isReadOnlyUser()" 
+            [attr.title]="isReadOnlyUser() ? 'No tienes permisos para actualizar el perfil' : 'Guardar los cambios en tu perfil'">
             {{ loading ? 'Guardando...' : 'Guardar Cambios' }}
           </button>
           <button type="button" class="logout-btn" (click)="signOut()" 

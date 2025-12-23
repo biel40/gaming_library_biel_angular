@@ -60,32 +60,52 @@ A modern, visually stunning video game library application built with Angular. T
 
 ### Technology Stack
 
-- **Framework**: Angular 19.2.1
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth
-- **Styling**: SCSS with custom variables
-- **Animations**: Angular animations
-- **State Management**: Angular services and RxJS
+- **Framework**: Angular 19.2.1 (Standalone Components)
+- **State Management**: Angular Signals (Zoneless)
+- **Database & Auth**: Supabase (PostgreSQL)
+- **Styling**: Modular SCSS with custom variables and mixins
+- **API Integration**: RAWG API for game search
+- **Bundler**: Vite
 
 ### Project Structure
 
 ```
 src/
 ├── app/
-│   ├── components/     # Reusable UI components
-│   │   └── game-card/  # Holographic game card component
-│   ├── services/       # Application services
-│   │   ├── loader/     # Loading state management
-│   │   └── supabase/   # Supabase integration
-│   ├── views/          # Application views/pages
-│   │   ├── dashboard/  # Main library view
-│   │   └── game-detail/# Detailed game view
-│   └── models/         # Data models and interfaces
-├── assets/             # Static assets
-│   ├── fonts/
-│   └── images/
-└── environments/       # Environment configurations
+│   ├── components/     # Reusable UI components (GameCard, Search, etc.)
+│   ├── views/          # Page-level components (Dashboard, Profile, etc.)
+│   ├── services/       # Business logic and data fetching
+│   ├── guards/         # Route protection (AuthGuard)
+│   ├── models/         # TypeScript interfaces and types
+│   └── environments/   # Environment-specific configurations
+├── assets/             # Static assets (images, icons)
+└── styles.scss         # Global styles and SCSS architecture
 ```
+
+## 🛠️ Key Architectural Patterns
+
+### Signal-Based State Management
+El proyecto utiliza **Angular Signals** para una gestión de estado reactiva y eficiente. Al usar `provideExperimentalZonelessChangeDetection()`, la aplicación no depende de Zone.js, lo que mejora el rendimiento y simplifica el flujo de datos.
+
+### Standalone Components
+Todos los componentes son **standalone**, eliminando la necesidad de NgModules y permitiendo una arquitectura más modular y fácil de mantener.
+
+### Supabase Integration
+Se utiliza Supabase como Backend-as-a-Service (BaaS) para:
+- **Autenticación**: Gestión de sesiones de usuario.
+- **Base de Datos**: Almacenamiento de la biblioteca de juegos con Row Level Security (RLS).
+- **Storage**: Almacenamiento de imágenes de juegos.
+
+### Modular SCSS
+La arquitectura de estilos sigue un enfoque modular utilizando `@use` y `@forward`, con parciales dedicados para variables, mixins y estilos específicos de componentes, asegurando un diseño coherente y mantenible.
+
+### Code Style & Best Practices
+
+Este proyecto sigue las convenciones modernas de Angular:
+- **Inyección de dependencias**: Uso de la función `inject()` en lugar de DI por constructor.
+- **Ciclo de vida**: `ngOnInit` síncrono con llamadas a métodos asíncronos privados.
+- **Inmutabilidad**: Actualización de señales mediante patrones inmutables (spread operator).
+- **Tipado Estricto**: Uso riguroso de TypeScript para evitar `any`.
 
 ## 🎨 UI Design & Style Guide
 

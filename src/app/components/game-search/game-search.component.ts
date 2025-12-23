@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Output, inject, ChangeDetectorRef, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GameSearchService, GameSearchResult } from '../../services/game-search/game-search.service';
@@ -15,7 +15,7 @@ import { NotificationService } from '../../services/notification/notification.se
     FormsModule
   ]
 })
-export class GameSearchComponent {
+export class GameSearchComponent implements OnInit {
   private _gameSearchService = inject(GameSearchService);
   private _supabaseService = inject(SupabaseService);
   private _notificationService = inject(NotificationService);
@@ -23,12 +23,28 @@ export class GameSearchComponent {
 
   @Output() gameSelected = new EventEmitter<Partial<Videogame>>();
 
+  private _isReadOnlyUser = signal<boolean>(false);
+  public readonly isReadOnlyUser = computed(() => this._isReadOnlyUser());
+
   public searchQuery = '';
   public searchResults: GameSearchResult[] = [];
   public isLoading = false;
   public error: string | null = null;
   public selectedGame: GameSearchResult | null = null;
   public savingGames: Set<number> = new Set();
+
+  ngOnInit() {
+    this.checkReadOnlyStatus();
+  }
+
+  private async checkReadOnlyStatus() {
+    try {
+      const isReadOnly = await this._supabaseService.isReadOnlyUser();
+      this._isReadOnlyUser.set(isReadOnly);
+    } catch (err) {
+      this._isReadOnlyUser.set(false);
+    }
+  }
 
   public searchGames() {
     if (!this.searchQuery.trim()) return;
@@ -81,6 +97,11 @@ export class GameSearchComponent {
    * @param game The game to save
   */
   public async saveGameToLibrary(game: GameSearchResult, event?: Event) {
+    if (this._isReadOnlyUser()) {
+      this._notificationService.error('No tienes permisos para añadir juegos');
+      return;
+    }
+
     if (event) {
       event.stopPropagation();
     }

@@ -9,6 +9,9 @@ This is a **standalone Angular 19** gaming library application using **signals**
 - State updates via `.set()` and `.update()` methods
 - Computed properties for derived state: `readonly userDisplayName = computed(() => { ... })`
 - No Zone.js dependency - uses `provideExperimentalZonelessChangeDetection()`
+- **Lifecycle Hooks**: Never use `async ngOnInit()`. If async initialization is needed, call a `private async` method from a synchronous `ngOnInit()`.
+- **Modern Control Flow**: Use `@if`, `@for`, and `@switch` syntax instead of `*ngIf` or `*ngFor`.
+- **Signal Inputs/Outputs**: Prefer `input()`, `output()`, and `model()` over `@Input()` and `@Output()`.
 - Try to avoid comments - code should be self-explanatory where possible.
 
 ### Standalone Components Pattern
@@ -16,7 +19,8 @@ Every component is standalone with explicit imports:
 ```typescript
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, CustomComponent]
+  imports: [CommonModule, FormsModule, RouterModule, CustomComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 ```
 
@@ -25,6 +29,11 @@ Every component is standalone with explicit imports:
 - **NotificationService**: RxJS Subject-based for cross-component messaging  
 - **UserService**: User state management
 - Services injected via `inject()` function, not constructor DI
+
+### Type Safety & Clean Code
+- **Strict Typing**: Avoid `any`. Define interfaces or types for all data structures.
+- **Immutability**: Treat signal values as immutable. Use spread operators for updates.
+- **Error Handling**: Use try/catch in async operations and update error signals.
 
 ## Development Workflows
 

@@ -16,8 +16,8 @@
             </div>
 
             <!-- Hamburger button for mobile -->
-            <button class="hamburger-btn" (click)="toggleMobileMenu()" [class.active]="showMobileMenu()" 
-                    title="Menú de navegación">
+            <button class="hamburger-btn" (click)="toggleMobileMenu()" [class.active]="showMobileMenu()"
+                title="Menú de navegación">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
@@ -29,19 +29,23 @@
                     <span class="material-icons">add</span>
                     Añadir Juego
                 </button>
-                <button class="currently-playing-btn" routerLink="/currently-playing" title="Ver juegos que estás jugando actualmente">
+                <button class="currently-playing-btn" routerLink="/currently-playing"
+                    title="Ver juegos que estás jugando actualmente">
                     <span class="material-icons">play_arrow</span>
                     Jugando actualmente
                 </button>
-                <button class="platinum-btn" routerLink="/platinum-trophies" title="Ver todos tus trofeos de platino obtenidos">
+                <button class="platinum-btn" routerLink="/platinum-trophies"
+                    title="Ver todos tus trofeos de platino obtenidos">
                     <span class="material-icons">emoji_events</span>
                     Platinos
                 </button>
-                <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()" 
-                        [attr.title]="selectMode() ? 'Cancelar selección múltiple' : 'Activar modo de selección múltiple para eliminar varios juegos'">
+                @if (!isReadOnly()) {
+                <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()"
+                    [attr.title]="selectMode() ? 'Cancelar selección múltiple' : 'Activar modo de selección múltiple para eliminar varios juegos'">
                     <span class="material-icons">{{ selectMode() ? 'close' : 'check_box' }}</span>
                     {{ selectMode() ? 'Cancelar' : 'Selección múltiple' }}
                 </button>
+                }
             </div>
         </div>
 
@@ -55,7 +59,8 @@
                     <div class="user-email">{{ currentUser()?.email }}</div>
                 </div>
                 <hr class="menu-divider">
-                <button class="menu-item" (click)="logout(); $event.stopPropagation()" title="Cerrar sesión y salir de la aplicación">
+                <button class="menu-item" (click)="logout(); $event.stopPropagation()"
+                    title="Cerrar sesión y salir de la aplicación">
                     <span class="material-icons">logout</span>
                     Cerrar Sesión
                 </button>
@@ -92,12 +97,15 @@
                     <span>Platinos</span>
                 </button>
             </li>
+            @if (!isReadOnly()) {
             <li>
-                <button class="mobile-menu-item" [class.active]="selectMode()" (click)="toggleSelectMode(); closeMobileMenu()">
+                <button class="mobile-menu-item" [class.active]="selectMode()"
+                    (click)="toggleSelectMode(); closeMobileMenu()">
                     <span class="material-icons">{{ selectMode() ? 'close' : 'check_box' }}</span>
                     <span>{{ selectMode() ? 'Cancelar selección' : 'Selección múltiple' }}</span>
                 </button>
             </li>
+            }
         </ul>
     </nav>
     }
@@ -121,7 +129,8 @@
     <div class="filters">
         <div class="filter-chips">
             @for (genre of uniqueGenres(); track genre) {
-            <button type="button" class="filter-chip" [class.active]="activeGenre() === genre" (click)="filterByGenre(genre)" (keydown.enter)="filterByGenre(genre)" tabindex="0">
+            <button type="button" class="filter-chip" [class.active]="activeGenre() === genre"
+                (click)="filterByGenre(genre)" (keydown.enter)="filterByGenre(genre)" tabindex="0">
                 {{ genre }}
             </button>
             }
@@ -155,10 +164,12 @@
         <div class="section-header">
             <h2>Todos los juegos</h2>
             <div class="view-controls">
-                <button class="view-btn" [class.active]="viewMode() === 'grid'" (click)="viewMode.set('grid')" title="Ver juegos en cuadrícula">
+                <button class="view-btn" [class.active]="viewMode() === 'grid'" (click)="viewMode.set('grid')"
+                    title="Ver juegos en cuadrícula">
                     <span class="material-icons">grid_view</span>
                 </button>
-                <button class="view-btn" [class.active]="viewMode() === 'list'" (click)="viewMode.set('list')" title="Ver juegos en lista">
+                <button class="view-btn" [class.active]="viewMode() === 'list'" (click)="viewMode.set('list')"
+                    title="Ver juegos en lista">
                     <span class="material-icons">view_list</span>
                 </button>
             </div>
@@ -169,27 +180,26 @@
         <div class="empty-state">
             <span class="material-icons">videogame_asset</span>
             <p>No se encontraron juegos que coincidan con tu búsqueda</p>
-            <button class="btn" (click)="resetFilters()" title="Limpiar todos los filtros aplicados">Reiniciar filtros</button>
+            <button class="btn" (click)="resetFilters()" title="Limpiar todos los filtros aplicados">Reiniciar
+                filtros</button>
         </div>
         }
 
         <!-- Multi-select controls -->
         @if (selectMode() && filteredGames().length > 0) {
         <div class="multi-select-bar">
-            <button class="multi-select-btn primary" (click)="selectAllFiltered()" 
+            <button class="multi-select-btn primary" (click)="selectAllFiltered()"
                 title="Seleccionar todos los juegos filtrados">
                 <span class="material-icons">select_all</span>
                 Seleccionar todos
             </button>
-            <button class="multi-select-btn" (click)="clearSelection()" 
-                title="Deseleccionar todos los juegos">
+            <button class="multi-select-btn" (click)="clearSelection()" title="Deseleccionar todos los juegos">
                 <span class="material-icons">deselect</span>
                 Limpiar selección
             </button>
             <span class="selected-count">{{ selectedGameIds().length }} seleccionados</span>
             <button class="multi-select-btn danger" [disabled]="selectedGameIds().length === 0"
-                (click)="openDeleteConfirm()" 
-                title="Eliminar permanentemente los juegos seleccionados">
+                (click)="openDeleteConfirm()" title="Eliminar permanentemente los juegos seleccionados">
                 <span class="material-icons">delete_forever</span>
                 Eliminar seleccionados
             </button>
@@ -220,7 +230,8 @@
             @for (game of filteredGames(); track $index) {
             <div class="list-item" [class.selected]="isSelected(game.id)">
                 @if (selectMode()) {
-                <label class="select-checkbox list-checkbox" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                <label class="select-checkbox list-checkbox" (click)="$event.stopPropagation()"
+                    (keydown)="$event.stopPropagation()">
                     <input type="checkbox" [checked]="isSelected(game.id)"
                         (change)="toggleSelectGame(game.id); $event.stopPropagation()">
                     <span class="checkmark"></span>
@@ -240,7 +251,8 @@
                         }
                     </div>
                 </div>
-                <button class="list-btn" [routerLink]="['/game', game.id]" title="Ver detalles del juego">Ver Detalles</button>
+                <button class="list-btn" [routerLink]="['/game', game.id]" title="Ver detalles del juego">Ver
+                    Detalles</button>
             </div>
             }
         </div>
@@ -255,7 +267,7 @@
             <p>¿Estás seguro de que quieres eliminar {{ selectedGameIds().length }} juego(s) seleccionado(s)?</p>
             <p class="warning">Esta acción no se puede deshacer.</p>
             <div class="modal-actions">
-                <button class="modal-btn" (click)="closeDeleteConfirm()" 
+                <button class="modal-btn" (click)="closeDeleteConfirm()"
                     title="Cancelar la eliminación">Cancelar</button>
                 <button class="modal-btn danger" [disabled]="deleteLoading()" (click)="deleteSelectedGames()"
                     title="Confirmar la eliminación de los juegos seleccionados">

@@ -135,6 +135,7 @@ export class GenreNormalizerService {
 
         for (const genre of genres) {
             const normalized = this.normalizeGenre(genre);
+            
             if (normalized && normalized !== 'Sin categoría') {
                 normalizedSet.add(normalized);
             }
@@ -154,9 +155,10 @@ export class GenreNormalizerService {
 
         if (existingMapping) {
             const newVariants = variants.filter(
-                v => !existingMapping.variants.includes(v.toLowerCase())
+                variant => !existingMapping.variants.includes(variant.toLowerCase())
             );
-            existingMapping.variants.push(...newVariants.map(v => v.toLowerCase()));
+
+            existingMapping.variants.push(...newVariants.map(variant => variant.toLowerCase()));
         } else {
             this.genreMappings.push({
                 normalized,
@@ -169,7 +171,7 @@ export class GenreNormalizerService {
      * Capitaliza la primera letra de un texto y pone en minúsculas el resto.
      * @param text 
      * @returns 
-      */
+    */
     private capitalizeFirst(text: string): string {
         if (!text) return text;
         return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();

@@ -91,8 +91,8 @@
             <span class="material-icons">close</span>
             Cancelar
           </button>
-          <button type="submit" class="btn primary" [disabled]="!gameForm.form.valid || isLoading"
-            title="Añadir el nuevo juego a tu biblioteca">
+          <button type="submit" class="btn primary" [disabled]="!gameForm.form.valid || isLoading || isReadOnlyUser()"
+            [attr.title]="isReadOnlyUser() ? 'No tienes permisos para añadir juegos' : 'Añadir el nuevo juego a tu biblioteca'">
             <span class="material-icons">{{ isLoading ? 'hourglass_empty' : 'add' }}</span>
             {{ isLoading ? 'Añadiendo...' : 'Añadir Juego' }}
           </button>
