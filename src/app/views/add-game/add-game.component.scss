@@ -1,502 +1,130 @@
-// Variables - Aligned with platinum dark theme
-$primary-color: #ffd700;
-$primary-light: #ffed4e;
-$secondary-color: #3498db;
-$accent-orange: #ff5722;
-$error-color: #f44336;
-$success-color: #4caf50;
-$text-color: #ffffff;
+// Variables - Aligned with app dark theme
+$accent-color: #ff5722;
+$accent-light: #ff8a65;
+$text-color: #e0e0e0;
 $text-muted: rgba(255, 255, 255, 0.7);
-$dark-bg: #1a1a2e;
-$dark-bg-secondary: #16213e;
-$light-gray: rgba(255, 255, 255, 0.05);
-$border-radius: 8px;
-$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-$transition-speed: 0.3s;
+$bg-card: rgba(255, 255, 255, 0.05);
+$border-color: rgba(255, 255, 255, 0.1);
+$border-radius: 12px;
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-// Import the color module for modern Sass functions
-@use "sass:color";
-
-// Animations
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
-
-// Main container
+// Main container - sin fondo propio, usa el global
 .add-game-container {
-  max-width: 800px;
-  margin: 2rem auto;
+  min-height: 100vh;
   padding: 2rem;
-  background: linear-gradient(135deg, $dark-bg, $dark-bg-secondary);
-  border-radius: $border-radius;
-  box-shadow: $box-shadow;
-  animation: fadeIn 0.5s ease-out;
-  color: $text-color;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 }
 
 // Header styles
 .add-game-header {
+  max-width: 900px;
+  margin: 0 auto 2rem;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem 0;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 1.5rem;
-  width: 100%;
 }
 
 .back-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  background: $bg-card;
+  border: 1px solid $border-color;
+  border-radius: 8px;
   color: $text-color;
-  text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.6s ease;
-  }
+  transition: $transition;
+  width: fit-content;
 
   &:hover {
-    background: linear-gradient(135deg, $primary-color, $primary-light);
-    color: $dark-bg;
-    border-color: $primary-color;
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
-
-    &::before {
-      left: 100%;
-    }
-
-    .material-icons {
-      transform: translateX(-3px);
-    }
-  }
-
-  &:active {
-    transform: translateY(-1px) scale(1.01);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: $accent-color;
+    transform: translateX(-4px);
   }
 
   .material-icons {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     transition: transform 0.3s ease;
   }
-}
 
-.header-title {
-  h1 {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin: 0;
-    font-size: 2rem;
-    font-weight: 700;
-    background: linear-gradient(90deg, $primary-color, $primary-light);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-
-    .material-icons {
-      font-size: 2rem;
-      color: $primary-color;
-    }
-  }
-
-  .header-subtitle {
-    margin: 0.5rem 0 0 0;
-    color: $text-muted;
-    font-size: 1rem;
-    font-weight: 400;
+  &:hover .material-icons {
+    transform: translateX(-2px);
   }
 }
 
-// Toggle button
-.search-toggle {
+.header-content {
   display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.header-icon {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 2rem;
-  
-  .toggle-button {
-    background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: -10%));
-    color: white;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: $border-radius;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all $transition-speed;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-    
-    &:active {
-      transform: translateY(0);
-    }
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 87, 34, 0.15);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 87, 34, 0.3);
+
+  .material-icons {
+    font-size: 1.75rem;
+    color: $accent-color;
   }
 }
 
-// Form styles
-.add-game-form {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  
-  @media (min-width: 768px) {
-    grid-template-columns: 1fr 1fr;
-    
-    .form-group:nth-child(2) {
-      grid-column: span 2;
-    }
+.header-text {
+  h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $accent-color;
+    line-height: 1.2;
+  }
+
+  p {
+    margin: 0.35rem 0 0;
+    color: $text-muted;
+    font-size: 0.95rem;
   }
 }
 
-.form-group {
-  position: relative;
-  
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: $text-color;
-    transition: color $transition-speed;
-  }
-  
-  input, textarea {
-    width: 100%;
-    padding: 0.8rem;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: $border-radius;
-    font-size: 1rem;
-    transition: all $transition-speed;
-    background-color: $light-gray;
-    color: $text-color;
-    
-    &:focus {
-      outline: none;
-      border-color: $primary-color;
-      box-shadow: 0 0 0 3px rgba($primary-color, 0.2);
-    }
-    
-    &:hover {
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-    
-    &::placeholder {
-      color: rgba(255, 255, 255, 0.5);
-    }
-  }
-  
-  textarea {
-    min-height: 120px;
-    resize: vertical;
-  }
-  
-  &.ng-invalid.ng-touched {
-    input, textarea {
-      border-color: $error-color;
-      animation: shake 0.5s ease-in-out;
-    }
-  }
+// Content area
+.add-game-content {
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-// Error message
-.error-message {
-  color: $error-color;
-  font-size: 0.85rem;
-  margin-top: 0.5rem;
-  animation: fadeIn 0.3s ease-out;
-}
-
-// Form actions
-.form-actions {
-  grid-column: span 1;
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  
-  @media (min-width: 768px) {
-    grid-column: span 2;
-  }
-  
-  .btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: none;
-    text-decoration: none;
-    min-width: 130px;
-    justify-content: center;
-    
-    .material-icons {
-      font-size: 1.1rem;
-    }
-    
-    &:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      transform: none !important;
-    }
-    
-    &.secondary {
-      background: rgba(255, 255, 255, 0.05);
-      color: $text-color;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      
-      &:hover:not(:disabled) {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.2);
-        transform: translateY(-2px);
-      }
-    }
-    
-    &.primary {
-      background: linear-gradient(135deg, $primary-color, color.adjust($primary-color, $lightness: -10%));
-      color: white;
-      box-shadow: 0 4px 15px rgba(255, 87, 34, 0.2);
-      
-      &:hover:not(:disabled) {
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 8px 25px rgba(255, 87, 34, 0.3);
-      }
-      
-      &:active:not(:disabled) {
-        transform: translateY(-1px) scale(1.01);
-      }
-    }
-  }
-}
-
-// Responsive design for buttons
+// Responsive
 @media (max-width: 480px) {
-  .form-actions {
-    flex-direction: column;
-    
-    .btn {
-      width: 100%;
-    }
-  }
-}
-
-// Header responsive design
-@media (max-width: 768px) {
-  .add-game-header {
-    padding: 1rem 0;
-    margin-bottom: 1.5rem;
-  }
-
-  .header-left {
+  .header-content {
     gap: 1rem;
   }
 
-  .back-btn {
-    padding: 0.6rem 0.8rem;
-    font-size: 0.85rem;
-    
-    .material-icons {
-      font-size: 1.1rem;
-    }
-  }
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
 
-  .header-title {
-    h1 {
+    .material-icons {
       font-size: 1.5rem;
-      
-      .material-icons {
-        font-size: 1.5rem;
-      }
     }
-
-    .header-subtitle {
-      font-size: 0.9rem;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .header-left {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
   }
 
-  .back-btn {
-    align-self: flex-start;
-  }
-}
+  .header-text {
+    h1 {
+      font-size: 1.4rem;
+    }
 
-// Manual form toggle styles
-.manual-form-toggle {
-  text-align: center;
-  margin: 2.5rem 0;
-  padding: 2rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-  
-  // Subtle background pattern
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, transparent 45%, rgba(255, 255, 255, 0.01) 50%, transparent 55%);
-    pointer-events: none;
-  }
-  
-  .toggle-button {
-    position: relative;
-    z-index: 1;
-    
-    &.secondary {
-      background: linear-gradient(135deg, #4a90e2, #357abd);
-      color: white;
-      border: none;
-      padding: 1rem 2rem;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      
-      &:hover {
-        background: linear-gradient(135deg, #5ba0f2, #4a90e2);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
-        border-color: rgba(255, 255, 255, 0.2);
-      }
-      
-      &:active {
-        transform: translateY(0);
-        box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
-      }
-    }
-    
-    .material-icons {
-      margin-right: 0.75rem;
-      font-size: 1.2rem;
-      transition: transform 0.3s ease;
-    }
-    
-    &:hover .material-icons {
-      transform: scale(1.1);
-    }
-  }
-  
-  .toggle-description {
-    margin-top: 1rem;
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.65);
-    font-style: italic;
-    line-height: 1.4;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-// Manual form container
-.manual-form-container {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease-out, padding 0.4s ease-out;
-  
-  &.show {
-    max-height: 2000px; // Suficiente para mostrar todo el formulario
-    padding-top: 1rem;
-  }
-}
-
-// Responsive adjustments
-@media (max-width: 768px) {
-  .add-game-container {
-    margin: 1rem;
-    padding: 1.5rem;
-  }
-  
-  .add-game-header h1 {
-    font-size: 2rem;
-  }
-  
-  .form-actions {
-    flex-direction: column;
-    
-    button {
-      width: 100%;
-    }
-  }
-  
-  .manual-form-toggle {
-    margin: 2rem 0;
-    padding: 1.5rem;
-    
-    .toggle-button {
-      width: 100%;
-      padding: 1rem 1.5rem;
-      font-size: 0.95rem;
-      
-      .material-icons {
-        margin-right: 0.5rem;
-        font-size: 1.1rem;
-      }
-    }
-    
-    .toggle-description {
-      font-size: 0.9rem;
-      margin-top: 0.75rem;
+    p {
+      font-size: 0.85rem;
     }
   }
 }

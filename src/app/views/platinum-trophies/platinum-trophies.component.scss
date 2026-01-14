@@ -35,7 +35,7 @@ $transition: all 0.3s ease;
 
 .platinum-trophies {
   min-height: 100vh;
-  background: linear-gradient(135deg, $primary-dark 0%, $primary-light 100%);
+  background: linear-gradient(135deg, #1d1f21, #282a2e);
   color: white;
   padding: 2rem;
 
@@ -134,6 +134,12 @@ $transition: all 0.3s ease;
     // Avatar reutilizado
     .user-avatar {
       cursor: pointer;
+      background: transparent;
+      border: none;
+      padding: 0;
+      box-shadow: none;
+      -webkit-appearance: none;
+      appearance: none;
 
       .avatar-circle {
         width: 3rem;

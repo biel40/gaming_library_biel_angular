@@ -1,103 +1,18 @@
 <div class="add-game-container">
   <header class="add-game-header">
-    <div class="header-left">
-      <button class="back-btn" routerLink="/dashboard" title="Regresar al panel principal">
-        <span class="material-icons">arrow_back</span>
-        Volver
-      </button>
-      <div class="header-title">
-        <h1>
-          Añadir juego
-        </h1>
-        <p class="header-subtitle">Introduce los detalles del juego que quieres añadir a tu biblioteca</p>
+    <button class="back-btn" routerLink="/dashboard" title="Regresar al panel principal">
+      <span class="material-icons">arrow_back</span>
+      <span>Volver</span>
+    </button>
+    <div class="header-content">
+      <div class="header-text">
+        <h1>Añadir juego</h1>
+        <p>Busca y añade juegos a tu biblioteca personal. </p>
       </div>
     </div>
   </header>
 
   <div class="add-game-content">
-    <!-- Búsqueda de juegos (opción principal) -->
     <app-game-search (gameSelected)="onGameSelected($event)"></app-game-search>
-
-    <!-- Botón para mostrar formulario manual -->
-    <div class="manual-form-toggle">
-      <button class="toggle-button secondary" (click)="toggleManualForm()"
-        title="Mostrar u ocultar el formulario para añadir juegos manualmente">
-        <span class="material-icons">edit</span>
-        {{ showManualForm ? 'Ocultar formulario manual' : 'Añadir manualmente' }}
-      </button>
-      <p class="toggle-description">¿No encuentras el juego? Puedes añadirlo manualmente</p>
-    </div>
-
-    <!-- Formulario manual (oculto por defecto) -->
-    <div class="manual-form-container" [class.show]="showManualForm">
-      <form (ngSubmit)="onSubmit()" #gameForm="ngForm" class="add-game-form">
-        <div class="form-group">
-          <label for="name">Nombre del Juego</label>
-          <input type="text" id="name" name="name" [(ngModel)]="game.name" required #name="ngModel" />
-          <div class="error-message" *ngIf="name.invalid && (name.dirty || name.touched)">
-            El nombre del juego es obligatorio
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="description">Descripción</label>
-          <textarea id="description" name="description" [(ngModel)]="game.description" required
-            #description="ngModel"></textarea>
-          <div class="error-message" *ngIf="description.invalid && (description.dirty || description.touched)">
-            La descripción es obligatoria
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="genre">Género</label>
-          <input type="text" id="genre" name="genre" [(ngModel)]="game.genre" required #genre="ngModel" />
-          <div class="error-message" *ngIf="genre.invalid && (genre.dirty || genre.touched)">
-            El género es obligatorio
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="platform">Plataforma</label>
-          <input type="text" id="platform" name="platform" [(ngModel)]="game.platform" required #platform="ngModel" />
-          <div class="error-message" *ngIf="platform.invalid && (platform.dirty || platform.touched)">
-            La plataforma es obligatoria
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="image_url">URL de la Imagen</label>
-          <input type="url" id="image_url" name="image_url" [(ngModel)]="game.image_url" required #imageUrl="ngModel" />
-          <div class="error-message" *ngIf="imageUrl.invalid && (imageUrl.dirty || imageUrl.touched)">
-            La URL de la imagen es obligatoria
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="releaseDate">Fecha de Lanzamiento</label>
-          <input type="date" id="releaseDate" name="releaseDate" [(ngModel)]="game.releaseDate" required
-            #releaseDate="ngModel" />
-          <div class="error-message" *ngIf="releaseDate.invalid && (releaseDate.dirty || releaseDate.touched)">
-            La fecha de lanzamiento es obligatoria
-          </div>
-        </div>
-
-        <div class="error-message" *ngIf="error">
-          {{ error }}
-        </div>
-
-        <div class="form-actions">
-          <button type="button" class="btn secondary" routerLink="/dashboard"
-            title="Cancelar y regresar al panel principal">
-            <span class="material-icons">close</span>
-            Cancelar
-          </button>
-          <button type="submit" class="btn primary" [disabled]="!gameForm.form.valid || isLoading || isReadOnlyUser()"
-            [attr.title]="isReadOnlyUser() ? 'No tienes permisos para añadir juegos' : 'Añadir el nuevo juego a tu biblioteca'">
-            <span class="material-icons">{{ isLoading ? 'hourglass_empty' : 'add' }}</span>
-            {{ isLoading ? 'Añadiendo...' : 'Añadir Juego' }}
-          </button>
-        </div>
-      </form>
-    </div>
   </div>
 </div>

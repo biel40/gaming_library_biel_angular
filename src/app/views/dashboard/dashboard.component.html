@@ -39,7 +39,8 @@
                     <span class="material-icons">emoji_events</span>
                     Platinos
                 </button>
-                @if (!isReadOnly()) {
+                <!-- Funcionalidad deshabilitada temporalmente -->
+                @if (false) {
                 <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()"
                     [attr.title]="selectMode() ? 'Cancelar selección múltiple' : 'Activar modo de selección múltiple para eliminar varios juegos'">
                     <span class="material-icons">{{ selectMode() ? 'close' : 'check_box' }}</span>
@@ -97,7 +98,8 @@
                     <span>Platinos</span>
                 </button>
             </li>
-            @if (!isReadOnly()) {
+            <!-- Funcionalidad deshabilitada temporalmente -->
+            @if (false) {
             <li>
                 <button class="mobile-menu-item" [class.active]="selectMode()"
                     (click)="toggleSelectMode(); closeMobileMenu()">
