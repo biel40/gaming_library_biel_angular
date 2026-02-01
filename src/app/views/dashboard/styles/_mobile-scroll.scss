@@ -6,22 +6,20 @@
   -webkit-overflow-scrolling: touch;
   
   // Mejora el rendimiento del scroll en dispositivos táctiles
-  overscroll-behavior: contain;
+  overscroll-behavior-y: auto;
+  overscroll-behavior-x: contain;
   
   // Optimizaciones de rendimiento - MEJORADAS
   transform: translateZ(0);
-  will-change: auto; // Cambio: auto es más eficiente que scroll-position
+  will-change: auto;
   
   // Específico para dispositivos táctiles
   @media (pointer: coarse) {
     // Mejora la respuesta táctil
-    touch-action: pan-y;
+    touch-action: pan-y pan-x;
     
     // Reduce el momentum scrolling en iOS
     -webkit-overflow-scrolling: touch;
-    
-    // Optimiza el repintado durante el scroll
-    contain: layout style paint;
   }
 }
 
@@ -32,13 +30,9 @@
   // Mejora el rendimiento durante el scroll
   transform: translateZ(0);
   
-  // Reduce el repintado de elementos
-  contain: layout style;
-  
   @media (max-width: 767px) {
     // Optimizaciones específicas para móviles
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
     
     // Mejora la fluidez en la animación de los elementos
     .game-card-wrapper,

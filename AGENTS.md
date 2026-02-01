@@ -140,6 +140,12 @@ try {
 - Use CSS custom properties for theming
 - Mobile-first responsive design
 
+#### Critical Scroll Guidelines (DO NOT BREAK)
+- **Forbidden Properties on Scroll Containers**: `contain: layout`, `contain: paint`, `contain: content`. These break sticky positioning and scrolling contexts.
+- **Root Layout**: Ensure `html, body, .main` structure allows for `overflow-y: auto`.
+- **Mobile Touch**: Use `touch-action: pan-y pan-x` instead of `pan-y` only.
+- **Overscroll**: Use `overscroll-behavior-y: auto` to prevent "stuck" scroll feeling on mobile.
+
 #### Global Styles (styles.scss)
 - CSS reset with box-sizing: border-box
 - Material Icons import

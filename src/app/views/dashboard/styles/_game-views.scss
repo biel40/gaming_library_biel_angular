@@ -98,11 +98,10 @@
   gap: 1.5rem;
   margin-bottom: 2rem;
   align-items: start;
-  justify-items: center; // Centra las tarjetas horizontalmente
+  justify-items: center;
   
   // Optimizaciones de rendimiento
   will-change: contents;
-  contain: layout style;
   
   @media (max-width: 1200px) {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -164,13 +163,11 @@
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
-  align-items: start; // Alinea los elementos al inicio para mantener consistencia
-  justify-items: center; // Centra las tarjetas horizontalmente
-  min-height: 100%;
+  align-items: start;
+  justify-items: center;
   
   // Optimizaciones de rendimiento para scroll suave
   will-change: contents;
-  contain: layout style;
   transform: translateZ(0);
   
   @media (max-width: 1200px) {
@@ -182,8 +179,6 @@
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
     place-items: center;
-    min-height: 50vh;
-    align-content: center;
     
     // Optimizaciones específicas para móviles
     backface-visibility: hidden;
@@ -272,7 +267,6 @@
   
   // Optimizaciones de rendimiento
   will-change: contents;
-  contain: layout style;
   
   @media (max-width: 767px) {
     transform: translateZ(0);

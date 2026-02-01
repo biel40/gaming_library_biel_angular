@@ -61,8 +61,22 @@ export class SupabaseService {
   // Session management
   public async getSession() {
     if (!this._session()) {
-      const { data } = await this._supabaseClient.auth.getSession();
-      this._session.set(data.session);
+      try {
+        const { data, error } = await this._supabaseClient.auth.getSession();
+        
+        if (error) {
+          console.warn('Session error, clearing invalid session:', error.message);
+          await this._supabaseClient.auth.signOut();
+          this._session.set(null);
+          return null;
+        }
+        
+        this._session.set(data.session);
+      } catch (error) {
+        console.error('Error getting session:', error);
+        this._session.set(null);
+        return null;
+      }
     }
 
     return this._session();

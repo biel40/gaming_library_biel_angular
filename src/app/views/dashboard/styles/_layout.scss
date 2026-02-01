@@ -4,16 +4,18 @@
 // Main layout
 .dashboard {
   width: 100%;
+  min-height: 100%;
   margin: 0 auto;
   padding: 0.5rem;
+  padding-bottom: 2rem;
   overflow-x: hidden;
+  overflow-y: visible;
   box-sizing: border-box;
   position: relative;
   
   // Optimizaciones básicas de rendimiento
   transform: translateZ(0);
   backface-visibility: hidden;
-  contain: layout style;
   
   // Animación inicial para el dashboard - MÁS RÁPIDA
   opacity: 0;
@@ -23,8 +25,8 @@
   @media (max-width: 767px) {
     // Optimiza el scroll en móviles
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    contain: layout style paint;
+    overscroll-behavior-y: auto;
+    overscroll-behavior-x: contain;
     
     // Reduce la duración de animaciones en móviles para mejor rendimiento
     animation-duration: 0.3s;

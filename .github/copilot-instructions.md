@@ -138,3 +138,11 @@ readonly filteredGames = computed(() =>
 - Image optimization with WebP format support
 - CSS containment properties for scroll performance
 - Animation optimizations with `prefers-reduced-motion` support
+## Critical User Experience Requirements
+
+### Scrolling Behavior (CRITICAL)
+- **NEVER use `contain: layout`** on main scrolling containers (e.g., `.dashboard`, `.game-grid`). It creates a new stacking context that breaks vertical scrolling.
+- **NEVER use `overflow: hidden`** on the body or main content wrappers unless specifically managing a modal.
+- **Use `touch-action: pan-y pan-x`** for better touch response on mobile.
+- **Avoid `overscroll-behavior: contain`** on the main vertical axis; prefer `auto` to maintain natural bounce effects.
+- Ensure `.main` container has `min-height: 100vh` and `overflow-y: auto`.

@@ -5,6 +5,8 @@
     width: 100%;
     background: linear-gradient(135deg, #1d1f21, #282a2e);
     color: #e0e0e0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .content {
@@ -14,6 +16,7 @@
     margin: 0 auto;
     padding: 1rem;
     box-sizing: border-box;
+    overflow: visible;
 }
 
 h2 {
