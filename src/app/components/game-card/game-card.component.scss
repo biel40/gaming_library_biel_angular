@@ -39,18 +39,16 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 16px;
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     overflow: hidden;
-    transition: all 0.4s ease-out;
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
     margin: 0 auto;
     position: relative;
-    transform-style: preserve-3d;
-    perspective: 1000px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    contain: layout style paint;
 
     @media (max-width: 767px) {
         max-width: 320px;
@@ -179,15 +177,13 @@
 
         &:hover {
             box-shadow:
-                20px 20px 30px rgba(0, 0, 0, 0.1),
-                -5px -5px 30px rgba(255, 255, 255, 0.05),
+                0 16px 32px rgba(0, 0, 0, 0.15),
                 0 0 25px rgba(255, 215, 0, 0.4);
             border-color: rgba(255, 215, 0, 0.6);
         }
 
         .card-body {
             background: rgba(30, 30, 45, 0.95);
-            backdrop-filter: blur(10px);
             border-top: 1px solid rgba(255, 215, 0, 0.3);
             
             .card-title {
@@ -234,16 +230,11 @@
     }
 
     &:hover {
-        transform: translateY(-10px) rotateX(5deg) rotateY(-5deg);
+        transform: translateY(-8px);
         box-shadow:
-            20px 20px 30px rgba(0, 0, 0, 0.1),
-            -5px -5px 30px rgba(255, 255, 255, 0.05),
-            0 0 20px rgba(52, 152, 219, 0.25);
-        border: 2px solid transparent;
-        background-clip: padding-box;
-        background-image: linear-gradient(white, white), linear-gradient(to right, #3498db, #2980b9);
-        background-origin: border-box;
-        background-clip: content-box, border-box;
+            0 16px 32px rgba(0, 0, 0, 0.2),
+            0 0 20px rgba(52, 152, 219, 0.15);
+        border: 2px solid rgba(52, 152, 219, 0.4);
 
         &::before {
             opacity: 1;
@@ -251,11 +242,7 @@
         }
 
         .card-img {
-            transform: scale(1.08) translateZ(20px);
-        }
-
-        .card-body {
-            transform: translateZ(15px);
+            transform: scale(1.05);
         }
     }
 }
@@ -266,8 +253,7 @@
     height: 180px;
     object-fit: cover;
     display: block;
-    transition: transform 0.5s ease;
-    transform: translateZ(0);
+    transition: transform 0.3s ease;
     position: relative;
     z-index: 1;
     flex-shrink: 0;
@@ -276,8 +262,7 @@
 
 .card-body {
     padding: 20px;
-    transform: translateZ(0);
-    transition: transform 0.5s ease;
+    transition: transform 0.3s ease;
     position: relative;
     z-index: 1;
     flex: 1;
@@ -286,8 +271,7 @@
     max-width: 100%;
     box-sizing: border-box;
     overflow: hidden;
-    background: rgba(20, 20, 30, 0.85);
-    backdrop-filter: blur(10px);
+    background: rgba(20, 20, 30, 0.95);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 
     .card-title {

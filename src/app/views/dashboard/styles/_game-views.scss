@@ -100,9 +100,6 @@
   align-items: start;
   justify-items: center;
   
-  // Optimizaciones de rendimiento
-  will-change: contents;
-  
   @media (max-width: 1200px) {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
@@ -112,11 +109,6 @@
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
     place-items: center;
-    
-    // Optimizaciones específicas para móviles
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-overflow-scrolling: touch;
   }
   
   @media (max-width: 480px) {
@@ -125,34 +117,23 @@
   }
   
   app-game-card {
-    max-width: 320px; // Limita el ancho máximo de las tarjetas de favoritos
+    max-width: 320px;
     width: 100%;
     display: block;
     box-sizing: border-box;
     
-    // Animación fade-in para favoritos
     opacity: 0;
     transform: translateY(20px);
-    animation: fadeInUp 1.6s ease forwards;
+    animation: fadeInUp 0.6s ease forwards;
     
-    // Optimizaciones de rendimiento
-    will-change: transform, opacity;
-    backface-visibility: hidden;
-    
-    // Retraso escalonado
-    @for $i from 1 through 10 {
+    @for $i from 1 through 6 {
       &:nth-child(#{$i}) {
-        animation-delay: #{$i * 0.1}s;
+        animation-delay: #{$i * 0.05}s;
       }
     }
     
-    // Optimizaciones para móviles
-    @media (max-width: 767px) {
-      animation-duration: 1.2s; // Más rápido en móviles
-    }
-    
     @media (max-width: 480px) {
-      max-width: 300px; // Ancho máximo para móviles muy pequeños
+      max-width: 300px;
     }
   }
 }
@@ -166,10 +147,6 @@
   align-items: start;
   justify-items: center;
   
-  // Optimizaciones de rendimiento para scroll suave
-  will-change: contents;
-  transform: translateZ(0);
-  
   @media (max-width: 1200px) {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
@@ -179,15 +156,10 @@
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
     place-items: center;
-    
-    // Optimizaciones específicas para móviles
-    backface-visibility: hidden;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
   }
   
   @media (max-width: 480px) {
-    grid-template-columns: 1fr; // Una sola columna en móviles muy pequeños
+    grid-template-columns: 1fr;
     place-items: center;
   }
   
@@ -196,27 +168,25 @@
     border-radius: vars.$border-radius-lg;
     overflow: hidden;
     box-shadow: vars.$box-shadow-md;
-    transition: all 0.3s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
     width: 100%;
-    max-width: 320px; // Limita el ancho máximo para evitar que se expanda excesivamente
-    height: 100%; // Ocupa toda la altura disponible
+    max-width: 320px;
+    height: 100%;
     display: flex;
     justify-content: center;
     margin: 0 auto;
     box-sizing: border-box;
     
-    // Optimizaciones de rendimiento
-    backface-visibility: hidden;
-    transform: translateZ(0);
+    content-visibility: auto;
+    contain-intrinsic-size: 320px 500px;
     
-    // Animación fade-in - movido antes de las reglas anidadas
     opacity: 0;
     transform: translateY(20px);
-    animation: fadeInUp 1.6s ease forwards;
+    animation: fadeInUp 0.5s ease forwards;
   
-    @for $i from 1 through 20 {
+    @for $i from 1 through 12 {
       &:nth-child(#{$i}) {
-        animation-delay: #{$i * 0.1}s;
+        animation-delay: #{$i * 0.04}s;
       }
     }
     
@@ -225,11 +195,7 @@
     }
     
     @media (max-width: 767px) {
-      // Optimizaciones específicas para móviles
-      animation-duration: 1.2s; // Más rápido en móviles
-      transition-duration: 0.2s;
-      
-      // Mejora la respuesta táctil
+      animation-duration: 0.4s;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
     }
@@ -239,7 +205,6 @@
       box-shadow: vars.$box-shadow-lg;
       
       @media (max-width: 767px) {
-        // Efecto más sutil en móviles
         transform: translateY(-3px);
       }
     }
@@ -265,31 +230,23 @@
   gap: 1rem;
   margin-bottom: 2rem;
   
-  // Optimizaciones de rendimiento
-  will-change: contents;
-  
   @media (max-width: 767px) {
-    transform: translateZ(0);
-    backface-visibility: hidden;
     -webkit-overflow-scrolling: touch;
   }
   
   .list-item {
     @include mix.flex(row, center, flex-start);
     background: vars.$bg-card;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border-radius: vars.$border-radius-lg;
     border: 1px solid vars.$border-color;
     padding: 1rem 1.25rem;
     box-shadow: vars.$box-shadow-sm;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
     position: relative;
     overflow: hidden;
     
-    // Optimizaciones de rendimiento
-    will-change: transform, box-shadow, background;
-    backface-visibility: hidden;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 160px;
 
     // Efecto de brillo sutil
     &::before {

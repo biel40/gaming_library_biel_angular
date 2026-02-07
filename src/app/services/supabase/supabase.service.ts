@@ -46,6 +46,11 @@ export class SupabaseService {
   private _videogames = signal<Videogame[]>([]);
   private _favorites = signal<string[]>([]);
 
+  private static readonly CACHE_KEY = 'videogames-cache';
+  private static readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
+  private _cacheTimestamp: number | null = null;
+  private _cachedReadOnly: boolean | null = null;
+
   // Event emitter for favorite changes
   public favoriteChanged = new EventEmitter<Videogame>();
 
@@ -87,8 +92,10 @@ export class SupabaseService {
    * @returns boolean - true if current user is NOT the admin (biel40aws@gmail.com)
   */
   public async isReadOnlyUser(): Promise<boolean> {
+    if (this._cachedReadOnly !== null) return this._cachedReadOnly;
     const session = await this.getSession();
-    return session?.user?.email !== 'biel40aws@gmail.com';
+    this._cachedReadOnly = session?.user?.email !== 'biel40aws@gmail.com';
+    return this._cachedReadOnly;
   }
 
   public profile(user: User) {
@@ -203,8 +210,17 @@ export class SupabaseService {
       .in('id', ids);
 
     if (error) throw error;
+    this.invalidateCache();
   }
-  public async getVideogames(): Promise<Videogame[]> {
+  public async getVideogames(forceRefresh = false): Promise<Videogame[]> {
+    if (!forceRefresh) {
+      const cached = this._getFromCache();
+      if (cached) {
+        this._videogames.set(cached);
+        return cached;
+      }
+    }
+
     const { data, error } = await this._supabaseClient
       .from('videogames')
       .select();
@@ -214,7 +230,6 @@ export class SupabaseService {
       return [];
     }
 
-    // Always map the data to a Model
     const videogames: Videogame[] = data.map((item: any) => ({
       id: item.id,
       name: item.name,
@@ -230,7 +245,51 @@ export class SupabaseService {
     }));
 
     this._videogames.set(videogames);
+    this._saveToCache(videogames);
     return videogames;
+  }
+
+  public invalidateCache(): void {
+    this._cacheTimestamp = null;
+    try {
+      sessionStorage.removeItem(SupabaseService.CACHE_KEY);
+    } catch {}
+  }
+
+  private _saveToCache(games: Videogame[]): void {
+    this._cacheTimestamp = Date.now();
+    try {
+      sessionStorage.setItem(SupabaseService.CACHE_KEY, JSON.stringify({
+        timestamp: this._cacheTimestamp,
+        data: games
+      }));
+    } catch {}
+  }
+
+  private _getFromCache(): Videogame[] | null {
+    if (this._cacheTimestamp && (Date.now() - this._cacheTimestamp < SupabaseService.CACHE_TTL_MS)) {
+      const current = this._videogames();
+      if (current.length > 0) return current;
+    }
+
+    try {
+      const raw = sessionStorage.getItem(SupabaseService.CACHE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (Date.now() - parsed.timestamp > SupabaseService.CACHE_TTL_MS) {
+        sessionStorage.removeItem(SupabaseService.CACHE_KEY);
+        return null;
+      }
+      const games: Videogame[] = parsed.data.map((item: any) => ({
+        ...item,
+        releaseDate: item.releaseDate ? new Date(item.releaseDate) : undefined,
+        favorite: this.isFavorite(item.id)
+      }));
+      this._cacheTimestamp = parsed.timestamp;
+      return games;
+    } catch {
+      return null;
+    }
   }
 
   public async getVideogameDetails(id: string): Promise<Videogame | null> {
@@ -584,6 +643,7 @@ export class SupabaseService {
 
     if (error) throw error;
 
+    this.invalidateCache();
     return {
       id: data.id,
       name: data.name,

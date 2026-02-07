@@ -141,8 +141,8 @@
 
         @if (favoriteGames().length > 0) {
         <div class="game-grid favorites-grid">
-            @for (game of favoriteGames(); track $index) {
-            <app-game-card [game]="game" [selectMode]="selectMode()"></app-game-card>
+            @for (game of favoriteGames(); track game.id) {
+            <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()"></app-game-card>
             }
         </div>
         } @else {
@@ -204,7 +204,7 @@
         <!-- Grid view -->
         @if (viewMode() === 'grid' && filteredGames().length > 0) {
         <div class="game-grid">
-            @for (game of filteredGames(); track $index) {
+            @for (game of filteredGames(); track game.id) {
             <div class="game-card-wrapper" [class.selected]="isSelected(game.id)">
                 @if (selectMode()) {
                 <label class="select-checkbox" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
@@ -213,7 +213,7 @@
                     <span class="checkmark"></span>
                 </label>
                 }
-                <app-game-card [game]="game" [selectMode]="selectMode()"></app-game-card>
+                <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()"></app-game-card>
             </div>
             }
         </div>
@@ -222,7 +222,7 @@
         <!-- List view -->
         @if (viewMode() === 'list' && filteredGames().length > 0) {
         <div class="game-list">
-            @for (game of filteredGames(); track $index) {
+            @for (game of filteredGames(); track game.id) {
             <div class="list-item" [class.selected]="isSelected(game.id)">
                 @if (selectMode()) {
                 <label class="select-checkbox list-checkbox" (click)="$event.stopPropagation()"
@@ -233,7 +233,7 @@
                 </label>
                 }
                 <div class="list-img">
-                    <img [src]="game.image_url" [alt]="game.name">
+                    <img [src]="game.image_url" [alt]="game.name" loading="lazy" decoding="async">
                 </div>
                 <div class="list-content">
                     <h3>{{ game.name }}</h3>

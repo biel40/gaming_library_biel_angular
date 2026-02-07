@@ -13,22 +13,13 @@
   box-sizing: border-box;
   position: relative;
   
-  // Optimizaciones básicas de rendimiento
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  
-  // Animación inicial para el dashboard - MÁS RÁPIDA
   opacity: 0;
   animation: fadeIn 0.4s ease-out forwards;
   
-  // Mejoras específicas para móviles
   @media (max-width: 767px) {
-    // Optimiza el scroll en móviles
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: auto;
     overscroll-behavior-x: contain;
-    
-    // Reduce la duración de animaciones en móviles para mejor rendimiento
     animation-duration: 0.3s;
   }
 }

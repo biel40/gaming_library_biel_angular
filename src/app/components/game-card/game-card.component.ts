@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal, computed, inject, OnInit } from "@angular/core";
+import { Component, Input, Output, EventEmitter, signal, computed, inject } from "@angular/core";
 import { Videogame, SupabaseService } from "../../services/supabase/supabase.service";
 import { NotificationService } from "../../services/notification/notification.service";
 import { CommonModule } from "@angular/common";
@@ -14,26 +14,24 @@ import { RouterModule } from "@angular/router";
     RouterModule
   ]
 })
-export class GameCardComponent implements OnInit {
+export class GameCardComponent {
   private _game = signal<Videogame | null>(null);
-  private _isReadOnlyUser = signal<boolean>(false);
   
   @Input() set game(value: Videogame) {
     this._game.set(value);
   }
 
   @Input() selectMode: boolean = false;
+  @Input() isReadOnly: boolean = false;
 
   @Output() platinumTargetChanged = new EventEmitter<Videogame>();
 
-  // Computed signals for template bindings
   readonly favoriteIcon = computed(() => this._game()?.favorite ? 'star' : 'star_border');
   readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos');
   readonly gameId = computed(() => this._game()?.id);
   readonly gameName = computed(() => this._game()?.name);
   readonly gameDescription = computed(() => {
     const description = this._game()?.description;
-    // Si no hay descripción o está vacía, devolver una descripción placeholder
     if (!description || description.trim() === '') {
       return this.getPlaceholderDescription();
     }
@@ -43,7 +41,6 @@ export class GameCardComponent implements OnInit {
   readonly gamePlatform = computed(() => this._game()?.platform);
   readonly gameReleaseDate = computed(() => this._game()?.releaseDate);
   readonly gameImageUrl = computed(() => this._game()?.image_url);
-  readonly isReadOnlyUser = computed(() => this._isReadOnlyUser());
   readonly isPlatinumTarget = computed(() => this._game()?.platinum_target || false);
   readonly platinumTargetIcon = computed(() => this.isPlatinumTarget() ? 'flag' : 'outlined_flag');
   readonly platinumTargetTitle = computed(() => 
@@ -55,24 +52,6 @@ export class GameCardComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit(): void {
-    this.checkReadOnlyUser();
-  }
-
-  private async checkReadOnlyUser(): Promise<void> {
-    try {
-      const isReadOnly = await this._supabaseService.isReadOnlyUser();
-      this._isReadOnlyUser.set(isReadOnly);
-    } catch (error) {
-      console.error('Error checking read-only user status:', error);
-      this._isReadOnlyUser.set(false);
-    }
-  }
-
-  /**
-   * Genera una descripción placeholder variada basada en el nombre del juego
-   * @returns Una descripción placeholder
-   */
   private getPlaceholderDescription(): string {
     const placeholders = [
       'Este juego forma parte de tu biblioteca personal. Añade una valoración y comparte tu experiencia con otros jugadores.',
@@ -100,7 +79,7 @@ export class GameCardComponent implements OnInit {
     event.stopPropagation();
     event.preventDefault();
 
-    if (this._isReadOnlyUser()) {
+    if (this.isReadOnly) {
       this._notificationService.info('No tienes permisos para modificar favoritos en modo solo lectura.');
       return;
     }
@@ -121,7 +100,7 @@ export class GameCardComponent implements OnInit {
     event.stopPropagation();
     event.preventDefault();
 
-    if (this._isReadOnlyUser()) {
+    if (this.isReadOnly) {
       this._notificationService.info('No tienes permisos para modificar objetivos de platino en modo solo lectura.');
       return;
     }

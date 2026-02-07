@@ -1,11 +1,11 @@
 <div class="card" [routerLink]="!selectMode ? ['/game', gameId()] : null" [class.select-mode]="selectMode" [class.platinum-target]="isPlatinumTarget()">
     <button type="button" class="favorite-button" (click)="toggleFavorite($event)" [title]="favoriteTitle()"
-      [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()">
+      [disabled]="isReadOnly" [class.disabled]="isReadOnly">
       <span class="material-icons">{{favoriteIcon()}}</span>
     </button>
     
     <button type="button" class="platinum-target-button" (click)="togglePlatinumTarget($event)" [title]="platinumTargetTitle()"
-      [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()" [class.active]="isPlatinumTarget()">
+      [disabled]="isReadOnly" [class.disabled]="isReadOnly" [class.active]="isPlatinumTarget()">
       <span class="material-icons">{{platinumTargetIcon()}}</span>
     </button>
     
@@ -16,7 +16,7 @@
     </div>
     }
     
-    <img [src]="gameImageUrl()" [alt]="gameName()" class="card-img">
+    <img [src]="gameImageUrl()" [alt]="gameName()" class="card-img" loading="lazy" decoding="async">
     
     <div class="card-body">
       <h2 class="card-title">{{ gameName() }}</h2>
