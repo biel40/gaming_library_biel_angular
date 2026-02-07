@@ -291,3 +291,18 @@
     opacity: 1;
   }
 }
+
+.read-only-notice {
+  @include mix.flex(row, center, flex-start, 0.75rem);
+  padding: 1.25rem 1.5rem;
+  color: #ffa726;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: linear-gradient(90deg, rgba(255, 167, 38, 0.1), transparent);
+  border-left: 3px solid #ffa726;
+
+  .material-icons {
+    font-size: 1.25rem;
+    color: #ffa726;
+  }
+}

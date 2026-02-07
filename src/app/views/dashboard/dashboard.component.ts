@@ -3,11 +3,12 @@ import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit, signal
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
+import { User } from '@supabase/supabase-js';
+import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.component';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
 import { UserService } from '../../services/user/user.service';
 import { GenreNormalizerService } from '../../services/genre-normalizer/genre-normalizer.service';
-import { User } from '@supabase/supabase-js';
 
 @Component({
     selector: 'app-dashboard',
@@ -18,6 +19,7 @@ import { User } from '@supabase/supabase-js';
         CommonModule,
         FormsModule,
         GameCardComponent,
+        UserAvatarComponent,
         RouterLink
     ]
 })
@@ -35,10 +37,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private _favoriteSubscription: Subscription | null = null;
 
     // Signals for state management
-    public title = signal('My Game Library');
+    public title = signal('My Videogame Library');
     public isAuthenticated = signal(false);
     public currentUser = signal<User | null>(null);
-    public showUserMenu = signal(false);
     public showMobileMenu = signal(false);
     public games = signal<Videogame[]>([]);
     public searchTerm = signal('');
@@ -59,34 +60,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Computed properties
     public isReadOnly = computed(() => {
         const user = this.currentUser();
-        return user?.email === 'test@testuser.com';
+        return user?.email !== 'biel40aws@gmail.com';
     });
-
-    public userDisplayName = computed(() => {
-        const user = this.currentUser();
-        if (!user) return '';
-        return user.user_metadata?.['full_name'] || user.email || 'Usuario';
-    });
-
-    public userInitials = computed(() => {
-        const user = this.currentUser();
-        if (!user) return 'U';
-        
-        const name = user.user_metadata?.['full_name'] || user.email || 'Usuario';
-        return name.split(' ')
-            .map((n: string) => n[0])
-            .join('')
-            .toUpperCase()
-            .slice(0, 2);
-    });
-
-    public toggleUserMenu() {
-        this.showUserMenu.set(!this.showUserMenu());
-    }
-
-    public closeUserMenu() {
-        this.showUserMenu.set(false);
-    }
 
     public toggleMobileMenu() {
         this.showMobileMenu.set(!this.showMobileMenu());
@@ -109,7 +84,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public toggleSelectMode() {
         if (this.isReadOnly()) return;
-        
+
         this.selectMode.set(!this.selectMode());
         if (!this.selectMode()) this.selectedGameIds.set([]);
     }
@@ -120,16 +95,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public toggleSelectGame(id: string | undefined) {
         if (!id) return;
-        
+
         const selected = [...this.selectedGameIds()];
         const idx = selected.indexOf(id);
-        
+
         if (idx > -1) {
             selected.splice(idx, 1);
         } else {
             selected.push(id);
         }
-        
+
         this.selectedGameIds.set(selected);
     }
 
@@ -156,20 +131,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public async deleteSelectedGames() {
         const ids = this.selectedGameIds();
         if (!ids.length) return;
-        
+
         this.deleteLoading.set(true);
-        
+
         try {
             await this._supabaseService.deleteVideogames(ids);
-            
+
             // Update local games list
             this.games.set(this.games().filter(g => !ids.includes(g.id!)));
-            
+
             // Reset selection state
             this.selectedGameIds.set([]);
             this.showDeleteConfirm.set(false);
             this.selectMode.set(false);
-            
+
             // Show success notification
             this.notificationMessage.set('Juegos eliminados correctamente');
             this.notificationType.set('success');
@@ -237,12 +212,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     constructor() {
         this._resizeListener = () => this.calculateItemsPerPage();
-        
+
         document.addEventListener('click', (event) => {
             const target = event.target as HTMLElement;
-            if (!target.closest('.user-menu') && !target.closest('.user-avatar')) {
-                this.showUserMenu.set(false);
-            }
+            // Removed user menu close logic as it is now in a separate component
             if (!target.closest('.mobile-menu') && !target.closest('.hamburger-btn')) {
                 this.showMobileMenu.set(false);
             }
@@ -379,28 +352,28 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             this.showNotification.set(false);
         }, 3000);
     }
-    
+
     /**
      * Logs out the current user and redirects to the login page
      */
     public async logout(): Promise<void> {
         try {
             // Close the user menu immediately
-            this.showUserMenu.set(false);
-            
+            // this.showUserMenu.set(false);
+
             // Sign out and clear session
             await this._supabaseService.signOut();
-            
+
             // Clear user information
             this.currentUser.set(null);
             this._userService.clearUser();
             this.isAuthenticated.set(false);
-            
+
             // Show success notification
             this.notificationMessage.set('Sesión cerrada correctamente');
             this.notificationType.set('success');
             this.showNotification.set(true);
-            
+
             // Wait a bit before navigating to show the notification
             setTimeout(() => {
                 this._router.navigate(['/login']);
@@ -409,7 +382,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             this.notificationMessage.set('Error al cerrar sesión');
             this.notificationType.set('error');
             this.showNotification.set(true);
-            
+
             // Auto-hide error notification
             setTimeout(() => {
                 this.showNotification.set(false);

@@ -13,6 +13,8 @@ This is a **standalone Angular 19** gaming library application using **signals**
 - **Modern Control Flow**: Use `@if`, `@for`, and `@switch` syntax instead of `*ngIf` or `*ngFor`.
 - **Signal Inputs/Outputs**: Prefer `input()`, `output()`, and `model()` over `@Input()` and `@Output()`.
 - Try to avoid comments - code should be self-explanatory where possible.
+- **Template Binding**: When passing signals as @Input bindings, invoke the signal with `()` to pass the value: `[selectMode]="selectMode()"`. Never pass the signal reference unless the child component explicitly expects a signal.
+- **Input Types**: Use primitive types (`boolean`, `string`, `number`) for `@Input()` properties, not signals. For reactive inputs, use Angular's signal input API: `selectMode = input(false);`
 
 ### Standalone Components Pattern
 Every component is standalone with explicit imports:
@@ -22,6 +24,23 @@ Every component is standalone with explicit imports:
   imports: [CommonModule, FormsModule, RouterModule, CustomComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
+```
+
+**CRITICAL: All imports must be properly declared**
+- Every component, service, and type used must have a corresponding `import` statement at the top of the file
+- Components used in templates MUST be listed in the `imports` array of `@Component`
+- Missing imports cause compilation errors like "'X' is not a known element" or "Value could not be determined statically"
+
+### Common Import Patterns
+```typescript
+// Services and types
+import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
+import { UserService } from '../../services/user/user.service';
+import { User } from '@supabase/supabase-js';
+
+// Components used in templates
+import { GameCardComponent } from '../../components/game-card/game-card.component';
+import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.component';
 ```
 
 ### Service Architecture
@@ -67,6 +86,8 @@ Every component is standalone with explicit imports:
 - **Mixins**: Flex layouts, gradients, button styles in `_mixins.scss`
 - **Mobile-first**: Extensive mobile optimizations with `-webkit-overflow-scrolling: touch`
 - **Performance**: `will-change`, `transform: translateZ(0)`, `backface-visibility: hidden`
+- **SCSS Imports**: When using `@use` for shared SCSS files, verify relative paths carefully. From `src/app/components/**/`, the path to `src/app/views/dashboard/styles/` is `../../views/dashboard/styles/` (2 levels up), not 3.
+- **Background Consistency**: Use `linear-gradient(135deg, vars.$bg-primary 0%, vars.$bg-secondary 100%)` for components that need to match the main app background. This gradient (#1a1a2e to #16213e) ensures visual consistency across all UI elements like dropdowns, menus, and modals.
 
 ## Database Schema (Supabase)
 

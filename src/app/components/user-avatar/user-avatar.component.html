@@ -1,0 +1,16 @@
+<div class="user-avatar" (click)="toggleUserMenu()" (keydown)="toggleUserMenu()">
+    <div class="avatar-circle">
+        <span class="avatar-initials">{{ userInitials() }}</span>
+    </div>
+    <div class="user-menu" [class.show]="showUserMenu()">
+        <div class="user-info" (click)="$event.stopPropagation()">
+            <div class="user-name">{{ userDisplayName() }}</div>
+            <div class="user-email">{{ user()?.email }}</div>
+        </div>
+        <hr class="menu-divider">
+        <button class="menu-item" (click)="logout()" title="Cerrar sesión y salir de la aplicación">
+            <span class="material-icons">logout</span>
+            Cerrar Sesión
+        </button>
+    </div>
+</div>

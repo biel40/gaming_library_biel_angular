@@ -83,12 +83,12 @@ export class SupabaseService {
   }
 
   /**
-   * Check if the current user is the read-only test user
-   * @returns boolean - true if current user is test@testuser.com
+   * Check if the current user is read-only (not the admin user)
+   * @returns boolean - true if current user is NOT the admin (biel40aws@gmail.com)
   */
   public async isReadOnlyUser(): Promise<boolean> {
     const session = await this.getSession();
-    return session?.user?.email === 'test@testuser.com';
+    return session?.user?.email !== 'biel40aws@gmail.com';
   }
 
   public profile(user: User) {

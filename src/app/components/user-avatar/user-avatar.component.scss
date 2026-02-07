@@ -1,7 +1,13 @@
-@use 'variables' as vars;
-@use 'mixins' as mix;
+@use '../../views/dashboard/styles/variables' as vars;
+@use '../../views/dashboard/styles/mixins' as mix;
 
-// User avatar styles
+:host {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+}
+
 .user-avatar {
   position: relative;
   display: inline-block;
@@ -11,22 +17,25 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, vars.$primary-color, vars.$accent-color);
+    background: linear-gradient(90deg, vars.$accent-color, vars.$accent-light);
     @include mix.flex(row, center, center);
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(255, 87, 34, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.15);
     
     &:hover {
       transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.2);
     }
     
     .avatar-initials {
       color: white;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
   }
   
@@ -34,17 +43,22 @@
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
-    background: vars.$bg-secondary;
-    border-radius: vars.$border-radius-md;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    min-width: 220px;
+    min-width: 240px;
     padding: 0;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 9999;
-    border: 1px solid vars.$white-20;
+    background: linear-gradient(135deg, vars.$bg-primary 0%, vars.$bg-secondary 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    
+    &::before {
+      display: none;
+    }
     
     &.show {
       opacity: 1;
@@ -52,22 +66,9 @@
       transform: translateY(0);
     }
     
-    // Triangle arrow
-    &::before {
-      content: '';
-      position: absolute;
-      top: -8px;
-      right: 12px; // Centrado con el avatar de 40px (40/2 - 8 = 12)
-      width: 0;
-      height: 0;
-      border-left: 8px solid transparent;
-      border-right: 8px solid transparent;
-      border-bottom: 8px solid vars.$bg-secondary;
-    }
-    
     .user-info {
       padding: 1rem;
-      border-bottom: 1px solid vars.$white-10;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
       .user-name {
         font-weight: 600;
@@ -88,44 +89,47 @@
       margin: 0;
       border: none;
       height: 1px;
-      background: vars.$white-10;
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .menu-item {
       width: 100%;
       padding: 0.75rem 1rem;
       border: none;
-      background: none;
+      background: transparent;
       text-align: left;
       cursor: pointer;
       @include mix.flex(row, center, flex-start, 0.75rem);
       font-size: 0.9rem;
       color: vars.$white;
       transition: all 0.2s ease;
-
-      &:hover {
-        background: vars.$white-10;
-      }
-
-      &:first-of-type {
-        border-top: 1px solid vars.$white-10;
-      }
-
-      &:last-of-type {
-        border-bottom-left-radius: vars.$border-radius-md;
-        border-bottom-right-radius: vars.$border-radius-md;
-      }
+      font-weight: 500;
+      border-radius: 0 0 16px 16px;
 
       .material-icons {
         font-size: 1.1rem;
         color: vars.$text-light;
+        transition: color 0.2s;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        
+        .material-icons {
+          color: vars.$white;
+        }
       }
     }
   }
 }
 
-// Responsive adjustments
 @media (max-width: 767px) {
+  :host {
+    top: 0;
+    right: 0;
+    z-index: 101;
+  }
+  
   .user-avatar {
     .avatar-circle {
       width: 36px;
@@ -138,10 +142,10 @@
     
     .user-menu {
       min-width: 200px;
-      right: -10px;
+      right: 0;
       
       &::before {
-        right: 20px; // Centrado con el avatar de 36px (36/2 - 8 + 10 de offset = 20)
+        right: 10px;
       }
     }
   }

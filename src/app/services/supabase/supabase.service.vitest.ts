@@ -51,7 +51,16 @@ describe('SupabaseService (critical local behavior)', () => {
     expect((service as any)._videogames()[0].favorite).toBe(true);
   });
 
-  it('isReadOnlyUser returns true for test user email', async () => {
+  it('isReadOnlyUser returns false for admin user (biel40aws@gmail.com)', async () => {
+    (createClient as unknown as any).mockReturnValue({ auth: { getSession: vi.fn() } });
+
+    const service = new SupabaseService();
+    vi.spyOn(service, 'getSession').mockResolvedValue({ user: { email: 'biel40aws@gmail.com' } } as any);
+
+    await expect(service.isReadOnlyUser()).resolves.toBe(false);
+  });
+
+  it('isReadOnlyUser returns true for non-admin users', async () => {
     (createClient as unknown as any).mockReturnValue({ auth: { getSession: vi.fn() } });
 
     const service = new SupabaseService();

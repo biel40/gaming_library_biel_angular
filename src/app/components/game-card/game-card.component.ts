@@ -22,7 +22,7 @@ export class GameCardComponent implements OnInit {
     this._game.set(value);
   }
 
-  @Input() selectMode = signal(false);
+  @Input() selectMode: boolean = false;
 
   @Output() platinumTargetChanged = new EventEmitter<Videogame>();
 

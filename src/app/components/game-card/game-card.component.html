@@ -1,4 +1,4 @@
-<div class="card" [routerLink]="!selectMode() ? ['/game', gameId()] : null" [class.select-mode]="selectMode()" [class.platinum-target]="isPlatinumTarget()">
+<div class="card" [routerLink]="!selectMode ? ['/game', gameId()] : null" [class.select-mode]="selectMode" [class.platinum-target]="isPlatinumTarget()">
     <button type="button" class="favorite-button" (click)="toggleFavorite($event)" [title]="favoriteTitle()"
       [disabled]="isReadOnlyUser()" [class.disabled]="isReadOnlyUser()">
       <span class="material-icons">{{favoriteIcon()}}</span>
@@ -28,8 +28,8 @@
         <p class="card-release-date">Fecha de lanzamiento: {{ gameReleaseDate() | date: 'dd/MM/yyyy' }}</p>
       </div>
       
-      <button type="button" [routerLink]="!selectMode() ? ['/game', gameId()] : null" class="btn" [class.disabled]="selectMode()" [attr.disabled]="selectMode() ? true : null"
-        [attr.title]="selectMode() ? 'Modo selección activo - haz clic en la tarjeta para seleccionar' : 'Ver detalles completos del juego'">
+      <button type="button" [routerLink]="!selectMode ? ['/game', gameId()] : null" class="btn" [class.disabled]="selectMode" [attr.disabled]="selectMode ? true : null"
+        [attr.title]="selectMode ? 'Modo selección activo - haz clic en la tarjeta para seleccionar' : 'Ver detalles completos del juego'">
         Ver Detalles
       </button>
     </div>

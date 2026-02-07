@@ -25,6 +25,7 @@
 
             <!-- Desktop buttons (hidden on mobile) -->
             <div class="desktop-actions">
+                @if (!isReadOnly()) {
                 <button class="add-game-btn" routerLink="/add-game" title="Añadir un nuevo juego a tu biblioteca">
                     <span class="material-icons">add</span>
                     Añadir Juego
@@ -39,6 +40,7 @@
                     <span class="material-icons">emoji_events</span>
                     Platinos
                 </button>
+                }
                 <!-- Funcionalidad deshabilitada temporalmente -->
                 @if (false) {
                 <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()"
@@ -50,23 +52,7 @@
             </div>
         </div>
 
-        <div class="user-avatar" (click)="toggleUserMenu()" (keydown)="toggleUserMenu()">
-            <div class="avatar-circle">
-                <span class="avatar-initials">{{ userInitials() }}</span>
-            </div>
-            <div class="user-menu" [class.show]="showUserMenu()">
-                <div class="user-info">
-                    <div class="user-name">{{ userDisplayName() }}</div>
-                    <div class="user-email">{{ currentUser()?.email }}</div>
-                </div>
-                <hr class="menu-divider">
-                <button class="menu-item" (click)="logout(); $event.stopPropagation()"
-                    title="Cerrar sesión y salir de la aplicación">
-                    <span class="material-icons">logout</span>
-                    Cerrar Sesión
-                </button>
-            </div>
-        </div>
+        <app-user-avatar [user]="currentUser()"></app-user-avatar>
     </header>
 
     <!-- Mobile menu overlay -->
@@ -80,6 +66,7 @@
             </button>
         </div>
         <ul class="mobile-menu-list">
+            @if (!isReadOnly()) {
             <li>
                 <button class="mobile-menu-item" (click)="navigateAndCloseMenu('/add-game')">
                     <span class="material-icons">add</span>
@@ -98,6 +85,12 @@
                     <span>Platinos</span>
                 </button>
             </li>
+            } @else {
+            <li class="read-only-notice">
+                <span class="material-icons">info</span>
+                <span>Modo solo lectura</span>
+            </li>
+            }
             <!-- Funcionalidad deshabilitada temporalmente -->
             @if (false) {
             <li>
@@ -149,7 +142,7 @@
         @if (favoriteGames().length > 0) {
         <div class="game-grid favorites-grid">
             @for (game of favoriteGames(); track $index) {
-            <app-game-card [game]="game" [selectMode]="selectMode"></app-game-card>
+            <app-game-card [game]="game" [selectMode]="selectMode()"></app-game-card>
             }
         </div>
         } @else {
@@ -220,7 +213,7 @@
                     <span class="checkmark"></span>
                 </label>
                 }
-                <app-game-card [game]="game" [selectMode]="selectMode"></app-game-card>
+                <app-game-card [game]="game" [selectMode]="selectMode()"></app-game-card>
             </div>
             }
         </div>
