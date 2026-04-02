@@ -210,6 +210,11 @@ export class SupabaseService {
       .in('id', ids);
 
     if (error) throw error;
+
+    const currentGames = this._videogames();
+    if (currentGames.length > 0) {
+      this._videogames.set(currentGames.filter(game => !ids.includes(game.id || '')));
+    }
     this.invalidateCache();
   }
   public async getVideogames(forceRefresh = false): Promise<Videogame[]> {
@@ -254,6 +259,22 @@ export class SupabaseService {
     try {
       sessionStorage.removeItem(SupabaseService.CACHE_KEY);
     } catch {}
+  }
+
+  /**
+   * Syncs the local signal after an update to ensure the UI reflects the latest data
+   * @param gameId 
+   * @param changes 
+   */
+  private _syncAfterUpdate(gameId: string, changes: Partial<Videogame>): void {
+    const currentGames = this._videogames();
+    if (currentGames.length > 0) {
+      const updatedGames = currentGames.map(game =>
+        game.id === gameId ? { ...game, ...changes } : game
+      );
+      this._videogames.set(updatedGames);
+    }
+    this.invalidateCache();
   }
 
   private _saveToCache(games: Videogame[]): void {
@@ -339,6 +360,8 @@ export class SupabaseService {
     if (error) {
       throw error;
     }
+
+    this._syncAfterUpdate(gameId, { score });
   }
 
   /**
@@ -355,6 +378,8 @@ export class SupabaseService {
     if (error) {
       throw error;
     }
+
+    this._syncAfterUpdate(gameId, { review });
   }
 
   /**
@@ -371,6 +396,8 @@ export class SupabaseService {
     if (error) {
       throw error;
     }
+
+    this._syncAfterUpdate(gameId, { description });
   }
 
   /**
@@ -386,6 +413,8 @@ export class SupabaseService {
     if (error) {
       throw error;
     }
+
+    this._syncAfterUpdate(gameId, { review: '', score: 0 });
   }
 
   /**
@@ -403,14 +432,7 @@ export class SupabaseService {
       throw error;
     }
 
-    // Update the local state
-    const currentGames = this._videogames();
-    const updatedGames = currentGames.map(game =>
-      game.id === gameId
-        ? { ...game, currently_playing: currentlyPlaying }
-        : game
-    );
-    this._videogames.set(updatedGames);
+    this._syncAfterUpdate(gameId, { currently_playing: currentlyPlaying });
   }
 
   /**
@@ -428,14 +450,7 @@ export class SupabaseService {
       throw error;
     }
 
-    // Update the local state
-    const currentGames = this._videogames();
-    const updatedGames = currentGames.map(game =>
-      game.id === gameId
-        ? { ...game, hours_played: hoursPlayed }
-        : game
-    );
-    this._videogames.set(updatedGames);
+    this._syncAfterUpdate(gameId, { hours_played: hoursPlayed });
   }
 
   /**
@@ -501,6 +516,17 @@ export class SupabaseService {
       throw error;
     }
 
+    // Reset all targets in signal, then set the new one
+    const currentGames = this._videogames();
+    if (currentGames.length > 0) {
+      const updatedGames = currentGames.map(game => ({
+        ...game,
+        platinum_target: game.id === gameId
+      }));
+      this._videogames.set(updatedGames);
+    }
+    this.invalidateCache();
+
     return data;
   }
 
@@ -520,6 +546,8 @@ export class SupabaseService {
     if (error) {
       throw error;
     }
+
+    this._syncAfterUpdate(gameId, { platinum_target: false });
 
     return data;
   }
@@ -752,6 +780,11 @@ export class SupabaseService {
       throw error;
     }
 
+    this._syncAfterUpdate(gameId, {
+      platinum: newPlatinumStatus,
+      platinum_date: newPlatinumStatus ? new Date() : undefined
+    });
+
     return data;
   }
 
@@ -792,6 +825,8 @@ export class SupabaseService {
     if (error) {
       throw error;
     }
+
+    this._syncAfterUpdate(gameId, { platinum_date: date });
 
     return data;
   }
