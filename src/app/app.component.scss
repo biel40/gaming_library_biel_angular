@@ -7,6 +7,12 @@
     color: #e0e0e0;
     overflow-y: auto;
     overflow-x: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
+
+    &.light-theme {
+        background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+        color: #1a1a2e;
+    }
 }
 
 .content {

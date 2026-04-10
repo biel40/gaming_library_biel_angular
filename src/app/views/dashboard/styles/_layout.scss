@@ -114,11 +114,41 @@
     }
   }
   
-  // Position user avatar at the top right
-  .user-avatar {
+  // Position header-right group at the top right
+  .header-right {
     position: absolute;
     top: 0;
     right: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 101;
+  }
+
+  .theme-toggle-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(4px);
+
+    .material-icons {
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      background: rgba(255, 215, 0, 0.15);
+      border-color: rgba(255, 215, 0, 0.4);
+      color: #ffd700;
+      transform: rotate(30deg);
+    }
   }
   
   @media (max-width: 767px) {
@@ -154,10 +184,18 @@
       }
     }
     
-    .user-avatar {
+    .header-right {
       top: 0;
       right: 0;
-      z-index: 101;
+    }
+
+    .theme-toggle-btn {
+      width: 36px;
+      height: 36px;
+
+      .material-icons {
+        font-size: 1.1rem;
+      }
     }
   }
 

@@ -23,6 +23,7 @@ export class GameCardComponent {
 
   @Input() selectMode: boolean = false;
   @Input() isReadOnly: boolean = false;
+  @Input() theme: 'dark' | 'light' = 'dark';
 
   @Output() platinumTargetChanged = new EventEmitter<Videogame>();
 

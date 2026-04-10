@@ -1,0 +1,257 @@
+@use 'variables' as vars;
+
+// ─── Light theme overrides ────────────────────────────────────────────────────
+.dashboard.light-theme {
+  background: linear-gradient(135deg, #f0f4f8 0%, #e8ecf3 100%);
+  min-height: 100vh;
+
+  // ── Header title ────────────────────────────────────────────────────────────
+  .dashboard-header h1 {
+    background: linear-gradient(90deg, #d84315, #bf360c);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+  }
+
+  // ── Section titles (Mis favoritos, Todos los juegos) ────────────────────────
+  .all-games h2,
+  .favorites h2 {
+    background: linear-gradient(90deg, #c8960a, #a67c00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  // ── Theme toggle button ─────────────────────────────────────────────────────
+  .theme-toggle-btn {
+    background: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.6);
+
+    &:hover {
+      background: rgba(216, 67, 21, 0.1);
+      border-color: rgba(216, 67, 21, 0.3);
+      color: #d84315;
+    }
+  }
+
+  // ── Search bar ──────────────────────────────────────────────────────────────
+  .search-bar {
+    input {
+      background: rgba(255, 255, 255, 0.9);
+      color: #1a1a2e;
+      border-color: rgba(0, 0, 0, 0.12);
+
+      &::placeholder {
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      &:hover {
+        background: #ffffff;
+        border-color: rgba(200, 150, 10, 0.6);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(200, 150, 10, 0.15);
+      }
+
+      &:focus {
+        background: #ffffff;
+        border-color: #c8960a;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 0 0 3px rgba(200, 150, 10, 0.12);
+      }
+    }
+
+    .material-icons {
+      color: rgba(0, 0, 0, 0.45);
+    }
+
+    &:hover .material-icons,
+    input:focus + .material-icons {
+      color: #c8960a;
+    }
+  }
+
+  // ── Filter chips ────────────────────────────────────────────────────────────
+  .filter-chip {
+    background: rgba(255, 255, 255, 0.85);
+    color: #1a1a2e;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+
+    &:hover {
+      background: #ffffff;
+      border-color: rgba(200, 150, 10, 0.55);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      color: #1a1a2e;
+    }
+  }
+
+  // ── View-mode toggle buttons ────────────────────────────────────────────────
+  .view-btn {
+    color: rgba(0, 0, 0, 0.55);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.07);
+    }
+
+    &.active {
+      color: #d84315;
+      background: rgba(216, 67, 21, 0.1);
+    }
+  }
+
+  // ── Game card wrapper (grid view) ───────────────────────────────────────────
+  .game-card-wrapper {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  // ── Game list (list view) ───────────────────────────────────────────────────
+  .list-item {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.08);
+
+    &::before {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0, 0, 0, 0.04),
+        transparent
+      );
+    }
+
+    &:hover {
+      background: #ffffff;
+      border-color: rgba(200, 150, 10, 0.65);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.09), 0 0 20px rgba(200, 150, 10, 0.07);
+    }
+
+    .list-img {
+      background: #dce3ed;
+    }
+
+    .list-content {
+      h3 {
+        color: #1a1a2e;
+      }
+
+      .list-description {
+        color: rgba(0, 0, 0, 0.58);
+      }
+
+      .list-meta {
+        span {
+          background: rgba(0, 0, 0, 0.07);
+          color: rgba(0, 0, 0, 0.65);
+
+          &:first-child {
+            background: linear-gradient(135deg, vars.$accent-gold, vars.$accent-gold-light);
+            color: vars.$bg-primary;
+          }
+        }
+      }
+    }
+
+    .list-btn {
+      background: rgba(0, 0, 0, 0.06);
+      border-color: rgba(0, 0, 0, 0.1);
+      color: #1a1a2e;
+    }
+  }
+
+  // ── Empty / loading / error states ─────────────────────────────────────────
+  .empty-state {
+    .material-icons {
+      color: rgba(0, 0, 0, 0.28);
+    }
+
+    p {
+      color: rgba(0, 0, 0, 0.65);
+    }
+  }
+
+  .loading-state {
+    p {
+      color: rgba(0, 0, 0, 0.65);
+    }
+  }
+
+  // ── Hamburger lines ─────────────────────────────────────────────────────────
+  .hamburger-btn .hamburger-line {
+    background: #d84315;
+  }
+
+  // ── Mobile menu ─────────────────────────────────────────────────────────────
+  .mobile-menu {
+    background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    box-shadow: -4px 0 30px rgba(0, 0, 0, 0.15);
+    border-left-color: #d84315;
+  }
+
+  .mobile-menu-list {
+    li:not(:last-child)::after {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0, 0, 0, 0.08),
+        transparent
+      );
+    }
+  }
+
+  .mobile-menu-item {
+    color: #1a1a2e;
+
+    &:hover {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 87, 34, 0.1),
+        rgba(255, 87, 34, 0.03)
+      );
+    }
+  }
+}
+
+// ─── Theme transition ripple ──────────────────────────────────────────────────
+// Overlay que se expande desde el botón (top-right) en forma de círculo.
+// Solo usa clip-path + opacity → 100% GPU-composited, sin layout/paint.
+// ─────────────────────────────────────────────────────────────────────────────
+.theme-ripple-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  pointer-events: none;
+  will-change: clip-path, opacity;
+
+  &.to-light {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+  }
+
+  &.to-dark {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  }
+
+  animation: theme-ripple 0.38s forwards;
+}
+
+// Origen aproximado al centro del botón theme-toggle (top-right)
+// calc(100vw - 100px): ~84px desde la derecha del viewport
+// 40px: centro vertical del botón (header padding + button height/2)
+@keyframes theme-ripple {
+  0% {
+    clip-path: circle(0px at calc(100vw - 100px) 40px);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  50% {
+    clip-path: circle(200vw at calc(100vw - 100px) 40px);
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+  100% {
+    clip-path: circle(200vw at calc(100vw - 100px) 40px);
+    opacity: 0;
+  }
+}

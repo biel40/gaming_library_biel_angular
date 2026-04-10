@@ -57,6 +57,27 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public showDeleteConfirm = signal(false);
     public deleteLoading = signal(false);
 
+    // Theme
+    public theme = signal<'dark' | 'light'>(
+        (localStorage.getItem('gaming-library-theme') as 'dark' | 'light') || 'dark'
+    );
+    public isAnimating = signal(false);
+    public pendingTheme = signal<'dark' | 'light'>('dark');
+
+    public toggleTheme() {
+        if (this.isAnimating()) return;
+        const next = this.theme() === 'dark' ? 'light' : 'dark';
+        this.pendingTheme.set(next);
+        this.isAnimating.set(true);
+        setTimeout(() => {
+            this.theme.set(next);
+            localStorage.setItem('gaming-library-theme', next);
+        }, 190);
+        setTimeout(() => {
+            this.isAnimating.set(false);
+        }, 380);
+    }
+
     // Computed properties
     public isReadOnly = computed(() => {
         const user = this.currentUser();
@@ -213,6 +234,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor() {
         this._resizeListener = () => this.calculateItemsPerPage();
 
+        effect(() => {
+            const isDark = this.theme() === 'dark';
+            document.body.classList.toggle('light-theme', !isDark);
+            document.querySelector('.main')?.classList.toggle('light-theme', !isDark);
+        });
+
         document.addEventListener('click', (event) => {
             const target = event.target as HTMLElement;
             // Removed user menu close logic as it is now in a separate component
@@ -271,6 +298,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnDestroy() {
         window.removeEventListener('resize', this._resizeListener);
         document.body.style.overflow = '';
+        document.body.classList.remove('light-theme');
+        document.querySelector('.main')?.classList.remove('light-theme');
 
         if (this._favoriteSubscription) {
             this._favoriteSubscription.unsubscribe();

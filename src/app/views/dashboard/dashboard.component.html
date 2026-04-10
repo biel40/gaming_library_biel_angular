@@ -1,4 +1,4 @@
-<div class="dashboard">
+<div class="dashboard" [class.light-theme]="theme() === 'light'">
     <!-- Notification component -->
     @if (showNotification()) {
     <div class="notification" [ngClass]="notificationType()">
@@ -52,7 +52,13 @@
             </div>
         </div>
 
-        <app-user-avatar [user]="currentUser()"></app-user-avatar>
+        <div class="header-right">
+            <button class="theme-toggle-btn" (click)="toggleTheme()"
+                [title]="theme() === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'">
+                <span class="material-icons">{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
+            </button>
+            <app-user-avatar [user]="currentUser()"></app-user-avatar>
+        </div>
     </header>
 
     <!-- Mobile menu overlay -->
@@ -101,6 +107,12 @@
                 </button>
             </li>
             }
+            <li>
+                <button class="mobile-menu-item" (click)="toggleTheme(); closeMobileMenu()">
+                    <span class="material-icons">{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
+                    <span>{{ theme() === 'dark' ? 'Tema claro' : 'Tema oscuro' }}</span>
+                </button>
+            </li>
         </ul>
     </nav>
     }
@@ -142,7 +154,7 @@
         @if (favoriteGames().length > 0) {
         <div class="game-grid favorites-grid">
             @for (game of favoriteGames(); track game.id) {
-            <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()"></app-game-card>
+            <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()" [theme]="theme()"></app-game-card>
             }
         </div>
         } @else {
@@ -213,7 +225,7 @@
                     <span class="checkmark"></span>
                 </label>
                 }
-                <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()"></app-game-card>
+                <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()" [theme]="theme()"></app-game-card>
             </div>
             }
         </div>
@@ -276,5 +288,11 @@
             </div>
         </div>
     </div>
+    }
+
+    @if (isAnimating()) {
+    <div class="theme-ripple-overlay"
+        [class.to-dark]="pendingTheme() === 'dark'"
+        [class.to-light]="pendingTheme() === 'light'"></div>
     }
 </div>

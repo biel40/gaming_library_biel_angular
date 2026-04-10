@@ -1,4 +1,4 @@
-<div class="card" [routerLink]="!selectMode ? ['/game', gameId()] : null" [class.select-mode]="selectMode" [class.platinum-target]="isPlatinumTarget()">
+<div class="card" [routerLink]="!selectMode ? ['/game', gameId()] : null" [class.select-mode]="selectMode" [class.platinum-target]="isPlatinumTarget()" [class.light-theme]="theme === 'light'">
     <button type="button" class="favorite-button" (click)="toggleFavorite($event)" [title]="favoriteTitle()"
       [disabled]="isReadOnly" [class.disabled]="isReadOnly">
       <span class="material-icons">{{favoriteIcon()}}</span>

@@ -2,10 +2,6 @@
 @use '../../views/dashboard/styles/mixins' as mix;
 
 :host {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 100;
   display: block;
 }
 
