@@ -109,7 +109,7 @@ export class GameDetailComponent implements OnInit {
   /**
    * Toggle the favorite status of the current game
   */
-  public toggleFavorite(): void {
+  public async toggleFavorite(): Promise<void> {
     if (this._isReadOnlyUser()) {
       this.notificationService.info('No tienes permisos para modificar favoritos en modo solo lectura');
       return;
@@ -117,7 +117,12 @@ export class GameDetailComponent implements OnInit {
 
     const currentGame = this._game();
     if (currentGame) {
-      this.supabaseService.toggleFavorite(currentGame);
+      try {
+        const newFavorite = await this.supabaseService.toggleFavorite(currentGame);
+        this._game.set({ ...currentGame, favorite: newFavorite });
+      } catch (err) {
+        this.notificationService.error('Error al actualizar favorito');
+      }
     }
   }
 

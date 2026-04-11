@@ -49,10 +49,17 @@ import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.co
 - **UserService**: User state management
 - Services injected via `inject()` function, not constructor DI
 
+### Favorites Architecture
+- Favorites are stored in the `user_favorites` table in Supabase (columns: `user_id UUID`, `game_id BIGINT`, `created_at`), NOT in localStorage.
+- `SupabaseService.loadFavorites()` is idempotent (guarded by `_favoritesLoaded`). Any method that maps `isFavorite()` must call `await this.loadFavorites()` first.
+- `toggleFavorite()` is `async` — it does an `INSERT` or `DELETE` on `user_favorites`. Components must `await` it and handle errors with try/catch.
+- On `signOut()`, `_favorites`, `_favoritesLoaded`, and `_cachedReadOnly` are all reset.
+
 ### Type Safety & Clean Code
 - **Strict Typing**: Avoid `any`. Define interfaces or types for all data structures.
 - **Immutability**: Treat signal values as immutable. Use spread operators for updates.
 - **Error Handling**: Use try/catch in async operations and update error signals.
+- **Access Modifiers**: Every method must have an explicit access modifier (`public`, `private`, or `protected`). Never leave a method without one.
 
 ## Development Workflows
 

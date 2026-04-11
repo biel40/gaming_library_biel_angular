@@ -75,8 +75,7 @@ export class GameCardComponent {
    * Toggle favorite status for this game
    * @param event The click event
    */
-  toggleFavorite(event: MouseEvent): void {
-    // Prevent navigation to game details when clicking the star
+  public async toggleFavorite(event: MouseEvent): Promise<void> {
     event.stopPropagation();
     event.preventDefault();
 
@@ -87,8 +86,11 @@ export class GameCardComponent {
 
     const currentGame = this._game();
     if (currentGame) {
-      // Toggle the favorite status through the service
-      this._supabaseService.toggleFavorite(currentGame);
+      try {
+        await this._supabaseService.toggleFavorite(currentGame);
+      } catch (err) {
+        this._notificationService.error('Error al actualizar favorito');
+      }
     }
   }
 
@@ -96,7 +98,7 @@ export class GameCardComponent {
    * Toggle platinum target status for this game
    * @param event The click event
    */
-  async togglePlatinumTarget(event: MouseEvent): Promise<void> {
+  public async togglePlatinumTarget(event: MouseEvent): Promise<void> {
     // Prevent navigation to game details when clicking the flag
     event.stopPropagation();
     event.preventDefault();

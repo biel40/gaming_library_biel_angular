@@ -30,21 +30,37 @@ describe('SupabaseService (critical local behavior)', () => {
     expect(auth.signOut).toHaveBeenCalledTimes(1);
   });
 
-  it('toggleFavorite persists to localStorage, emits event, and updates local games signal', () => {
-    (createClient as unknown as any).mockReturnValue({ auth: { getSession: vi.fn() } });
+  it('toggleFavorite inserts to DB, emits event, and updates local games signal', async () => {
+    const mockInsert = vi.fn().mockResolvedValue({ error: null });
+    const mockDelete = vi.fn().mockResolvedValue({ error: null });
+    const mockSelect = vi.fn().mockResolvedValue({ data: [], error: null });
+
+    const from = vi.fn((table: string) => {
+      if (table === 'user_favorites') {
+        return {
+          select: () => mockSelect(),
+          insert: mockInsert,
+          delete: () => ({ eq: mockDelete }),
+        };
+      }
+      return {};
+    });
+
+    (createClient as unknown as any).mockReturnValue({ auth: { getSession: vi.fn() }, from });
 
     const service = new SupabaseService();
-    const game: Videogame = { id: 'g1', name: 'Game 1', favorite: false };
+    vi.spyOn(service, 'getSession').mockResolvedValue({ user: { id: 'user-1', email: 'test@test.com' } } as any);
 
+    const game: Videogame = { id: 'g1', name: 'Game 1', favorite: false };
     (service as any)._videogames.set([{ ...game }]);
 
     const emitted: Videogame[] = [];
     service.favoriteChanged.subscribe((g) => emitted.push(g));
 
-    const newValue = service.toggleFavorite(game);
+    const newValue = await service.toggleFavorite(game);
 
     expect(newValue).toBe(true);
-    expect(JSON.parse(localStorage.getItem('favorite-games') || '[]')).toEqual(['g1']);
+    expect(mockInsert).toHaveBeenCalledWith({ user_id: 'user-1', game_id: 'g1' });
     expect(emitted).toHaveLength(1);
     expect(emitted[0].id).toBe('g1');
     expect(emitted[0].favorite).toBe(true);

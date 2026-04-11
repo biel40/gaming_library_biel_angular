@@ -50,6 +50,7 @@ export class SupabaseService {
   private static readonly CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
   private _cacheTimestamp: number | null = null;
   private _cachedReadOnly: boolean | null = null;
+  private _favoritesLoaded = false;
 
   // Event emitter for favorite changes
   public favoriteChanged = new EventEmitter<Videogame>();
@@ -60,7 +61,6 @@ export class SupabaseService {
     }
 
     this._supabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
-    this._loadFavoritesFromStorage();
   }
 
   // Session management
@@ -137,8 +137,10 @@ export class SupabaseService {
    */
   public async signOut(): Promise<void> {
     await this._supabaseClient.auth.signOut();
-    // Clear the session signal to ensure the user is properly logged out
     this._session.set(null);
+    this._favorites.set([]);
+    this._favoritesLoaded = false;
+    this._cachedReadOnly = null;
   }
 
   // Had to fix this manually to work
@@ -218,6 +220,7 @@ export class SupabaseService {
     this.invalidateCache();
   }
   public async getVideogames(forceRefresh = false): Promise<Videogame[]> {
+    await this.loadFavorites();
     if (!forceRefresh) {
       const cached = this._getFromCache();
       if (cached) {
@@ -314,6 +317,7 @@ export class SupabaseService {
   }
 
   public async getVideogameDetails(id: string): Promise<Videogame | null> {
+    await this.loadFavorites();
     const { data, error } = await this._supabaseClient
       .from('videogames')
       .select()
@@ -458,6 +462,7 @@ export class SupabaseService {
    * @returns Promise<Videogame[]> - Array of games currently being played
    */
   public async getCurrentlyPlayingGames(): Promise<Videogame[]> {
+    await this.loadFavorites();
     const { data, error } = await this._supabaseClient
       .from('videogames')
       .select()
@@ -557,6 +562,7 @@ export class SupabaseService {
    * @returns Promise<Videogame | null> - the current target game or null if none
    */
   public async getCurrentPlatinumTarget(): Promise<Videogame | null> {
+    await this.loadFavorites();
     const { data, error } = await this._supabaseClient
       .from('videogames')
       .select('*')
@@ -588,48 +594,66 @@ export class SupabaseService {
     };
   }
 
-  // Store favorites in localStorage since we don't want to modify the database
-  private _loadFavoritesFromStorage(): void {
-    const favorites = localStorage.getItem('favorite-games');
-    this._favorites.set(favorites ? JSON.parse(favorites) : []);
-  }
+  public async loadFavorites(): Promise<void> {
+    if (this._favoritesLoaded) return;
 
-  private getFavoritesFromStorage(): string[] {
-    return this._favorites();
+    const session = await this.getSession();
+    if (!session) {
+      this._favorites.set([]);
+      return;
+    }
+
+    const { data, error } = await this._supabaseClient
+      .from('user_favorites')
+      .select('game_id');
+
+    if (error) {
+      console.error('Error loading favorites:', error);
+      this._favorites.set([]);
+      return;
+    }
+
+    this._favorites.set(data?.map(row => String(row.game_id)) ?? []);
+    this._favoritesLoaded = true;
   }
 
   public isFavorite(gameId: string): boolean {
-    return this._favorites().includes(gameId);
+    return this._favorites().includes(String(gameId));
   }
 
-  public toggleFavorite(game: Videogame): boolean {
+  public async toggleFavorite(game: Videogame): Promise<boolean> {
     if (!game.id) return false;
 
-    const favorites = this._favorites();
-    const index = favorites.indexOf(game.id);
+    const session = await this.getSession();
+    if (!session) return false;
 
-    // Toggle favorite status
-    if (index >= 0) {
-      favorites.splice(index, 1);
+    const isFav = this.isFavorite(game.id);
+
+    if (isFav) {
+      const { error } = await this._supabaseClient
+        .from('user_favorites')
+        .delete()
+        .eq('game_id', game.id);
+
+      if (error) throw error;
+
       game.favorite = false;
+      this._favorites.update(favs => favs.filter(id => id !== String(game.id)));
     } else {
-      favorites.push(game.id);
+      const { error } = await this._supabaseClient
+        .from('user_favorites')
+        .insert({ user_id: session.user.id, game_id: game.id });
+
+      if (error) throw error;
+
       game.favorite = true;
+      this._favorites.update(favs => [...favs, String(game.id)]);
     }
 
-    // Update the favorites signal
-    this._favorites.set([...favorites]);
-
-    // Save to localStorage
-    localStorage.setItem('favorite-games', JSON.stringify(favorites));
-
-    // Emit an event to notify subscribers of the change
     this.favoriteChanged.emit(game);
-
-    // Update the game in the videogames signal
     this._updateGameInVideogamesSignal(game);
 
-    return game.favorite;
+    return game.favorite ?? false;
   }
 
   /**
