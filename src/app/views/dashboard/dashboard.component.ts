@@ -198,7 +198,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
             const matchesGenre = activeGenre === 'All' || normalizedGenre === activeGenre;
 
-            return matchesSearch && matchesGenre;
+            return matchesSearch && matchesGenre && !game.favorite;
         });
     });
 
