@@ -32,6 +32,7 @@ export class GameSearchComponent implements OnInit {
   public error: string | null = null;
   public selectedGame: GameSearchResult | null = null;
   public savingGames: Set<number> = new Set();
+  public readonly gamesInLibrary = signal<Set<string>>(new Set());
 
   ngOnInit() {
     this.checkReadOnlyStatus();
@@ -52,14 +53,14 @@ export class GameSearchComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
     this.searchResults = [];
+    this.gamesInLibrary.set(new Set());
 
     this._gameSearchService.searchGames(this.searchQuery).subscribe({
       next: (response) => {
         this.searchResults = response.results;
         this.isLoading = false;
-        // Force change detection to update the UI immediately
         this._cdr.detectChanges();
-        console.log('Search results received and UI updated:', this.searchResults.length, 'games found');
+        this.checkGamesInLibrary(response.results);
       },
       error: (err) => {
         console.error('Error searching games:', err);
@@ -96,6 +97,23 @@ export class GameSearchComponent implements OnInit {
    * Saves a game directly to the database without user rating
    * @param game The game to save
   */
+  private async checkGamesInLibrary(games: GameSearchResult[]): Promise<void> {
+    for (const game of games) {
+      try {
+        const exists = await this._supabaseService.gameExistsInLibrary(game.name);
+        if (exists) {
+          this.gamesInLibrary.update(set => new Set([...set, game.name]));
+        }
+      } catch {
+        // Si falla la verificación, no bloqueamos la UI
+      }
+    }
+  }
+
+  public isGameInLibrary(gameName: string): boolean {
+    return this.gamesInLibrary().has(gameName);
+  }
+
   public async saveGameToLibrary(game: GameSearchResult, event?: Event) {
     if (this._isReadOnlyUser()) {
       this._notificationService.error('No tienes permisos para añadir juegos');
@@ -145,6 +163,7 @@ export class GameSearchComponent implements OnInit {
         await this._supabaseService.addVideogame(videogame as Omit<Videogame, 'id'>);
         console.log('Game saved successfully');
         this._notificationService.success(`${game.name} se ha añadido a tu biblioteca exitosamente`);
+        this.gamesInLibrary.update(set => new Set([...set, game.name]));
       } catch (saveError: any) {
         console.error('Error saving game:', saveError);
 
@@ -152,6 +171,7 @@ export class GameSearchComponent implements OnInit {
         if (saveError.status === 406) {
           console.log('Received 406 error, assuming game was saved successfully');
           this._notificationService.success(`${game.name} se ha añadido a tu biblioteca exitosamente`);
+          this.gamesInLibrary.update(set => new Set([...set, game.name]));
 
           // Update the gameExists flag to prevent re-saving
           gameExists = true;

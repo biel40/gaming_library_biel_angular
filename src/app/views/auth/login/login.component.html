@@ -1,13 +1,13 @@
 <div class="login-container">
   <div class="login-card">
     <div class="login-header">
-      <h1>{{ isResetPasswordMode ? 'Restablecer Contraseña' : (isLoginMode ? 'Iniciar sesión' : 'Registrarse') }}</h1>
-      <p>{{ isResetPasswordMode ? 'Introduce tu correo electrónico para recibir instrucciones' : (isLoginMode ? '¡Bienvenido a mi biblioteca de videojuegos personal!' : '¿Te apetece ver mi biblioteca de juegos personal?') }}</p>
+      <h1>{{ isResetPasswordMode() ? 'Restablecer Contraseña' : (isLoginMode() ? 'Iniciar sesión' : 'Registrarse') }}</h1>
+      <p>{{ isResetPasswordMode() ? 'Introduce tu correo electrónico para recibir instrucciones' : (isLoginMode() ? '¡Bienvenido a mi biblioteca de videojuegos personal!' : '¿Te apetece ver mi biblioteca de juegos personal?') }}</p>
     </div>
 
     <div class="form-container">
       <!-- Reset Password Form -->
-      @if (isResetPasswordMode) {
+      @if (isResetPasswordMode()) {
         <form [formGroup]="resetPasswordForm" (ngSubmit)="onSubmit()" class="login-form">
           <div class="form-group">
             <label for="reset-email">Correo electrónico</label>
@@ -30,9 +30,9 @@
             }
           </div>
 
-          <button type="submit" class="submit-btn" [disabled]="loading" 
+          <button type="submit" class="submit-btn" [disabled]="loading()" 
             title="Enviar instrucciones de recuperación de contraseña a tu email">
-            {{ loading ? 'Enviando...' : 'Enviar Instrucciones' }}
+            {{ loading() ? 'Enviando...' : 'Enviar Instrucciones' }}
           </button>
           
           <div class="back-to-login">
@@ -43,7 +43,7 @@
         </form>
       } 
       <!-- Login Form -->
-      @else if (isLoginMode) {
+      @else if (isLoginMode()) {
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
           <div class="form-group">
             <label for="email">Correo electrónico</label>
@@ -88,9 +88,9 @@
             }
           </div>
 
-          <button type="submit" class="submit-btn" [disabled]="loading" 
+          <button type="submit" class="submit-btn" [disabled]="loading()" 
             title="Iniciar sesión con tu email y contraseña">
-            {{ loading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
+            {{ loading() ? 'Iniciando sesión...' : 'Iniciar sesión' }}
           </button>
         </form>
       } @else {
@@ -160,41 +160,41 @@
             }
           </div>
 
-          <button type="submit" class="submit-btn" [disabled]="loading" 
+          <button type="submit" class="submit-btn" [disabled]="loading()" 
             title="Crear una nueva cuenta con tu email y contraseña">
-            {{ loading ? 'Registrando...' : 'Registrarse' }}
+            {{ loading() ? 'Registrando...' : 'Registrarse' }}
           </button>
         </form>
       }
 
       <!-- Error Message -->
-      @if (errorMessage) {
+      @if (errorMessage()) {
         <div class="error-container">
-          <p class="error-text">{{ errorMessage }}</p>
+          <p class="error-text">{{ errorMessage() }}</p>
         </div>
       }
 
       <!-- Toggle Mode - Solo mostrar si el registro está habilitado -->
-      @if (allowRegistration && !isResetPasswordMode) {
+      @if (allowRegistration() && !isResetPasswordMode()) {
       <div class="toggle-container">
         <p>
-          {{ isLoginMode ? '¿No tienes una cuenta?' : '¿Ya tienes una cuenta?' }}
+          {{ isLoginMode() ? '¿No tienes una cuenta?' : '¿Ya tienes una cuenta?' }}
           <a href="javascript:void(0)" (click)="toggleMode()">
-            {{ isLoginMode ? 'Registrarse' : 'Iniciar sesión' }}
+            {{ isLoginMode() ? 'Registrarse' : 'Iniciar sesión' }}
           </a>
         </p>
       </div>
       }
 
       <!-- Mensaje cuando el registro está deshabilitado -->
-      @if (!allowRegistration && isLoginMode && !isResetPasswordMode) {
+      @if (!allowRegistration() && isLoginMode() && !isResetPasswordMode()) {
       <div class="registration-disabled-info">
         <p>El registro de nuevos usuarios está temporalmente deshabilitado.</p>
       </div>
       }
       
       <!-- Only show in login mode -->
-      @if (isLoginMode) {
+      @if (isLoginMode()) {
         <div class="forgot-password-container">
           <p>
             ¿Olvidaste tu contraseña?

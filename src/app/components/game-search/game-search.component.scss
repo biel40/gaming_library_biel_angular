@@ -241,6 +241,13 @@
                 }
               }
 
+              &.in-library {
+                background: #37474f;
+                color: #90a4ae;
+                cursor: not-allowed;
+                opacity: 1;
+              }
+
               .material-icons {
                 font-size: 1rem;
               }

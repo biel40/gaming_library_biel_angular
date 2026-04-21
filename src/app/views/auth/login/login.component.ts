@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,17 +13,18 @@ import { environment } from '../../../environments/environment';
     ReactiveFormsModule
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   registerForm!: FormGroup;
   resetPasswordForm!: FormGroup;
-  isLoginMode = true;
-  isResetPasswordMode = false;
-  loading = false;
-  errorMessage = '';
-  allowRegistration = environment.allowRegistration;
+  isLoginMode = signal(true);
+  isResetPasswordMode = signal(false);
+  loading = signal(false);
+  errorMessage = signal('');
+  allowRegistration = signal(environment.allowRegistration);
 
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
@@ -59,18 +60,17 @@ export class LoginComponent implements OnInit {
   }
 
   toggleMode(): void {
-    // Solo permite cambiar al modo de registro si está habilitado en el entorno
-    if (!this.isLoginMode || this.allowRegistration) {
-      this.isLoginMode = !this.isLoginMode;
-      this.isResetPasswordMode = false;
-      this.errorMessage = '';
+    if (!this.isLoginMode() || this.allowRegistration()) {
+      this.isLoginMode.update(v => !v);
+      this.isResetPasswordMode.set(false);
+      this.errorMessage.set('');
     }
   }
   
   showResetPasswordForm(): void {
-    this.isResetPasswordMode = true;
-    this.isLoginMode = false;
-    this.errorMessage = '';
+    this.isResetPasswordMode.set(true);
+    this.isLoginMode.set(false);
+    this.errorMessage.set('');
     
     // Pre-fill email if it's already entered in login form
     if (this.loginForm.get('email')?.valid) {
@@ -80,12 +80,12 @@ export class LoginComponent implements OnInit {
   
   async handleResetPassword(): Promise<void> {
     if (this.resetPasswordForm.invalid) {
-      this.errorMessage = 'Por favor, introduce un correo electrónico válido';
+      this.errorMessage.set('Por favor, introduce un correo electrónico válido');
       return;
     }
     
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
     
     try {
       const email = this.resetPasswordForm.get('email')?.value;
@@ -95,38 +95,38 @@ export class LoginComponent implements OnInit {
         throw error;
       }
       
-      this.errorMessage = 'Se ha enviado un correo electrónico con instrucciones para restablecer tu contraseña';
-      this.isLoginMode = true;
-      this.isResetPasswordMode = false;
+      this.errorMessage.set('Se ha enviado un correo electrónico con instrucciones para restablecer tu contraseña');
+      this.isLoginMode.set(true);
+      this.isResetPasswordMode.set(false);
     } catch (error: any) {
-      this.errorMessage = error.message || 'Ha ocurrido un error al intentar restablecer la contraseña';
+      this.errorMessage.set(this.translateAuthError(error));
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
   async onSubmit(): Promise<void> {
-    this.loading = true;
-    this.errorMessage = '';
+    this.loading.set(true);
+    this.errorMessage.set('');
     
     try {
-      if (this.isResetPasswordMode) {
+      if (this.isResetPasswordMode()) {
         await this.handleResetPassword();
-      } else if (this.isLoginMode) {
+      } else if (this.isLoginMode()) {
         await this.handleLogin();
       } else {
         await this.handleRegistration();
       }
     } catch (error: any) {
-      this.errorMessage = error.message || 'An unexpected error occurred';
+      this.errorMessage.set(this.translateAuthError(error));
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
   private async handleLogin(): Promise<void> {
     if (this.loginForm.invalid) {
-      this.errorMessage = 'Por favor, completa todos los campos correctamente';
+      this.errorMessage.set('Por favor, completa todos los campos correctamente');
       return;
     }
 
@@ -141,13 +141,13 @@ export class LoginComponent implements OnInit {
   }
 
   private async handleRegistration(): Promise<void> {
-    if (!this.allowRegistration) {
-      this.errorMessage = 'El registro de nuevos usuarios está deshabilitado en este momento.';
+    if (!this.allowRegistration()) {
+      this.errorMessage.set('El registro de nuevos usuarios está deshabilitado en este momento.');
       return;
     }
 
     if (this.registerForm.invalid) {
-      this.errorMessage = 'Por favor, completa todos los campos correctamente';
+      this.errorMessage.set('Por favor, completa todos los campos correctamente');
       return;
     }
 
@@ -170,7 +170,7 @@ export class LoginComponent implements OnInit {
         
         if (profileError) {
           console.error('Error al crear el perfil:', profileError);
-          this.errorMessage = 'Error al crear el perfil: ' + profileError.message;
+          this.errorMessage.set('Error al crear el perfil: ' + profileError.message);
           return;
         }
         
@@ -178,8 +178,30 @@ export class LoginComponent implements OnInit {
       }
     } catch (err: any) {
       console.error('Error de registro:', err);
-      this.errorMessage = err.message || 'Ha ocurrido un error inesperado durante el registro.';
+      this.errorMessage.set(this.translateAuthError(err));
       throw err;
     }
+  }
+
+  private translateAuthError(error: any): string {
+    const message: string = error?.message ?? '';
+    const errorMap: Record<string, string> = {
+      'Email not confirmed': 'Debes confirmar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada.',
+      'Invalid login credentials': 'Correo electrónico o contraseña incorrectos.',
+      'User already registered': 'Ya existe una cuenta con este correo electrónico.',
+      'Password should be at least 6 characters': 'La contraseña debe tener al menos 6 caracteres.',
+      'Unable to validate email address: invalid format': 'El formato del correo electrónico no es válido.',
+      'Email rate limit exceeded': 'Has superado el límite de intentos. Espera unos minutos e inténtalo de nuevo.',
+      'For security purposes, you can only request this after': 'Por razones de seguridad, espera unos segundos antes de volver a intentarlo.',
+      'Token has expired or is invalid': 'El enlace ha caducado o no es válido. Solicita uno nuevo.',
+    };
+
+    for (const [key, translation] of Object.entries(errorMap)) {
+      if (message.includes(key)) {
+        return translation;
+      }
+    }
+
+    return message || 'Ha ocurrido un error inesperado. Inténtalo de nuevo.';
   }
 }
