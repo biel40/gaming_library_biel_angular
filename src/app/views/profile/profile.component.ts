@@ -127,13 +127,11 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  signOut(): void {
-    // Authentication signout commented out
-    // this.supabaseService.signOut().then(() => {
-    //   this.router.navigate(['/login']);
-    // });
-    
-    // Just navigate to dashboard instead
-    this.router.navigate(['/dashboard']);
+  async signOut(): Promise<void> {
+    try {
+      await this.supabaseService.signOut();
+    } finally {
+      this.router.navigate(['/login']);
+    }
   }
 }

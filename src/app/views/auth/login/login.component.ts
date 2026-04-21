@@ -126,7 +126,7 @@ export class LoginComponent implements OnInit {
 
   private async handleLogin(): Promise<void> {
     if (this.loginForm.invalid) {
-      this.errorMessage = 'Please fill in all required fields correctly';
+      this.errorMessage = 'Por favor, completa todos los campos correctamente';
       return;
     }
 
@@ -141,7 +141,6 @@ export class LoginComponent implements OnInit {
   }
 
   private async handleRegistration(): Promise<void> {
-    // Verificar si el registro está permitido en el entorno actual
     if (!this.allowRegistration) {
       this.errorMessage = 'El registro de nuevos usuarios está deshabilitado en este momento.';
       return;
@@ -162,27 +161,24 @@ export class LoginComponent implements OnInit {
       }
       
       if (data.user) {
-        const userId = data.user.id;
-
         const profile: Profile = {
-          id: userId,
+          id: data.user.id,
           name: name
         };
         
         const { error: profileError } = await this.supabaseService.insertProfile(profile);
         
         if (profileError) {
-          console.error('Error creating profile:', profileError);
-          this.errorMessage = 'Error creating profile: ' + profileError.message;
+          console.error('Error al crear el perfil:', profileError);
+          this.errorMessage = 'Error al crear el perfil: ' + profileError.message;
           return;
         }
         
-        this.errorMessage = 'Registration successful! Please check your email to confirm your account.';
-        this.isLoginMode = true;
+        this.router.navigate(['/dashboard']);
       }
     } catch (err: any) {
-      console.error('Registration error:', err);
-      this.errorMessage = err.message || 'An unexpected error occurred during registration.';
+      console.error('Error de registro:', err);
+      this.errorMessage = err.message || 'Ha ocurrido un error inesperado durante el registro.';
       throw err;
     }
   }

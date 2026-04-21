@@ -11,6 +11,7 @@ mkdirSync('./src/app/environments', { recursive: true });
 const envConfigFile = `export const environment = {
   production: false,
   allowRegistration: true,
+  adminUserId: '${process.env['VITE_ADMIN_USER_ID'] || ''}',
   supabaseUrl: '${process.env['VITE_SUPABASE_URL'] || ''}',
   supabaseKey: '${process.env['VITE_SUPABASE_KEY'] || ''}',
   rawgApiKey: '${process.env['VITE_RAWG_API_KEY'] || ''}'
@@ -20,6 +21,7 @@ const envConfigFile = `export const environment = {
 const envConfigFileProd = `export const environment = {
   production: true,
   allowRegistration: false,
+  adminUserId: '${process.env['VITE_ADMIN_USER_ID'] || ''}',
   supabaseUrl: '${process.env['VITE_SUPABASE_URL'] || ''}',
   supabaseKey: '${process.env['VITE_SUPABASE_KEY'] || ''}',
   rawgApiKey: '${process.env['VITE_RAWG_API_KEY'] || ''}'
@@ -34,3 +36,4 @@ console.log('📋 Loaded variables:');
 console.log('  - SUPABASE_URL:', process.env['VITE_SUPABASE_URL'] ? '✓' : '✗');
 console.log('  - SUPABASE_KEY:', process.env['VITE_SUPABASE_KEY'] ? '✓' : '✗');
 console.log('  - RAWG_API_KEY:', process.env['VITE_RAWG_API_KEY'] ? '✓' : '✗');
+console.log('  - ADMIN_USER_ID:', process.env['VITE_ADMIN_USER_ID'] ? '✓' : '✗');

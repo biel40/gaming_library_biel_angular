@@ -138,9 +138,11 @@ export class SupabaseService {
   public async signOut(): Promise<void> {
     await this._supabaseClient.auth.signOut();
     this._session.set(null);
+    this._videogames.set([]);
     this._favorites.set([]);
     this._favoritesLoaded = false;
     this._cachedReadOnly = null;
+    this.invalidateCache();
   }
 
   // Had to fix this manually to work
@@ -171,10 +173,14 @@ export class SupabaseService {
 
 
   public async signUp(email: string, password: string) {
-    return await this._supabaseClient.auth.signUp({
+    const result = await this._supabaseClient.auth.signUp({
       email: email,
       password: password,
     });
+    if (result.data.session) {
+      this._session.set(result.data.session);
+    }
+    return result;
   }
 
   public async insertProfile(profile: Profile) {
@@ -206,10 +212,14 @@ export class SupabaseService {
   public async deleteVideogames(ids: string[]): Promise<void> {
     if (!ids.length) return;
 
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
+
     const { error } = await this._supabaseClient
-      .from('videogames')
+      .from('user_game_library')
       .delete()
-      .in('id', ids);
+      .eq('user_id', session.user.id)
+      .in('game_id', ids);
 
     if (error) throw error;
 
@@ -229,29 +239,24 @@ export class SupabaseService {
       }
     }
 
+    const session = await this.getSession();
+    if (!session) {
+      this._videogames.set([]);
+      return [];
+    }
+
+    const effectiveUserId = await this._getEffectiveUserId(session);
     const { data, error } = await this._supabaseClient
-      .from('videogames')
-      .select();
+      .from('user_game_library')
+      .select(this.LIBRARY_SELECT)
+      .eq('user_id', effectiveUserId);
 
     if (!data) {
       this._videogames.set([]);
       return [];
     }
 
-    const videogames: Videogame[] = data.map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      genre: item.genre,
-      releaseDate: new Date(item.release_date),
-      image_url: item.image_url,
-      platform: item.platform,
-      favorite: this.isFavorite(item.id),
-      platinum_target: item.platinum_target || false,
-      currently_playing: item.currently_playing || false,
-      hours_played: item.hours_played || 0
-    }));
-
+    const videogames = data.map(item => this._mapLibraryEntry(item));
     this._videogames.set(videogames);
     this._saveToCache(videogames);
     return videogames;
@@ -318,36 +323,20 @@ export class SupabaseService {
 
   public async getVideogameDetails(id: string): Promise<Videogame | null> {
     await this.loadFavorites();
+    const session = await this.getSession();
+    if (!session) return null;
+
+    const effectiveUserId = await this._getEffectiveUserId(session);
     const { data, error } = await this._supabaseClient
-      .from('videogames')
-      .select()
-      .eq('id', id)
+      .from('user_game_library')
+      .select(this.LIBRARY_SELECT)
+      .eq('user_id', effectiveUserId)
+      .eq('game_id', id)
       .single();
 
-    if (!data) {
-      return null;
-    }
+    if (!data) return null;
 
-    // Always map the data to a Model
-    const videogame: Videogame = {
-      id: data.id,
-      name: data.name,
-      description: data.description,
-      genre: data.genre,
-      releaseDate: new Date(data.release_date),
-      image_url: data.image_url,
-      platform: data.platform,
-      score: data.score,
-      review: data.review,
-      platinum_target: data.platinum_target || false,
-      currently_playing: data.currently_playing || false,
-      hours_played: data.hours_played || 0
-    };
-
-    // Check if game is favorite
-    videogame.favorite = this.isFavorite(videogame.id || '');
-
-    return videogame;
+    return this._mapLibraryEntry(data);
   }
 
   /**
@@ -356,14 +345,16 @@ export class SupabaseService {
    * @param score The new score value (0-10)
    */
   public async updateGameScore(gameId: string, score: number): Promise<void> {
-    const { error } = await this._supabaseClient
-      .from('videogames')
-      .update({ score })
-      .eq('id', gameId);
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
 
-    if (error) {
-      throw error;
-    }
+    const { error } = await this._supabaseClient
+      .from('user_game_library')
+      .update({ score })
+      .eq('user_id', session.user.id)
+      .eq('game_id', gameId);
+
+    if (error) throw error;
 
     this._syncAfterUpdate(gameId, { score });
   }
@@ -374,14 +365,16 @@ export class SupabaseService {
    * @param review The new review text
    */
   public async updateGameReview(gameId: string, review: string): Promise<void> {
-    const { error } = await this._supabaseClient
-      .from('videogames')
-      .update({ review })
-      .eq('id', gameId);
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
 
-    if (error) {
-      throw error;
-    }
+    const { error } = await this._supabaseClient
+      .from('user_game_library')
+      .update({ review })
+      .eq('user_id', session.user.id)
+      .eq('game_id', gameId);
+
+    if (error) throw error;
 
     this._syncAfterUpdate(gameId, { review });
   }
@@ -397,9 +390,7 @@ export class SupabaseService {
       .update({ description })
       .eq('id', gameId);
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
     this._syncAfterUpdate(gameId, { description });
   }
@@ -409,14 +400,16 @@ export class SupabaseService {
    * @param gameId The ID of the game to update
    */
   public async removeGameReviewAndScore(gameId: string): Promise<void> {
-    const { error } = await this._supabaseClient
-      .from('videogames')
-      .update({ review: null, score: null })
-      .eq('id', gameId);
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
 
-    if (error) {
-      throw error;
-    }
+    const { error } = await this._supabaseClient
+      .from('user_game_library')
+      .update({ review: null, score: null })
+      .eq('user_id', session.user.id)
+      .eq('game_id', gameId);
+
+    if (error) throw error;
 
     this._syncAfterUpdate(gameId, { review: '', score: 0 });
   }
@@ -427,14 +420,16 @@ export class SupabaseService {
    * @param currentlyPlaying The new currently playing status
    */
   public async updateGameCurrentlyPlaying(gameId: string, currentlyPlaying: boolean): Promise<void> {
-    const { error } = await this._supabaseClient
-      .from('videogames')
-      .update({ currently_playing: currentlyPlaying })
-      .eq('id', gameId);
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
 
-    if (error) {
-      throw error;
-    }
+    const { error } = await this._supabaseClient
+      .from('user_game_library')
+      .update({ currently_playing: currentlyPlaying })
+      .eq('user_id', session.user.id)
+      .eq('game_id', gameId);
+
+    if (error) throw error;
 
     this._syncAfterUpdate(gameId, { currently_playing: currentlyPlaying });
   }
@@ -445,14 +440,16 @@ export class SupabaseService {
    * @param hoursPlayed The new hours played value
    */
   public async updateGameHoursPlayed(gameId: string, hoursPlayed: number): Promise<void> {
-    const { error } = await this._supabaseClient
-      .from('videogames')
-      .update({ hours_played: hoursPlayed })
-      .eq('id', gameId);
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
 
-    if (error) {
-      throw error;
-    }
+    const { error } = await this._supabaseClient
+      .from('user_game_library')
+      .update({ hours_played: hoursPlayed })
+      .eq('user_id', session.user.id)
+      .eq('game_id', gameId);
+
+    if (error) throw error;
 
     this._syncAfterUpdate(gameId, { hours_played: hoursPlayed });
   }
@@ -463,38 +460,21 @@ export class SupabaseService {
    */
   public async getCurrentlyPlayingGames(): Promise<Videogame[]> {
     await this.loadFavorites();
+    const session = await this.getSession();
+    if (!session) return [];
+
+    const effectiveUserId = await this._getEffectiveUserId(session);
     const { data, error } = await this._supabaseClient
-      .from('videogames')
-      .select()
+      .from('user_game_library')
+      .select(this.LIBRARY_SELECT)
+      .eq('user_id', effectiveUserId)
       .eq('currently_playing', true)
       .order('hours_played', { ascending: false });
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
+    if (!data) return [];
 
-    if (!data) {
-      return [];
-    }
-
-    // Map the data to Videogame model
-    const games: Videogame[] = data.map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      genre: item.genre,
-      releaseDate: new Date(item.release_date),
-      image_url: item.image_url,
-      platform: item.platform,
-      favorite: this.isFavorite(item.id),
-      platinum_target: item.platinum_target || false,
-      currently_playing: item.currently_playing || false,
-      hours_played: item.hours_played || 0,
-      score: item.score,
-      review: item.review
-    }));
-
-    return games;
+    return data.map(item => this._mapLibraryEntry(item));
   }
 
   /**
@@ -503,36 +483,35 @@ export class SupabaseService {
    * @returns Promise<Videogame> - the updated game
    */
   public async setPlatinumTarget(gameId: string): Promise<Videogame> {
-    // First, remove platinum_target from all other games
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
+
     await this._supabaseClient
-      .from('videogames')
+      .from('user_game_library')
       .update({ platinum_target: false })
-      .neq('id', gameId);
+      .eq('user_id', session.user.id)
+      .neq('game_id', gameId);
 
-    // Then set the target game
-    const { data, error } = await this._supabaseClient
-      .from('videogames')
+    const { error } = await this._supabaseClient
+      .from('user_game_library')
       .update({ platinum_target: true })
-      .eq('id', gameId)
-      .select()
-      .single();
+      .eq('user_id', session.user.id)
+      .eq('game_id', gameId);
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
-    // Reset all targets in signal, then set the new one
     const currentGames = this._videogames();
     if (currentGames.length > 0) {
-      const updatedGames = currentGames.map(game => ({
+      this._videogames.set(currentGames.map(game => ({
         ...game,
         platinum_target: game.id === gameId
-      }));
-      this._videogames.set(updatedGames);
+      })));
     }
     this.invalidateCache();
 
-    return data;
+    const updatedGame = this._videogames().find(g => g.id === gameId);
+    if (!updatedGame) throw new Error('Juego no encontrado');
+    return updatedGame;
   }
 
   /**
@@ -541,20 +520,22 @@ export class SupabaseService {
    * @returns Promise<Videogame> - the updated game
    */
   public async removePlatinumTarget(gameId: string): Promise<Videogame> {
-    const { data, error } = await this._supabaseClient
-      .from('videogames')
-      .update({ platinum_target: false })
-      .eq('id', gameId)
-      .select()
-      .single();
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
 
-    if (error) {
-      throw error;
-    }
+    const { error } = await this._supabaseClient
+      .from('user_game_library')
+      .update({ platinum_target: false })
+      .eq('user_id', session.user.id)
+      .eq('game_id', gameId);
+
+    if (error) throw error;
 
     this._syncAfterUpdate(gameId, { platinum_target: false });
 
-    return data;
+    const updatedGame = this._videogames().find(g => g.id === gameId);
+    if (!updatedGame) throw new Error('Juego no encontrado');
+    return updatedGame;
   }
 
   /**
@@ -563,35 +544,21 @@ export class SupabaseService {
    */
   public async getCurrentPlatinumTarget(): Promise<Videogame | null> {
     await this.loadFavorites();
+    const session = await this.getSession();
+    if (!session) return null;
+
+    const effectiveUserId = await this._getEffectiveUserId(session);
     const { data, error } = await this._supabaseClient
-      .from('videogames')
-      .select('*')
+      .from('user_game_library')
+      .select(this.LIBRARY_SELECT)
+      .eq('user_id', effectiveUserId)
       .eq('platinum_target', true)
       .single();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
-      throw error;
-    }
+    if (error && error.code !== 'PGRST116') throw error;
+    if (!data) return null;
 
-    if (!data) {
-      return null;
-    }
-
-    return {
-      id: data.id,
-      name: data.name,
-      description: data.description,
-      genre: data.genre,
-      releaseDate: new Date(data.release_date),
-      image_url: data.image_url,
-      platform: data.platform,
-      score: data.score,
-      review: data.review,
-      platinum: data.platinum,
-      platinum_date: data.platinum_date,
-      platinum_target: data.platinum_target,
-      favorite: this.isFavorite(data.id || '')
-    };
+    return this._mapLibraryEntry(data);
   }
 
   public async loadFavorites(): Promise<void> {
@@ -633,6 +600,7 @@ export class SupabaseService {
       const { error } = await this._supabaseClient
         .from('user_favorites')
         .delete()
+        .eq('user_id', session.user.id)
         .eq('game_id', game.id);
 
       if (error) throw error;
@@ -674,37 +642,77 @@ export class SupabaseService {
     this._videogames.set(updatedGames);
   }
 
+  private readonly LIBRARY_SELECT = `score, review, platinum, platinum_date, platinum_target, currently_playing, hours_played, videogames ( id, name, description, image_url, genre, release_date, platform )`;
+
+  private async _getEffectiveUserId(session: AuthSession): Promise<string> {
+    const isReadOnly = await this.isReadOnlyUser();
+    return isReadOnly ? environment.adminUserId : session.user.id;
+  }
+
+  private _mapLibraryEntry(item: any): Videogame {
+    const game = item.videogames;
+    return {
+      id: game.id,
+      name: game.name,
+      description: game.description,
+      image_url: game.image_url,
+      genre: game.genre,
+      releaseDate: game.release_date ? new Date(game.release_date) : undefined,
+      platform: game.platform,
+      score: item.score,
+      review: item.review,
+      platinum: item.platinum || false,
+      platinum_date: item.platinum_date ? new Date(item.platinum_date) : undefined,
+      platinum_target: item.platinum_target || false,
+      currently_playing: item.currently_playing || false,
+      hours_played: item.hours_played || 0,
+      favorite: this.isFavorite(String(game.id))
+    };
+  }
+
   public async addVideogame(game: Omit<Videogame, 'id'>): Promise<Videogame> {
-    // Asegurar que siempre hay una descripción
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
+
     const description = game.description && game.description.trim() !== ''
       ? game.description
       : this.getPlaceholderDescription(game.name || '');
 
-    const { data, error } = await this._supabaseClient
+    const { data: catalogGame, error: catalogError } = await this._supabaseClient
       .from('videogames')
-      .insert([{
+      .insert({
         name: game.name,
         description: description,
         genre: game.genre,
         platform: game.platform,
         image_url: game.image_url,
         release_date: game.releaseDate
-      }])
+      })
       .select()
       .single();
 
-    if (error) throw error;
+    if (catalogError) throw catalogError;
+
+    const { error: libraryError } = await this._supabaseClient
+      .from('user_game_library')
+      .insert({ user_id: session.user.id, game_id: catalogGame.id });
+
+    if (libraryError) throw libraryError;
 
     this.invalidateCache();
     return {
-      id: data.id,
-      name: data.name,
-      description: data.description,
-      genre: data.genre,
-      platform: data.platform,
-      image_url: data.image_url,
-      releaseDate: new Date(data.release_date),
-      favorite: false
+      id: catalogGame.id,
+      name: catalogGame.name,
+      description: catalogGame.description,
+      genre: catalogGame.genre,
+      platform: catalogGame.platform,
+      image_url: catalogGame.image_url,
+      releaseDate: new Date(catalogGame.release_date),
+      favorite: false,
+      platinum: false,
+      platinum_target: false,
+      currently_playing: false,
+      hours_played: 0
     };
   }
 
@@ -736,17 +744,25 @@ export class SupabaseService {
    * @returns Promise<boolean> - true if the game exists, false otherwise
    */
   public async gameExistsInLibrary(gameName: string): Promise<boolean> {
-    const { data, error } = await this._supabaseClient
+    const session = await this.getSession();
+    if (!session) return false;
+
+    const { data: catalogGame } = await this._supabaseClient
       .from('videogames')
       .select('id')
       .eq('name', gameName)
-      .single();
+      .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
-      throw error;
-    }
+    if (!catalogGame) return false;
 
-    return !!data;
+    const { data: libEntry } = await this._supabaseClient
+      .from('user_game_library')
+      .select('id')
+      .eq('user_id', session.user.id)
+      .eq('game_id', catalogGame.id)
+      .maybeSingle();
+
+    return !!libEntry;
   }
 
   /*
@@ -776,40 +792,38 @@ export class SupabaseService {
    * @returns Promise<Videogame> - the updated game
    */
   public async togglePlatinum(gameId: string): Promise<Videogame> {
-    // First get the current game to check its platinum status
-    const { data: currentGame, error: fetchError } = await this._supabaseClient
-      .from('videogames')
-      .select('*')
-      .eq('id', gameId)
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
+
+    const { data: currentEntry, error: fetchError } = await this._supabaseClient
+      .from('user_game_library')
+      .select('platinum')
+      .eq('user_id', session.user.id)
+      .eq('game_id', gameId)
       .single();
 
-    if (fetchError) {
-      throw fetchError;
-    }
+    if (fetchError) throw fetchError;
 
-    const newPlatinumStatus = !currentGame.platinum;
-    const updateData: any = {
-      platinum: newPlatinumStatus,
-      platinum_date: newPlatinumStatus ? new Date().toISOString() : null
-    };
+    const newPlatinumStatus = !currentEntry.platinum;
+    const { error } = await this._supabaseClient
+      .from('user_game_library')
+      .update({
+        platinum: newPlatinumStatus,
+        platinum_date: newPlatinumStatus ? new Date().toISOString() : null
+      })
+      .eq('user_id', session.user.id)
+      .eq('game_id', gameId);
 
-    const { data, error } = await this._supabaseClient
-      .from('videogames')
-      .update(updateData)
-      .eq('id', gameId)
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
     this._syncAfterUpdate(gameId, {
       platinum: newPlatinumStatus,
       platinum_date: newPlatinumStatus ? new Date() : undefined
     });
 
-    return data;
+    const updatedGame = this._videogames().find(g => g.id === gameId);
+    if (!updatedGame) throw new Error('Juego no encontrado');
+    return updatedGame;
   }
 
   /**
@@ -817,17 +831,21 @@ export class SupabaseService {
    * @returns Promise<Videogame[]> - array of games with platinum status
    */
   public async getPlatinumGames(): Promise<Videogame[]> {
+    await this.loadFavorites();
+    const session = await this.getSession();
+    if (!session) return [];
+
+    const effectiveUserId = await this._getEffectiveUserId(session);
     const { data, error } = await this._supabaseClient
-      .from('videogames')
-      .select('*')
+      .from('user_game_library')
+      .select(this.LIBRARY_SELECT)
+      .eq('user_id', effectiveUserId)
       .eq('platinum', true)
       .order('platinum_date', { ascending: false });
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
-    return data || [];
+    return (data || []).map(item => this._mapLibraryEntry(item));
   }
 
   /**
@@ -837,21 +855,21 @@ export class SupabaseService {
    * @returns Promise<Videogame> - the updated game
    */
   public async updatePlatinumDate(gameId: string, date: Date): Promise<Videogame> {
-    const { data, error } = await this._supabaseClient
-      .from('videogames')
-      .update({
-        platinum_date: date.toISOString()
-      })
-      .eq('id', gameId)
-      .select()
-      .single();
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
 
-    if (error) {
-      throw error;
-    }
+    const { error } = await this._supabaseClient
+      .from('user_game_library')
+      .update({ platinum_date: date.toISOString() })
+      .eq('user_id', session.user.id)
+      .eq('game_id', gameId);
+
+    if (error) throw error;
 
     this._syncAfterUpdate(gameId, { platinum_date: date });
 
-    return data;
+    const updatedGame = this._videogames().find(g => g.id === gameId);
+    if (!updatedGame) throw new Error('Juego no encontrado');
+    return updatedGame;
   }
 }
