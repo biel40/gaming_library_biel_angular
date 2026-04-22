@@ -56,7 +56,7 @@ A modern, visually stunning video game library application built with Angular. T
 
 5. Open your browser and navigate to `http://localhost:4200`
 
-## 🏗️ Architecture
+## Architecture
 
 ### Technology Stack
 
