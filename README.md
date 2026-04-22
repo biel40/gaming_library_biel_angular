@@ -1,4 +1,4 @@
-# 🎮 My Gaming Library - by Biel40
+# My Gaming Library - by Biel40
 
 ![Angular Version](https://img.shields.io/badge/Angular-19.2.1-DD0031?style=for-the-badge&logo=angular)
 ![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)
@@ -6,7 +6,7 @@
 
 A modern, visually stunning video game library application built with Angular. This project showcases a collection of games with beautiful UI effects inspired by Pokémon TCG Pocket holographic cards, responsive design, and smooth animations.
 
-## ✨ Features
+## Features
 
 - **Holographic Card Effects**: Stunning visual effects on game cards inspired by Pokémon TCG Pocket
 - **Responsive Design**: Optimized for all devices, with special attention to mobile experiences (iPhone 14 Pro Max)
@@ -18,7 +18,7 @@ A modern, visually stunning video game library application built with Angular. T
 - **Beautiful UI Elements**: Enhanced section titles with gradient effects and improved navigation arrows
 
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -66,78 +66,55 @@ A modern, visually stunning video game library application built with Angular. T
 - **Styling**: Modular SCSS with custom variables and mixins
 - **API Integration**: RAWG API for game search
 - **Bundler**: Vite
-
-### Project Structure
-
-```
-src/
-├── app/
-│   ├── components/     # Reusable UI components (GameCard, Search, etc.)
-│   ├── views/          # Page-level components (Dashboard, Profile, etc.)
-│   ├── services/       # Business logic and data fetching
-│   ├── guards/         # Route protection (AuthGuard)
-│   ├── models/         # TypeScript interfaces and types
-│   └── environments/   # Environment-specific configurations
-├── assets/             # Static assets (images, icons)
-└── styles.scss         # Global styles and SCSS architecture
-```
-
-## 🛠️ Key Architectural Patterns
+- 
+## Key Patterns
 
 ### Signal-Based State Management
-El proyecto utiliza **Angular Signals** para una gestión de estado reactiva y eficiente. Al usar `provideExperimentalZonelessChangeDetection()`, la aplicación no depende de Zone.js, lo que mejora el rendimiento y simplifica el flujo de datos.
+This project uses **Angular Signals** for efficient and reactive state management. By using `provideExperimentalZonelessChangeDetection()`, the application does not rely on Zone.js, which improves performance and simplifies data flow.
 
 ### Standalone Components
-Todos los componentes son **standalone**, eliminando la necesidad de NgModules y permitiendo una arquitectura más modular y fácil de mantener.
+All components are built as **standalone components**, removing the need for NgModules and enabling a more modular and maintainable architecture.
 
 ### Supabase Integration
-Se utiliza Supabase como Backend-as-a-Service (BaaS) para:
-- **Autenticación**: Gestión de sesiones de usuario.
-- **Base de Datos**: Almacenamiento de la biblioteca de juegos con Row Level Security (RLS).
-- **Storage**: Almacenamiento de imágenes de juegos.
+Supabase is used as a Backend-as-a-Service (BaaS) for:
+
+- **Authentication**: User session management
+- **Database**: Storage of the game library with Row Level Security (RLS)
+- **Storage**: Hosting game images
 
 ### Modular SCSS
-La arquitectura de estilos sigue un enfoque modular utilizando `@use` y `@forward`, con parciales dedicados para variables, mixins y estilos específicos de componentes, asegurando un diseño coherente y mantenible.
+The styling architecture follows a modular approach using `@use` and `@forward`, with dedicated partials for variables, mixins, and component-specific styles, ensuring a consistent and maintainable design.
 
 ### Code Style & Best Practices
 
-Este proyecto sigue las convenciones modernas de Angular:
-- **Inyección de dependencias**: Uso de la función `inject()` en lugar de DI por constructor.
-- **Ciclo de vida**: `ngOnInit` síncrono con llamadas a métodos asíncronos privados.
-- **Inmutabilidad**: Actualización de señales mediante patrones inmutables (spread operator).
-- **Tipado Estricto**: Uso riguroso de TypeScript para evitar `any`.
+This project follows modern Angular conventions:
 
-## 🎨 UI Design & Style Guide
+- **Dependency Injection**: Use of the `inject()` function instead of constructor-based DI
+- **Lifecycle Management**: Synchronous `ngOnInit` with calls to private asynchronous methods
+- **Immutability**: Signal updates using immutable patterns such as the spread operator
+- **Strict Typing**: Strong TypeScript usage to avoid `any`
+
+### Code Style & Best Practices
+
+This project follows modern Angular conventions:
+
+- **Dependency Injection**: Use of the `inject()` function instead of constructor-based DI
+- **Lifecycle Management**: Synchronous `ngOnInit` with calls to private asynchronous methods
+- **Immutability**: Signal updates using immutable patterns such as the spread operator
+- **Strict Typing**: Strong TypeScript usage to avoid `any`
+
+## UI Design & Style Guide
 
 ### Color Palette
 
 - **Primary Blue**: `#3498db` to `#2980b9` (gradient)
-- **Background**: Clean white with subtle gradients
-- **Accent Colors**: Used for genre chips and interactive elements
 
 ### Typography
 
 - Primary font: Roboto (or your chosen font)
 - Header styles with gradient effects for enhanced visibility
 
-Games are stored in Supabase and include the following information:
-- Name
-- Description
-- Genre (for filtering)
-- Cover image URL
-- Rating
-- Release date
-- Additional metadata
-
-### Code Style
-
-This project follows Angular best practices and coding conventions:
-- Feature-based module organization
-- Smart/dumb component pattern
-- Reactive programming with RxJS
-- Comprehensive component documentation
-
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run unit tests
@@ -147,7 +124,7 @@ ng test
 ng e2e
 ```
 
-## 📦 Building for Production
+## Building for Production
 
 ```bash
 ng build --prod
@@ -155,15 +132,9 @@ ng build --prod
 
 This will generate optimized production files in the `dist/` directory.
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 👏 Acknowledgements
-
-- Pokémon TCG Pocket for UI inspiration
-- Angular team for the amazing framework
-- Supabase for the powerful backend services
+This project is licensed under the MIT License.
 
 ---
 
