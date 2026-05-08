@@ -42,7 +42,7 @@ export interface Videogame {
 export class SupabaseService {
 
   private _supabaseClient: SupabaseClient;
-  private _session = signal<AuthSession | null>(null);
+  private _session = signal<AuthSession | null | undefined>(undefined);
   private _videogames = signal<Videogame[]>([]);
   private _favorites = signal<string[]>([]);
 
@@ -64,8 +64,8 @@ export class SupabaseService {
   }
 
   // Session management
-  public async getSession() {
-    if (!this._session()) {
+  public async getSession(): Promise<AuthSession | null> {
+    if (this._session() === undefined) {
       try {
         const { data, error } = await this._supabaseClient.auth.getSession();
         
@@ -84,7 +84,7 @@ export class SupabaseService {
       }
     }
 
-    return this._session();
+    return this._session() ?? null;
   }
 
   /**
@@ -126,6 +126,7 @@ export class SupabaseService {
   }
 
   public signIn(email: string, password: string) {
+    this._session.set(undefined);
     return this._supabaseClient.auth.signInWithPassword({
       email: email,
       password: password,
@@ -136,13 +137,13 @@ export class SupabaseService {
    * Signs out the current user and clears the session
    */
   public async signOut(): Promise<void> {
-    await this._supabaseClient.auth.signOut();
     this._session.set(null);
     this._videogames.set([]);
     this._favorites.set([]);
     this._favoritesLoaded = false;
     this._cachedReadOnly = null;
     this.invalidateCache();
+    await this._supabaseClient.auth.signOut();
   }
 
   // Had to fix this manually to work

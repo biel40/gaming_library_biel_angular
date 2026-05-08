@@ -168,9 +168,19 @@ readonly filteredGames = computed(() =>
 - Animation optimizations with `prefers-reduced-motion` support
 ## Critical User Experience Requirements
 
+### Mobile is the PRIMARY view (CRITICAL)
+Mobile experience is the most important view in this project. Every UI change must be reviewed for mobile first. Desktop is secondary.
+
 ### Scrolling Behavior (CRITICAL)
 - **NEVER use `contain: layout`** on main scrolling containers (e.g., `.dashboard`, `.game-grid`). It creates a new stacking context that breaks vertical scrolling.
 - **NEVER use `overflow: hidden`** on the body or main content wrappers unless specifically managing a modal.
 - **Use `touch-action: pan-y pan-x`** for better touch response on mobile.
 - **Avoid `overscroll-behavior: contain`** on the main vertical axis; prefer `auto` to maintain natural bounce effects.
 - Ensure `.main` container has `min-height: 100vh` and `overflow-y: auto`.
+
+### Button / Interactive Element Styling (CRITICAL for iOS Safari)
+- Always add `appearance: none` and `-webkit-appearance: none` to styled `<button>` elements. iOS Safari applies its own inner shadow and border rendering that overrides custom styles.
+- Always add `outline: none` together with `&:focus-visible { outline: ... }` — remove the native outline globally but restore it only for keyboard navigation (accessibility).
+- Always add `-webkit-tap-highlight-color: transparent` to remove the tap flash on touch devices.
+- **NEVER use a `mask-image` with a left-side transparent fade on horizontally scrollable chip lists.** The left fade interacts with the `box-shadow` of the first (active) chip, producing a visible yellow artifact. Only fade the **right** side to hint at more content: `mask-image: linear-gradient(to right, black 85%, transparent 100%)`.
+- **NEVER apply `box-shadow` glow effects on active/selected chips in mobile.** On small screens, glow shadows (e.g. `0 4px 12px rgba(255, 215, 0, 0.4)`) look excessive and distracting. Suppress them with `box-shadow: none` inside `@media (max-width: 767px)`. The filled background + border-color already communicate the active state clearly.

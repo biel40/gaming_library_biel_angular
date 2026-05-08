@@ -25,15 +25,15 @@
 
             <!-- Desktop buttons (hidden on mobile) -->
             <div class="desktop-actions">
-                @if (!isReadOnly()) {
-                <button class="add-game-btn" routerLink="/add-game" title="Añadir un nuevo juego a tu biblioteca">
-                    <span class="material-icons">add</span>
-                    Añadir Juego
-                </button>
                 <button class="currently-playing-btn" routerLink="/currently-playing"
                     title="Ver juegos que estás jugando actualmente">
                     <span class="material-icons">play_arrow</span>
                     Jugando actualmente
+                </button>
+                @if (!isReadOnly()) {
+                <button class="add-game-btn" routerLink="/add-game" title="Añadir un nuevo juego a tu biblioteca">
+                    <span class="material-icons">add</span>
+                    Añadir Juego
                 </button>
                 <button class="platinum-btn" routerLink="/platinum-trophies"
                     title="Ver todos tus trofeos de platino obtenidos">
@@ -77,17 +77,17 @@
             </button>
         </div>
         <ul class="mobile-menu-list">
+            <li>
+                <button class="mobile-menu-item" (click)="navigateAndCloseMenu('/currently-playing')">
+                    <span class="material-icons">play_arrow</span>
+                    <span>Jugando actualmente</span>
+                </button>
+            </li>
             @if (!isReadOnly()) {
             <li>
                 <button class="mobile-menu-item" (click)="navigateAndCloseMenu('/add-game')">
                     <span class="material-icons">add</span>
                     <span>Añadir Juego</span>
-                </button>
-            </li>
-            <li>
-                <button class="mobile-menu-item" (click)="navigateAndCloseMenu('/currently-playing')">
-                    <span class="material-icons">play_arrow</span>
-                    <span>Jugando actualmente</span>
                 </button>
             </li>
             <li>
