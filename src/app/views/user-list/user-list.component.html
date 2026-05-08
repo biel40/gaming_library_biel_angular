@@ -1,0 +1,72 @@
+<div class="user-list-container">
+    <a routerLink="/dashboard" class="back-arrow-btn" title="Volver al Dashboard">
+        <span class="material-icons">arrow_back</span>
+    </a>
+
+    <header class="header">
+        <div class="title-section">
+            <h1 class="page-title">Explorar bibliotecas</h1>
+            @if (hasProfiles()) {
+            <div class="stats-pills">
+                <span class="stat-pill">
+                    <span class="stat-value">{{ profiles().length }}</span>
+                    <span class="stat-label">usuarios</span>
+                </span>
+            </div>
+            }
+        </div>
+        <p class="page-subtitle">Descubre la colección de juegos de otros usuarios</p>
+    </header>
+
+    @if (loading()) {
+    <div class="loading-state">
+        <span class="material-icons rotating">hourglass_empty</span>
+        <p>Cargando perfiles...</p>
+    </div>
+    }
+
+    @if (error()) {
+    <div class="error-state">
+        <span class="material-icons">error_outline</span>
+        <p>{{ error() }}</p>
+        <a routerLink="/dashboard" class="btn-back">Volver al inicio</a>
+    </div>
+    }
+
+    @if (!loading() && !error()) {
+        @if (hasProfiles()) {
+        <div class="profiles-grid">
+            @for (profile of profiles(); track profile.id) {
+            <a [routerLink]="['/user', profile.id]" class="profile-card"
+                [class.is-current-user]="profile.id === currentUserId()">
+                <div class="avatar-wrapper">
+                    @if (profile.image_url) {
+                    <img [src]="profile.image_url" [alt]="profile.name" class="avatar-img" />
+                    } @else {
+                    <div class="avatar-placeholder">{{ getAvatarLetter(profile) }}</div>
+                    }
+                    @if (profile.id === currentUserId()) {
+                    <span class="you-badge">Tú</span>
+                    }
+                </div>
+                <div class="profile-info">
+                    <h3 class="profile-name">{{ profile.name || 'Usuario' }}</h3>
+                    @if (profile.description) {
+                    <p class="profile-description">{{ profile.description }}</p>
+                    }
+                </div>
+                <span class="view-library-hint">
+                    <span class="material-icons">chevron_right</span>
+                </span>
+            </a>
+            }
+        </div>
+        } @else {
+        <div class="empty-state">
+            <span class="material-icons">people_outline</span>
+            <h2>Sin perfiles disponibles</h2>
+            <p>Aún no hay perfiles públicos que explorar.</p>
+        </div>
+        }
+    }
+</div>

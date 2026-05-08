@@ -48,6 +48,23 @@
   }
 }
 
+.explore-users-btn {
+  @include mix.button-base;
+  background: linear-gradient(135deg, #7c4dff, #651fff);
+  color: white;
+  margin-left: 0.5rem;
+
+  &:hover {
+    background: linear-gradient(135deg, #651fff, #6200ea);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 77, 255, 0.4);
+  }
+
+  .material-icons {
+    color: white;
+  }
+}
+
 .logout-btn {
   @include mix.button-base;
   background: linear-gradient(90deg, vars.$primary-color, vars.$primary-dark);

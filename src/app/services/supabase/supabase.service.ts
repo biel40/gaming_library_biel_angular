@@ -872,4 +872,29 @@ export class SupabaseService {
     if (!updatedGame) throw new Error('Juego no encontrado');
     return updatedGame;
   }
+
+  public async getAllProfiles(): Promise<Profile[]> {
+    const { data, error } = await this._supabaseClient
+      .from('profiles')
+      .select('id, name, description, image_url')
+      .order('name', { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  public async getVideogamesForUser(userId: string): Promise<Videogame[]> {
+    const session = await this.getSession();
+    if (!session) return [];
+
+    const { data, error } = await this._supabaseClient
+      .from('user_game_library')
+      .select(this.LIBRARY_SELECT)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+    if (!data) return [];
+
+    return data.map(item => this._mapLibraryEntry(item));
+  }
 }

@@ -1,0 +1,328 @@
+@use "sass:color";
+@use "../dashboard/styles/variables" as vars;
+@use "../dashboard/styles/mixins" as mixins;
+
+.user-library-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.back-arrow-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: vars.$white-10;
+  border: 1px solid vars.$border-color;
+  border-radius: 12px;
+  color: vars.$text-dark;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+  margin-bottom: 1.25rem;
+
+  .material-icons {
+    font-size: 1.25rem;
+  }
+
+  &:hover {
+    background: vars.$white-20;
+    border-color: vars.$accent-gold;
+    transform: translateX(-2px);
+  }
+}
+
+// ============================================
+// HEADER
+// ============================================
+.header {
+  margin-bottom: 2rem;
+}
+
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid vars.$border-color;
+  flex-shrink: 0;
+}
+
+.hero-avatar-placeholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: vars.$gradient-blue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: vars.$white;
+  border: 3px solid vars.$border-color;
+  flex-shrink: 0;
+}
+
+.profile-text {
+  min-width: 0;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: vars.$text-dark;
+  margin: 0 0 0.25rem;
+
+  @media (max-width: 480px) {
+    font-size: 1.4rem;
+  }
+}
+
+.profile-description {
+  color: vars.$text-muted;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.stats-pills {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: vars.$white-10;
+  border: 1px solid vars.$border-color;
+  border-radius: vars.$border-radius-xl;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.8rem;
+  color: vars.$text-medium;
+
+  .stat-value {
+    font-weight: 600;
+    color: vars.$text-dark;
+  }
+
+  .stat-label {
+    color: vars.$text-muted;
+  }
+
+  &.highlight-gold {
+    border-color: vars.$gold-30;
+    background: vars.$gold-10;
+
+    .stat-value {
+      color: vars.$accent-gold;
+    }
+  }
+}
+
+// ============================================
+// FILTERS
+// ============================================
+.filters-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 420px;
+
+  .search-icon {
+    position: absolute;
+    left: 0.875rem;
+    color: vars.$text-muted;
+    font-size: 1.1rem;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.6rem 2.5rem 0.6rem 2.5rem;
+    background: vars.$white-10;
+    border: 1px solid vars.$border-color;
+    border-radius: vars.$border-radius-lg;
+    color: vars.$text-dark;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+
+    &::placeholder {
+      color: vars.$text-muted;
+    }
+
+    &:focus {
+      border-color: vars.$primary-color;
+    }
+  }
+
+  .clear-search {
+    position: absolute;
+    right: 0.6rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: vars.$text-muted;
+    display: flex;
+    align-items: center;
+    padding: 0.2rem;
+    border-radius: 50%;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: vars.$text-dark;
+    }
+
+    .material-icons {
+      font-size: 1rem;
+    }
+  }
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 0.8rem;
+  color: vars.$text-muted;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.chips-scroll {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+
+.filter-chip {
+  background: vars.$white-10;
+  border: 1px solid vars.$border-color;
+  border-radius: vars.$border-radius-xl;
+  color: vars.$text-medium;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: vars.$white-20;
+  }
+
+  &.active {
+    background: vars.$primary-color;
+    border-color: vars.$primary-color;
+    color: vars.$white;
+  }
+}
+
+// ============================================
+// GAMES GRID
+// ============================================
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ============================================
+// STATES
+// ============================================
+.loading-state,
+.error-state,
+.empty-state,
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  gap: 0.75rem;
+
+  .material-icons {
+    font-size: 3rem;
+    color: vars.$text-muted;
+  }
+
+  p {
+    color: vars.$text-muted;
+    margin: 0;
+  }
+
+  h2 {
+    color: vars.$text-light;
+    margin: 0;
+    font-size: 1.25rem;
+  }
+}
+
+.loading-state .material-icons {
+  color: vars.$primary-color;
+}
+
+.error-state .material-icons {
+  color: vars.$error-color;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: vars.$white-10;
+  border: 1px solid vars.$border-color;
+  border-radius: vars.$border-radius-md;
+  color: vars.$text-dark;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: vars.$white-20;
+  }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.rotating {
+  animation: rotate 1.2s linear infinite;
+}

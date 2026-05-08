@@ -7,6 +7,8 @@ import { ProfileComponent } from "./views/profile/profile.component";
 import { ResetPasswordComponent } from "./views/auth/reset-password/reset-password.component";
 import { PlatinumTrophiesComponent } from "./views/platinum-trophies/platinum-trophies.component";
 import { CurrentlyPlayingComponent } from "./views/currently-playing/currently-playing.component";
+import { UserListComponent } from "./views/user-list/user-list.component";
+import { UserLibraryComponent } from "./views/user-library/user-library.component";
 import { authGuard } from "./guards/auth.guard";
 
 export const routes: Routes = [
@@ -19,4 +21,6 @@ export const routes: Routes = [
     { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
     { path: 'platinum-trophies', component: PlatinumTrophiesComponent, canActivate: [authGuard] },
     { path: 'currently-playing', component: CurrentlyPlayingComponent, canActivate: [authGuard] },
+    { path: 'users', component: UserListComponent, canActivate: [authGuard] },
+    { path: 'user/:id', component: UserLibraryComponent, canActivate: [authGuard] },
 ];

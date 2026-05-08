@@ -1,0 +1,102 @@
+<div class="user-library-container">
+    <a routerLink="/users" class="back-arrow-btn" title="Volver a explorar usuarios">
+        <span class="material-icons">arrow_back</span>
+    </a>
+
+    @if (loading()) {
+    <div class="loading-state">
+        <span class="material-icons rotating">hourglass_empty</span>
+        <p>Cargando biblioteca...</p>
+    </div>
+    }
+
+    @if (error()) {
+    <div class="error-state">
+        <span class="material-icons">error_outline</span>
+        <p>{{ error() }}</p>
+        <a routerLink="/users" class="btn-back">Volver a usuarios</a>
+    </div>
+    }
+
+    @if (!loading() && !error()) {
+    <header class="header">
+        <div class="profile-hero">
+            @if (profile()?.image_url) {
+            <img [src]="profile()!.image_url" [alt]="profile()!.name" class="hero-avatar" />
+            } @else {
+            <div class="hero-avatar-placeholder">{{ getAvatarLetter() }}</div>
+            }
+            <div class="profile-text">
+                <h1 class="page-title">{{ profile()?.name || 'Usuario' }}</h1>
+                @if (profile()?.description) {
+                <p class="profile-description">{{ profile()!.description }}</p>
+                }
+            </div>
+        </div>
+
+        @if (hasGames()) {
+        <div class="stats-pills">
+            <span class="stat-pill">
+                <span class="stat-value">{{ games().length }}</span>
+                <span class="stat-label">juegos</span>
+            </span>
+            @if (platinumCount() > 0) {
+            <span class="stat-pill highlight-gold">
+                <span class="stat-icon">🏆</span>
+                <span class="stat-value">{{ platinumCount() }}</span>
+                <span class="stat-label">platinos</span>
+            </span>
+            }
+        </div>
+        }
+    </header>
+
+    @if (hasGames()) {
+    <section class="filters-section">
+        <div class="search-bar">
+            <span class="material-icons search-icon">search</span>
+            <input type="text" placeholder="Buscar juegos..." [ngModel]="searchTerm()"
+                (ngModelChange)="updateSearchTerm($event)">
+            @if (searchTerm()) {
+            <button class="clear-search" (click)="updateSearchTerm('')">
+                <span class="material-icons">close</span>
+            </button>
+            }
+        </div>
+
+        @if (uniqueGenres().length > 2) {
+        <div class="filter-group">
+            <span class="filter-label">Género</span>
+            <div class="chips-scroll">
+                @for (genre of uniqueGenres(); track genre) {
+                <button type="button" class="filter-chip" [class.active]="activeGenre() === genre"
+                    (click)="filterByGenre(genre)">
+                    {{ genre }}
+                </button>
+                }
+            </div>
+        </div>
+        }
+    </section>
+
+    <div class="games-grid">
+        @for (game of filteredGames(); track game.id) {
+        <app-game-card [game]="game" [isReadOnly]="true" [selectMode]="false"></app-game-card>
+        }
+    </div>
+
+    @if (filteredGames().length === 0) {
+    <div class="no-results">
+        <span class="material-icons">search_off</span>
+        <p>No se encontraron juegos con ese filtro.</p>
+    </div>
+    }
+    } @else {
+    <div class="empty-state">
+        <span class="material-icons">videogame_asset_off</span>
+        <h2>Biblioteca vacía</h2>
+        <p>Este usuario todavía no ha añadido juegos a su biblioteca.</p>
+    </div>
+    }
+    }
+</div>

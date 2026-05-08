@@ -41,6 +41,11 @@
                     Platinos
                 </button>
                 }
+                <button class="explore-users-btn" routerLink="/users"
+                    title="Ver la biblioteca de juegos de otros usuarios">
+                    <span class="material-icons">people</span>
+                    Explorar usuarios
+                </button>
                 <!-- Funcionalidad deshabilitada temporalmente -->
                 @if (false) {
                 <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()"
@@ -97,6 +102,12 @@
                 <span>Modo solo lectura</span>
             </li>
             }
+            <li>
+                <button class="mobile-menu-item" (click)="navigateAndCloseMenu('/users')">
+                    <span class="material-icons">people</span>
+                    <span>Explorar usuarios</span>
+                </button>
+            </li>
             <!-- Funcionalidad deshabilitada temporalmente -->
             @if (false) {
             <li>
