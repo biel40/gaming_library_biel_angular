@@ -37,7 +37,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private _favoriteSubscription: Subscription | null = null;
 
     // Signals for state management
-    public title = signal('My Videogame Library');
+    public title = signal('Gaming Library');
     public isAuthenticated = signal(false);
     public currentUser = signal<User | null>(null);
     public showMobileMenu = signal(false);
