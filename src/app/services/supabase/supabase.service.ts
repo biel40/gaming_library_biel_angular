@@ -133,6 +133,16 @@ export class SupabaseService {
     });
   }
 
+  public async signInWithGoogle(): Promise<void> {
+    const { error } = await this._supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`
+      }
+    });
+    if (error) throw error;
+  }
+
   /**
    * Signs out the current user and clears the session
    */

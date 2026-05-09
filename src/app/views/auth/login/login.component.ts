@@ -66,6 +66,17 @@ export class LoginComponent implements OnInit {
       this.errorMessage.set('');
     }
   }
+
+  async loginWithGoogle(): Promise<void> {
+    this.loading.set(true);
+    this.errorMessage.set('');
+    try {
+      await this.supabaseService.signInWithGoogle();
+    } catch (error: any) {
+      this.errorMessage.set(this.translateAuthError(error));
+      this.loading.set(false);
+    }
+  }
   
   showResetPasswordForm(): void {
     this.isResetPasswordMode.set(true);
