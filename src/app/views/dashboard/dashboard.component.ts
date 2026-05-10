@@ -58,6 +58,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public activeCompany = signal<string>('All');
     public activeYear = signal<number | null>(null);
     public sortMode = signal<'default' | 'best-rated'>('default');
+    public showGenrePanel = signal(false);
+    public showCompanyPanel = signal(false);
+    public showPlatformPanel = signal(false);
+    public showYearPanel = signal(false);
 
     // Multi-select functionality
     public selectMode = signal(false);
@@ -397,25 +401,61 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    private _closeAllPanels() {
+        this.showGenrePanel.set(false);
+        this.showCompanyPanel.set(false);
+        this.showPlatformPanel.set(false);
+        this.showYearPanel.set(false);
+    }
+
     public filterByGenre(genre: string) {
         this.activeGenre.set(genre);
+        this.showGenrePanel.set(false);
         this.currentPage.set(0);
     }
 
     public filterByPlatform(platform: string) {
         this.activePlatform.set(platform);
+        this.showPlatformPanel.set(false);
         this.currentPage.set(0);
     }
 
     public filterByCompany(company: string) {
         this.activeCompany.set(company);
         this.activePlatform.set('All');
+        this.showCompanyPanel.set(false);
+        this.showPlatformPanel.set(false);
         this.currentPage.set(0);
     }
 
     public filterByYear(year: number | null) {
         this.activeYear.set(year);
+        this.showYearPanel.set(false);
         this.currentPage.set(0);
+    }
+
+    public toggleGenrePanel() {
+        const next = !this.showGenrePanel();
+        this._closeAllPanels();
+        this.showGenrePanel.set(next);
+    }
+
+    public toggleCompanyPanel() {
+        const next = !this.showCompanyPanel();
+        this._closeAllPanels();
+        this.showCompanyPanel.set(next);
+    }
+
+    public togglePlatformPanel() {
+        const next = !this.showPlatformPanel();
+        this._closeAllPanels();
+        this.showPlatformPanel.set(next);
+    }
+
+    public toggleYearPanel() {
+        const next = !this.showYearPanel();
+        this._closeAllPanels();
+        this.showYearPanel.set(next);
     }
 
     public toggleSortMode() {
@@ -425,8 +465,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public resetFilters() {
         this.searchTerm.set('');
         this.activeGenre.set('All');
+        this.activeCompany.set('All');
         this.activePlatform.set('All');
         this.activeYear.set(null);
+        this._closeAllPanels();
         this.sortMode.set('default');
         this.currentPage.set(0);
     }

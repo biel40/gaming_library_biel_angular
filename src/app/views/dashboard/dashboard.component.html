@@ -139,55 +139,130 @@
 
     @if (!isLoading() && !error()) {
     <div class="filters">
-        <!-- Fila 1: Género -->
-        <div class="filter-row">
+        <!-- Fila de controles: todos los toggles de filtro en una sola línea -->
+        <div class="filter-controls">
+            <button type="button" class="filter-chip filter-toggle-chip"
+                [class.active]="activeGenre() !== 'All' || showGenrePanel()"
+                (click)="toggleGenrePanel()"
+                title="Filtrar por género">
+                <span class="material-icons">category</span>
+                <span>{{ activeGenre() !== 'All' ? activeGenre() : 'Género' }}</span>
+                @if (activeGenre() !== 'All') {
+                <span class="material-icons filter-clear-icon"
+                    (click)="filterByGenre('All'); $event.stopPropagation()"
+                    title="Quitar filtro de género">close</span>
+                }
+                <span class="material-icons filter-arrow">{{ showGenrePanel() ? 'expand_less' : 'expand_more' }}</span>
+            </button>
+
+            @if (uniqueCompanies().length > 2) {
+            <button type="button" class="filter-chip filter-toggle-chip"
+                [class.active]="activeCompany() !== 'All' || showCompanyPanel()"
+                (click)="toggleCompanyPanel()"
+                title="Filtrar por empresa">
+                <span class="material-icons">business</span>
+                <span>{{ activeCompany() !== 'All' ? activeCompany() : 'Empresa' }}</span>
+                @if (activeCompany() !== 'All') {
+                <span class="material-icons filter-clear-icon"
+                    (click)="filterByCompany('All'); $event.stopPropagation()"
+                    title="Quitar filtro de empresa">close</span>
+                }
+                <span class="material-icons filter-arrow">{{ showCompanyPanel() ? 'expand_less' : 'expand_more' }}</span>
+            </button>
+            }
+
+            @if (activeCompany() !== 'All' && filteredPlatformsByCompany().length > 2) {
+            <button type="button" class="filter-chip filter-toggle-chip"
+                [class.active]="activePlatform() !== 'All' || showPlatformPanel()"
+                (click)="togglePlatformPanel()"
+                title="Filtrar por plataforma">
+                <span class="material-icons">devices</span>
+                <span>{{ activePlatform() !== 'All' ? activePlatform() : 'Plataforma' }}</span>
+                @if (activePlatform() !== 'All') {
+                <span class="material-icons filter-clear-icon"
+                    (click)="filterByPlatform('All'); $event.stopPropagation()"
+                    title="Quitar filtro de plataforma">close</span>
+                }
+                <span class="material-icons filter-arrow">{{ showPlatformPanel() ? 'expand_less' : 'expand_more' }}</span>
+            </button>
+            }
+
+            @if (uniqueYears().length > 0) {
+            <button type="button" class="filter-chip filter-toggle-chip"
+                [class.active]="activeYear() !== null || showYearPanel()"
+                (click)="toggleYearPanel()"
+                title="Filtrar por año de lanzamiento">
+                <span class="material-icons">calendar_today</span>
+                <span class="year-label">{{ activeYear() !== null ? activeYear() : 'Año' }}</span>
+                @if (activeYear() !== null) {
+                <span class="material-icons filter-clear-icon"
+                    (click)="filterByYear(null); $event.stopPropagation()"
+                    title="Quitar filtro de año">close</span>
+                }
+                <span class="material-icons filter-arrow">{{ showYearPanel() ? 'expand_less' : 'expand_more' }}</span>
+            </button>
+            }
+
+            <button type="button" class="filter-chip sort-chip" [class.active]="sortMode() === 'best-rated'"
+                (click)="toggleSortMode()">
+                <span class="material-icons">star</span>
+                Mejor valorados
+            </button>
+        </div>
+
+        <!-- Panel expandible: Género -->
+        @if (showGenrePanel()) {
+        <div class="filter-row expandable-panel">
             <div class="filter-chips">
                 @for (genre of uniqueGenres(); track genre) {
+                @if (genre !== 'All') {
                 <button type="button" class="filter-chip" [class.active]="activeGenre() === genre"
-                    (click)="filterByGenre(genre)" (keydown.enter)="filterByGenre(genre)" tabindex="0">
+                    (click)="filterByGenre(genre)" tabindex="0">
                     {{ genre }}
                 </button>
                 }
+                }
             </div>
         </div>
+        }
 
-        <!-- Fila 2: Empresa -->
-        @if (uniqueCompanies().length > 2) {
-        <div class="filter-row">
+        <!-- Panel expandible: Empresa -->
+        @if (showCompanyPanel() && uniqueCompanies().length > 2) {
+        <div class="filter-row expandable-panel">
             <div class="filter-chips">
                 @for (company of uniqueCompanies(); track company) {
-                <button type="button" class="filter-chip filter-chip--company" [class.active]="activeCompany() === company"
+                @if (company !== 'All') {
+                <button type="button" class="filter-chip filter-chip--company"
+                    [class.active]="activeCompany() === company"
                     (click)="filterByCompany(company)" tabindex="0">
-                    {{ company === 'All' ? 'Todas' : company }}
+                    {{ company }}
                 </button>
+                }
                 }
             </div>
         </div>
         }
 
-        <!-- Fila 3: Plataforma (solo visible cuando hay empresa seleccionada) -->
-        @if (activeCompany() !== 'All' && filteredPlatformsByCompany().length > 2) {
-        <div class="filter-row">
+        <!-- Panel expandible: Plataforma -->
+        @if (showPlatformPanel() && activeCompany() !== 'All' && filteredPlatformsByCompany().length > 2) {
+        <div class="filter-row expandable-panel">
             <div class="filter-chips">
                 @for (platform of filteredPlatformsByCompany(); track platform) {
+                @if (platform !== 'All') {
                 <button type="button" class="filter-chip" [class.active]="activePlatform() === platform"
                     (click)="filterByPlatform(platform)" tabindex="0">
-                    {{ platform === 'All' ? 'Todas las plataformas' : platform }}
+                    {{ platform }}
                 </button>
+                }
                 }
             </div>
         </div>
         }
 
-        <!-- Fila 3: Año -->
-        @if (uniqueYears().length > 0) {
-        <div class="filter-row">
+        <!-- Panel expandible: Año -->
+        @if (showYearPanel() && uniqueYears().length > 0) {
+        <div class="filter-row expandable-panel">
             <div class="filter-chips filter-chips--years">
-                <button type="button" class="filter-chip filter-chip--year" [class.active]="activeYear() === null"
-                    (click)="filterByYear(null)" tabindex="0">
-                    <span class="material-icons">calendar_today</span>
-                    Todos
-                </button>
                 @for (year of uniqueYears(); track year) {
                 <button type="button" class="filter-chip filter-chip--year" [class.active]="activeYear() === year"
                     (click)="filterByYear(year)" tabindex="0">
@@ -197,15 +272,6 @@
             </div>
         </div>
         }
-
-        <!-- Fila 4: Mejor valorados -->
-        <div class="filter-controls">
-            <button type="button" class="filter-chip sort-chip" [class.active]="sortMode() === 'best-rated'"
-                (click)="toggleSortMode()">
-                <span class="material-icons">star</span>
-                Mejor valorados
-            </button>
-        </div>
     </div>
 
     <!-- Favorites section -->
