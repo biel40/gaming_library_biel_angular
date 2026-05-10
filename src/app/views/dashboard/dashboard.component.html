@@ -159,13 +159,13 @@
             <button type="button" class="filter-chip filter-toggle-chip"
                 [class.active]="activeCompany() !== 'All' || showCompanyPanel()"
                 (click)="toggleCompanyPanel()"
-                title="Filtrar por empresa">
+                title="Filtrar por plataforma">
                 <span class="material-icons">business</span>
-                <span>{{ activeCompany() !== 'All' ? activeCompany() : 'Empresa' }}</span>
+                <span>{{ activeCompany() !== 'All' ? activeCompany() : 'Plataforma' }}</span>
                 @if (activeCompany() !== 'All') {
                 <span class="material-icons filter-clear-icon"
                     (click)="filterByCompany('All'); $event.stopPropagation()"
-                    title="Quitar filtro de empresa">close</span>
+                    title="Quitar filtro de plataforma">close</span>
                 }
                 <span class="material-icons filter-arrow">{{ showCompanyPanel() ? 'expand_less' : 'expand_more' }}</span>
             </button>
