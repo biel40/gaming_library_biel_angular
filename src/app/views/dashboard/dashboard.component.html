@@ -139,13 +139,72 @@
 
     @if (!isLoading() && !error()) {
     <div class="filters">
-        <div class="filter-chips">
-            @for (genre of uniqueGenres(); track genre) {
-            <button type="button" class="filter-chip" [class.active]="activeGenre() === genre"
-                (click)="filterByGenre(genre)" (keydown.enter)="filterByGenre(genre)" tabindex="0">
-                {{ genre }}
+        <!-- Fila 1: Género -->
+        <div class="filter-row">
+            <div class="filter-chips">
+                @for (genre of uniqueGenres(); track genre) {
+                <button type="button" class="filter-chip" [class.active]="activeGenre() === genre"
+                    (click)="filterByGenre(genre)" (keydown.enter)="filterByGenre(genre)" tabindex="0">
+                    {{ genre }}
+                </button>
+                }
+            </div>
+        </div>
+
+        <!-- Fila 2: Empresa -->
+        @if (uniqueCompanies().length > 2) {
+        <div class="filter-row">
+            <div class="filter-chips">
+                @for (company of uniqueCompanies(); track company) {
+                <button type="button" class="filter-chip filter-chip--company" [class.active]="activeCompany() === company"
+                    (click)="filterByCompany(company)" tabindex="0">
+                    {{ company === 'All' ? 'Todas' : company }}
+                </button>
+                }
+            </div>
+        </div>
+        }
+
+        <!-- Fila 3: Plataforma (solo visible cuando hay empresa seleccionada) -->
+        @if (activeCompany() !== 'All' && filteredPlatformsByCompany().length > 2) {
+        <div class="filter-row">
+            <div class="filter-chips">
+                @for (platform of filteredPlatformsByCompany(); track platform) {
+                <button type="button" class="filter-chip" [class.active]="activePlatform() === platform"
+                    (click)="filterByPlatform(platform)" tabindex="0">
+                    {{ platform === 'All' ? 'Todas las plataformas' : platform }}
+                </button>
+                }
+            </div>
+        </div>
+        }
+
+        <!-- Fila 3: Año -->
+        @if (uniqueYears().length > 0) {
+        <div class="filter-row">
+            <div class="filter-chips filter-chips--years">
+                <button type="button" class="filter-chip filter-chip--year" [class.active]="activeYear() === null"
+                    (click)="filterByYear(null)" tabindex="0">
+                    <span class="material-icons">calendar_today</span>
+                    Todos
+                </button>
+                @for (year of uniqueYears(); track year) {
+                <button type="button" class="filter-chip filter-chip--year" [class.active]="activeYear() === year"
+                    (click)="filterByYear(year)" tabindex="0">
+                    {{ year }}
+                </button>
+                }
+            </div>
+        </div>
+        }
+
+        <!-- Fila 4: Mejor valorados -->
+        <div class="filter-controls">
+            <button type="button" class="filter-chip sort-chip" [class.active]="sortMode() === 'best-rated'"
+                (click)="toggleSortMode()">
+                <span class="material-icons">star</span>
+                Mejor valorados
             </button>
-            }
         </div>
     </div>
 

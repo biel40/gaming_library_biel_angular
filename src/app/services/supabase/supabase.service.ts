@@ -98,6 +98,10 @@ export class SupabaseService {
     return this._cachedReadOnly;
   }
 
+  public async isAdminUser(): Promise<boolean> {
+    return !(await this.isReadOnlyUser());
+  }
+
   public profile(user: User) {
     return this._supabaseClient
       .from('profiles')
@@ -404,6 +408,47 @@ export class SupabaseService {
     if (error) throw error;
 
     this._syncAfterUpdate(gameId, { description });
+  }
+
+  /**
+   * Update the genre, platform and release date for a specific game
+   * @param gameId The ID of the game to update
+   * @param details Object with the fields to update
+   */
+  public async updateGameDetails(gameId: string, details: { genre?: string; platform?: string; releaseDate?: Date }): Promise<void> {
+    const updateData: Record<string, unknown> = {};
+    if (details.genre !== undefined) updateData['genre'] = details.genre;
+    if (details.platform !== undefined) updateData['platform'] = details.platform;
+    if (details.releaseDate !== undefined) updateData['release_date'] = details.releaseDate;
+
+    const { error } = await this._supabaseClient
+      .from('videogames')
+      .update(updateData)
+      .eq('id', gameId);
+
+    if (error) throw error;
+
+    const syncChanges: Partial<Videogame> = {};
+    if (details.genre !== undefined) syncChanges.genre = details.genre;
+    if (details.platform !== undefined) syncChanges.platform = details.platform;
+    if (details.releaseDate !== undefined) syncChanges.releaseDate = details.releaseDate;
+    this._syncAfterUpdate(gameId, syncChanges);
+  }
+
+  /**
+   * Update the cover image URL for a specific game
+   * @param gameId The ID of the game to update
+   * @param imageUrl The new image URL
+   */
+  public async updateGameImageUrl(gameId: string, imageUrl: string): Promise<void> {
+    const { error } = await this._supabaseClient
+      .from('videogames')
+      .update({ image_url: imageUrl })
+      .eq('id', gameId);
+
+    if (error) throw error;
+
+    this._syncAfterUpdate(gameId, { image_url: imageUrl });
   }
 
   /**

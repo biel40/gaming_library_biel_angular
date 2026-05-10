@@ -9,6 +9,7 @@ import { GameCardComponent } from '../../components/game-card/game-card.componen
 import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
 import { UserService } from '../../services/user/user.service';
 import { GenreNormalizerService } from '../../services/genre-normalizer/genre-normalizer.service';
+import { PlatformNormalizerService } from '../../services/platform-normalizer/platform-normalizer.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -33,6 +34,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private _userService: UserService = inject(UserService);
     private _router: Router = inject(Router);
     private _genreNormalizer: GenreNormalizerService = inject(GenreNormalizerService);
+    private _platformNormalizer: PlatformNormalizerService = inject(PlatformNormalizerService);
     private _resizeListener: () => void;
     private _favoriteSubscription: Subscription | null = null;
 
@@ -50,6 +52,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public carouselDots = signal<number[]>([]);
     public isLoading = signal(true);
     public error = signal<string | null>(null);
+
+    // Filter signals
+    public activePlatform = signal<string>('All');
+    public activeCompany = signal<string>('All');
+    public activeYear = signal<number | null>(null);
+    public sortMode = signal<'default' | 'best-rated'>('default');
 
     // Multi-select functionality
     public selectMode = signal(false);
@@ -186,8 +194,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         const games = this.games();
         const searchTerm = this.searchTerm().toLowerCase().trim();
         const activeGenre = this.activeGenre();
+        const activePlatform = this.activePlatform();
+        const activeCompany = this.activeCompany();
+        const activeYear = this.activeYear();
+        const sortMode = this.sortMode();
 
-        return games.filter(game => {
+        let result = games.filter(game => {
             const gameName = game.name || '';
             const gameDescription = game.description || '';
             const normalizedGenre = this._genreNormalizer.normalizeGenre(game.genre);
@@ -197,17 +209,32 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 gameDescription.toLowerCase().includes(searchTerm);
 
             const matchesGenre = activeGenre === 'All' || normalizedGenre === activeGenre;
+            const matchesPlatform = activePlatform !== 'All'
+                ? this._platformNormalizer.normalizePlatform(game.platform) === activePlatform
+                : activeCompany === 'All' || this._platformNormalizer.gameMatchesCompany(game.platform, activeCompany);
+            const matchesYear = activeYear === null ||
+                (game.releaseDate && new Date(game.releaseDate).getFullYear() === activeYear);
 
-            return matchesSearch && matchesGenre && !game.favorite;
+            return matchesSearch && matchesGenre && matchesPlatform && matchesYear && !game.favorite;
         });
+
+        if (sortMode === 'best-rated') {
+            result = [...result].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+        }
+
+        return result;
     });
 
     public favoriteGames = computed(() => {
         const games = this.games().filter(game => game.favorite);
         const activeGenre = this.activeGenre();
+        const activePlatform = this.activePlatform();
+        const activeCompany = this.activeCompany();
+        const activeYear = this.activeYear();
         const searchTerm = this.searchTerm().toLowerCase().trim();
+        const sortMode = this.sortMode();
 
-        return games.filter(game => {
+        let result = games.filter(game => {
             const gameName = game.name || '';
             const gameDescription = game.description || '';
             const normalizedGenre = this._genreNormalizer.normalizeGenre(game.genre);
@@ -217,9 +244,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 gameDescription.toLowerCase().includes(searchTerm);
 
             const matchesGenre = activeGenre === 'All' || normalizedGenre === activeGenre;
+            const matchesPlatform = activePlatform !== 'All'
+                ? this._platformNormalizer.normalizePlatform(game.platform) === activePlatform
+                : activeCompany === 'All' || this._platformNormalizer.gameMatchesCompany(game.platform, activeCompany);
+            const matchesYear = activeYear === null ||
+                (game.releaseDate && new Date(game.releaseDate).getFullYear() === activeYear);
 
-            return matchesSearch && matchesGenre;
+            return matchesSearch && matchesGenre && matchesPlatform && matchesYear;
         });
+
+        if (sortMode === 'best-rated') {
+            result = [...result].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+        }
+
+        return result;
     });
 
     public uniqueGenres = computed(() => {
@@ -227,6 +265,38 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return this._genreNormalizer.getUniqueNormalizedGenres(genres);
     });
 
+    // Extract unique platforms from games for the platform filter
+    public uniquePlatforms = computed(() => {
+        const platforms = this.games().map(game => game.platform);
+        return this._platformNormalizer.getUniquePlatforms(platforms);
+    });
+
+    public uniqueCompanies = computed(() => {
+        const platforms = this.games().map(game => game.platform);
+        return this._platformNormalizer.getUniqueCompanies(platforms);
+    });
+
+    public filteredPlatformsByCompany = computed(() => {
+        const company = this.activeCompany();
+        const allPlatforms = this.uniquePlatforms();
+        if (company === 'All') {
+            return allPlatforms;
+        }
+        const filtered = allPlatforms.filter(
+            p => p !== 'All' && this._platformNormalizer.normalizedPlatformMatchesCompany(p, company)
+        );
+        return ['All', ...filtered];
+    });
+
+    // Extract unique years from games for the year filter
+    public uniqueYears = computed(() => {
+        const years = this.games()
+            .map(game => game.releaseDate ? new Date(game.releaseDate).getFullYear() : null)
+            .filter((y): y is number => y !== null);
+        return [...new Set(years)].sort((a, b) => b - a);
+    });
+
+    // Helper method to normalize genre names
     public getNormalizedGenre(genre: string | undefined): string {
         return this._genreNormalizer.normalizeGenre(genre);
     }
@@ -332,9 +402,32 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentPage.set(0);
     }
 
+    public filterByPlatform(platform: string) {
+        this.activePlatform.set(platform);
+        this.currentPage.set(0);
+    }
+
+    public filterByCompany(company: string) {
+        this.activeCompany.set(company);
+        this.activePlatform.set('All');
+        this.currentPage.set(0);
+    }
+
+    public filterByYear(year: number | null) {
+        this.activeYear.set(year);
+        this.currentPage.set(0);
+    }
+
+    public toggleSortMode() {
+        this.sortMode.set(this.sortMode() === 'best-rated' ? 'default' : 'best-rated');
+    }
+
     public resetFilters() {
         this.searchTerm.set('');
         this.activeGenre.set('All');
+        this.activePlatform.set('All');
+        this.activeYear.set(null);
+        this.sortMode.set('default');
         this.currentPage.set(0);
     }
 

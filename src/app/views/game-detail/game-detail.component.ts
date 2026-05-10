@@ -31,6 +31,17 @@ export class GameDetailComponent implements OnInit {
   private _hoursPlayed: WritableSignal<number> = signal<number>(0);
   private _isEditingHours = signal<boolean>(false);
 
+  // Details editing
+  private _isEditingDetails = signal<boolean>(false);
+  private _editGenre: WritableSignal<string> = signal<string>('');
+  private _editPlatform: WritableSignal<string> = signal<string>('');
+  private _editReleaseDate: WritableSignal<string> = signal<string>('');
+
+  // Image editing
+  private _isEditingImage = signal<boolean>(false);
+  private _editImageUrl: WritableSignal<string> = signal<string>('');
+  private _isAdminUser = signal<boolean>(false);
+
   // Computed signals
   readonly game = computed(() => this._game());
   readonly loading = computed(() => this._loading());
@@ -49,6 +60,13 @@ export class GameDetailComponent implements OnInit {
   readonly isEditingHours = computed(() => this._isEditingHours());
   readonly currentlyPlayingIcon = computed(() => this._game()?.currently_playing ? 'pause' : 'play_arrow');
   readonly currentlyPlayingTitle = computed(() => this._game()?.currently_playing ? 'Dejar de jugar' : 'Jugando actualmente');
+  readonly isEditingDetails = computed(() => this._isEditingDetails());
+  readonly editGenre = computed(() => this._editGenre());
+  readonly editPlatform = computed(() => this._editPlatform());
+  readonly editReleaseDate = computed(() => this._editReleaseDate());
+  readonly isEditingImage = computed(() => this._isEditingImage());
+  readonly editImageUrl = computed(() => this._editImageUrl());
+  readonly isAdminUser = computed(() => this._isAdminUser());
 
   constructor(
     private route: ActivatedRoute,
@@ -76,9 +94,11 @@ export class GameDetailComponent implements OnInit {
     try {
       const isReadOnly = await this.supabaseService.isReadOnlyUser();
       this._isReadOnlyUser.set(isReadOnly);
+      this._isAdminUser.set(!isReadOnly);
     } catch (error) {
       console.error('Error checking read-only user status:', error);
       this._isReadOnlyUser.set(false);
+      this._isAdminUser.set(false);
     }
   }
 
@@ -511,6 +531,84 @@ export class GameDetailComponent implements OnInit {
    */
   public updateHoursValue(value: number): void {
     this._hoursPlayed.set(value);
+  }
+
+  private _dateToInputValue(date?: Date): string {
+    if (!date) return '';
+    return new Date(date).toISOString().split('T')[0];
+  }
+
+  public startEditingDetails(): void {
+    if (this._isReadOnlyUser()) return;
+    const game = this._game();
+    this._editGenre.set(game?.genre || '');
+    this._editPlatform.set(game?.platform || '');
+    this._editReleaseDate.set(this._dateToInputValue(game?.releaseDate));
+    this._isEditingDetails.set(true);
+  }
+
+  public cancelEditingDetails(): void {
+    this._isEditingDetails.set(false);
+  }
+
+  public setEditGenre(value: string): void { this._editGenre.set(value); }
+  public setEditPlatform(value: string): void { this._editPlatform.set(value); }
+  public setEditReleaseDate(value: string): void { this._editReleaseDate.set(value); }
+
+  public async saveDetails(): Promise<void> {
+    if (this._isReadOnlyUser()) return;
+    const game = this._game();
+    if (!game?.id) return;
+
+    const releaseDate = this._editReleaseDate() ? new Date(this._editReleaseDate()) : undefined;
+
+    try {
+      await this.supabaseService.updateGameDetails(game.id, {
+        genre: this._editGenre(),
+        platform: this._editPlatform(),
+        releaseDate
+      });
+      this._game.set({ ...game, genre: this._editGenre(), platform: this._editPlatform(), releaseDate });
+      this.notificationService.success('Detalles actualizados correctamente');
+      this._isEditingDetails.set(false);
+    } catch (err) {
+      this.notificationService.error('Error al actualizar los detalles');
+      console.error(err);
+    }
+  }
+
+  public startEditingImage(): void {
+    if (!this._isAdminUser()) return;
+    this._editImageUrl.set(this._game()?.image_url || '');
+    this._isEditingImage.set(true);
+  }
+
+  public cancelEditingImage(): void {
+    this._isEditingImage.set(false);
+  }
+
+  public setEditImageUrl(value: string): void { this._editImageUrl.set(value); }
+
+  public async saveImageUrl(): Promise<void> {
+    if (!this._isAdminUser()) return;
+    const game = this._game();
+    if (!game?.id) return;
+
+    const newUrl = this._editImageUrl().trim();
+    if (!newUrl) {
+      this.notificationService.error('La URL de la imagen no puede estar vacía');
+      return;
+    }
+
+    try {
+      await this.supabaseService.updateGameImageUrl(game.id, newUrl);
+      this._game.set({ ...game, image_url: newUrl });
+      this.notificationService.success('Portada actualizada correctamente');
+      this._isEditingImage.set(false);
+    } catch (err) {
+      this.notificationService.error('Error al actualizar la portada');
+      console.error(err);
+    }
   }
 
   /**

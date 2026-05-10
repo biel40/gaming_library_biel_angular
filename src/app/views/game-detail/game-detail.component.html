@@ -57,8 +57,43 @@
     </div>
 
     <div class="game-content">
-      <div class="game-image-container">
+      <div class="game-image-container" [class.editing]="isEditingImage()">
+        @if (!isEditingImage()) {
         <img [src]="game()?.image_url" [alt]="game()?.name" class="game-image">
+        @if (isAdminUser()) {
+        <button type="button" class="image-edit-trigger" (click)="startEditingImage()" title="Cambiar portada">
+          <span class="material-icons">photo_camera</span>
+          <span>Cambiar portada</span>
+        </button>
+        }
+        } @else {
+        <div class="image-edit-panel">
+          <h3 class="image-edit-title">
+            <span class="material-icons">photo_camera</span>
+            Nueva portada
+          </h3>
+          <div class="detail-edit-field">
+            <label>URL de la imagen:</label>
+            <input type="url" [ngModel]="editImageUrl()" (ngModelChange)="setEditImageUrl($event)"
+              placeholder="https://..." class="detail-input" autocomplete="off">
+          </div>
+          @if (editImageUrl()) {
+          <div class="image-preview-container">
+            <img [src]="editImageUrl()" alt="Vista previa" class="image-preview-img">
+          </div>
+          }
+          <div class="edit-actions">
+            <button class="action-btn primary" (click)="saveImageUrl()" title="Guardar portada">
+              <span class="material-icons">save</span>
+              Guardar
+            </button>
+            <button class="action-btn secondary" (click)="cancelEditingImage()" title="Cancelar">
+              <span class="material-icons">cancel</span>
+              Cancelar
+            </button>
+          </div>
+        </div>
+        }
         <div class="game-image-overlay"></div>
       </div>
 
@@ -94,7 +129,43 @@
         </div>
 
         <div class="game-section">
-          <h2>Detalles</h2>
+          <div class="section-header">
+            <h2>Detalles</h2>
+            @if (!isReadOnlyUser() && !isEditingDetails()) {
+            <button class="edit-btn" (click)="startEditingDetails()" title="Editar detalles">
+              <span class="material-icons">edit</span>
+            </button>
+            }
+          </div>
+          @if (isEditingDetails()) {
+          <div class="details-edit">
+            <div class="detail-edit-field">
+              <label>Género:</label>
+              <input type="text" [ngModel]="editGenre()" (ngModelChange)="setEditGenre($event)"
+                placeholder="Género del juego" class="detail-input">
+            </div>
+            <div class="detail-edit-field">
+              <label>Plataforma:</label>
+              <input type="text" [ngModel]="editPlatform()" (ngModelChange)="setEditPlatform($event)"
+                placeholder="Plataforma" class="detail-input">
+            </div>
+            <div class="detail-edit-field">
+              <label>Fecha de lanzamiento:</label>
+              <input type="date" [ngModel]="editReleaseDate()" (ngModelChange)="setEditReleaseDate($event)"
+                class="detail-input">
+            </div>
+            <div class="edit-actions">
+              <button class="action-btn primary" (click)="saveDetails()" title="Guardar detalles">
+                <span class="material-icons">save</span>
+                Guardar
+              </button>
+              <button class="action-btn secondary" (click)="cancelEditingDetails()" title="Cancelar edición">
+                <span class="material-icons">cancel</span>
+                Cancelar
+              </button>
+            </div>
+          </div>
+          } @else {
           <div class="game-details">
             @if (game()?.genre) {
             <div class="detail-item">
@@ -127,6 +198,7 @@
             </div>
             }
           </div>
+          }
         </div>
 
         <div class="game-section">
