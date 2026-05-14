@@ -145,7 +145,6 @@
                 [class.active]="activeGenre() !== 'All' || showGenrePanel()"
                 (click)="toggleGenrePanel()"
                 title="Filtrar por género">
-                <span class="material-icons">category</span>
                 <span>{{ activeGenre() !== 'All' ? activeGenre() : 'Género' }}</span>
                 @if (activeGenre() !== 'All') {
                 <span class="material-icons filter-clear-icon"
@@ -160,7 +159,6 @@
                 [class.active]="activeCompany() !== 'All' || showCompanyPanel()"
                 (click)="toggleCompanyPanel()"
                 title="Filtrar por plataforma">
-                <span class="material-icons">business</span>
                 <span>{{ activeCompany() !== 'All' ? activeCompany() : 'Plataforma' }}</span>
                 @if (activeCompany() !== 'All') {
                 <span class="material-icons filter-clear-icon"
@@ -192,7 +190,6 @@
                 [class.active]="activeYear() !== null || showYearPanel()"
                 (click)="toggleYearPanel()"
                 title="Filtrar por año de lanzamiento">
-                <span class="material-icons">calendar_today</span>
                 <span class="year-label">{{ activeYear() !== null ? activeYear() : 'Año' }}</span>
                 @if (activeYear() !== null) {
                 <span class="material-icons filter-clear-icon"
@@ -206,7 +203,7 @@
             <button type="button" class="filter-chip sort-chip" [class.active]="sortMode() === 'best-rated'"
                 (click)="toggleSortMode()">
                 <span class="material-icons">star</span>
-                Mejor valorados
+                Mis mejores valorados
             </button>
         </div>
 

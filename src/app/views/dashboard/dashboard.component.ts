@@ -196,7 +196,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Computed signals
     public filteredGames = computed(() => {
         const games = this.games();
-        const searchTerm = this.searchTerm().toLowerCase().trim();
+        const searchTerm = this._normalizeText(this.searchTerm());
         const activeGenre = this.activeGenre();
         const activePlatform = this.activePlatform();
         const activeCompany = this.activeCompany();
@@ -204,13 +204,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         const sortMode = this.sortMode();
 
         let result = games.filter(game => {
-            const gameName = game.name || '';
-            const gameDescription = game.description || '';
+            const gameName = this._normalizeText(game.name || '');
+            const gameDescription = this._normalizeText(game.description || '');
             const normalizedGenre = this._genreNormalizer.normalizeGenre(game.genre);
 
             const matchesSearch = !searchTerm ||
-                gameName.toLowerCase().includes(searchTerm) ||
-                gameDescription.toLowerCase().includes(searchTerm);
+                gameName.includes(searchTerm) ||
+                gameDescription.includes(searchTerm);
 
             const matchesGenre = activeGenre === 'All' || normalizedGenre === activeGenre;
             const matchesPlatform = activePlatform !== 'All'
@@ -235,17 +235,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         const activePlatform = this.activePlatform();
         const activeCompany = this.activeCompany();
         const activeYear = this.activeYear();
-        const searchTerm = this.searchTerm().toLowerCase().trim();
+        const searchTerm = this._normalizeText(this.searchTerm());
         const sortMode = this.sortMode();
 
         let result = games.filter(game => {
-            const gameName = game.name || '';
-            const gameDescription = game.description || '';
+            const gameName = this._normalizeText(game.name || '');
+            const gameDescription = this._normalizeText(game.description || '');
             const normalizedGenre = this._genreNormalizer.normalizeGenre(game.genre);
 
             const matchesSearch = !searchTerm ||
-                gameName.toLowerCase().includes(searchTerm) ||
-                gameDescription.toLowerCase().includes(searchTerm);
+                gameName.includes(searchTerm) ||
+                gameDescription.includes(searchTerm);
 
             const matchesGenre = activeGenre === 'All' || normalizedGenre === activeGenre;
             const matchesPlatform = activePlatform !== 'All'
@@ -401,6 +401,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    // Normalize text for consistent searching (remove accents, punctuation, and convert to lowercase)
+    private _normalizeText(text: string): string {
+        return text
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/,/g, '')
+            .toLowerCase()
+            .trim();
+    }
+
     private _closeAllPanels() {
         this.showGenrePanel.set(false);
         this.showCompanyPanel.set(false);
@@ -422,10 +432,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public filterByCompany(company: string) {
         this.activeCompany.set(company);
-        this.activePlatform.set('All');
         this.showCompanyPanel.set(false);
         this.showPlatformPanel.set(false);
         this.currentPage.set(0);
+
+        const platformsForCompany = this.uniquePlatforms().filter(
+            p => p !== 'All' && this._platformNormalizer.normalizedPlatformMatchesCompany(p, company)
+        );
+        this.activePlatform.set(platformsForCompany.length === 1 ? platformsForCompany[0] : 'All');
     }
 
     public filterByYear(year: number | null) {
