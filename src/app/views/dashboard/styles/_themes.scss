@@ -39,34 +39,34 @@
   // ── Search bar ──────────────────────────────────────────────────────────────
   .search-bar {
     input {
-      background: rgba(255, 255, 255, 0.9);
-      color: #1a1a2e;
-      border-color: rgba(0, 0, 0, 0.12);
+      background: #ffffff !important;
+      color: #1a1a2e !important;
+      border: 1.5px solid rgba(0, 0, 0, 0.45) !important;
+      backdrop-filter: none !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
 
       &::placeholder {
-        color: rgba(0, 0, 0, 0.4);
+        color: rgba(0, 0, 0, 0.5) !important;
       }
 
       &:hover {
-        background: #ffffff;
-        border-color: rgba(200, 150, 10, 0.6);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(200, 150, 10, 0.15);
+        border-color: rgba(200, 150, 10, 0.8) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(200, 150, 10, 0.25) !important;
       }
 
       &:focus {
-        background: #ffffff;
-        border-color: #c8960a;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 0 0 0 3px rgba(200, 150, 10, 0.12);
+        border-color: #c8960a !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(200, 150, 10, 0.2) !important;
       }
     }
 
     .material-icons {
-      color: rgba(0, 0, 0, 0.45);
+      color: rgba(0, 0, 0, 0.55) !important;
     }
 
     &:hover .material-icons,
     input:focus + .material-icons {
-      color: #c8960a;
+      color: #c8960a !important;
     }
   }
 

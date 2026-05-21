@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, WritableSignal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, WritableSignal } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -18,7 +18,7 @@ import { SpanishDatePipe } from '../../pipes/spanish-date.pipe';
     SpanishDatePipe
   ]
 })
-export class GameDetailComponent implements OnInit {
+export class GameDetailComponent implements OnInit, OnDestroy {
   private _game = signal<Videogame | null>(null);
   private _loading = signal<boolean>(true);
   private _error = signal<string | null>(null);
@@ -41,6 +41,11 @@ export class GameDetailComponent implements OnInit {
   private _isEditingImage = signal<boolean>(false);
   private _editImageUrl: WritableSignal<string> = signal<string>('');
   private _isAdminUser = signal<boolean>(false);
+
+  // Theme
+  private _theme = signal<'dark' | 'light'>(
+    (localStorage.getItem('gaming-library-theme') as 'dark' | 'light') || 'dark'
+  );
 
   // Computed signals
   readonly game = computed(() => this._game());
@@ -67,6 +72,7 @@ export class GameDetailComponent implements OnInit {
   readonly isEditingImage = computed(() => this._isEditingImage());
   readonly editImageUrl = computed(() => this._editImageUrl());
   readonly isAdminUser = computed(() => this._isAdminUser());
+  readonly isLightTheme = computed(() => this._theme() === 'light');
 
   constructor(
     private route: ActivatedRoute,
@@ -75,6 +81,9 @@ export class GameDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    document.body.classList.toggle('light-theme', this._theme() === 'light');
+    document.querySelector('.main')?.classList.toggle('light-theme', this._theme() === 'light');
+
     // Check if current user is read-only
     this.checkReadOnlyUser();
 
@@ -88,6 +97,11 @@ export class GameDetailComponent implements OnInit {
         this._loading.set(false);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove('light-theme');
+    document.querySelector('.main')?.classList.remove('light-theme');
   }
 
   private async checkReadOnlyUser(): Promise<void> {

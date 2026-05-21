@@ -1523,3 +1523,209 @@ textarea:disabled {
     }
   }
 }
+
+// ─── Light theme ──────────────────────────────────────────────────────────────
+.game-detail-container.light-theme {
+
+  .back-btn {
+    background: rgba(0, 0, 0, 0.06);
+    color: #1a1a2e;
+    &:hover { background: rgba(0, 0, 0, 0.1); }
+  }
+
+  .loading-container p { color: rgba(0, 0, 0, 0.6); }
+
+  .error-container {
+    h2 { color: #1a1a2e; }
+    p  { color: rgba(0, 0, 0, 0.6); }
+  }
+
+  // ── Card wrapper ────────────────────────────────────────────────────────────
+  .game-detail {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  // ── Header ──────────────────────────────────────────────────────────────────
+  .game-header {
+    background: linear-gradient(135deg, #e2e8f0, #f0f4f8);
+    border-bottom-color: rgba(200, 150, 10, 0.25);
+    color: #1a1a2e;
+
+    .game-title-container h1 {
+      color: #1a1a2e;
+      text-shadow: none;
+    }
+
+    .game-metadata span {
+      background: rgba(0, 0, 0, 0.08);
+      color: #1a1a2e;
+    }
+  }
+
+  // ── Image area ──────────────────────────────────────────────────────────────
+  .game-image-container {
+    background: linear-gradient(135deg, #dde3ec 0%, #e8ecf3 50%, #dde3ec 100%);
+
+    &.editing {
+      background: linear-gradient(135deg, #dde3ec 0%, #e8ecf3 50%, #dde3ec 100%);
+    }
+
+    .image-preview-container { background: rgba(0, 0, 0, 0.06); }
+  }
+
+  // ── Sections ────────────────────────────────────────────────────────────────
+  .game-section {
+    h2 {
+      color: #c8960a;
+      border-bottom-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header h2 { border-bottom-color: rgba(0, 0, 0, 0.1); }
+
+    .edit-btn {
+      background: rgba(0, 0, 0, 0.06);
+      border-color: rgba(0, 0, 0, 0.1);
+      color: #c8960a;
+
+      &:hover {
+        background: rgba(200, 150, 10, 0.1);
+        border-color: #c8960a;
+        box-shadow: 0 2px 8px rgba(200, 150, 10, 0.2);
+      }
+    }
+
+    .game-description {
+      color: rgba(0, 0, 0, 0.7);
+      &.editable:hover { background-color: rgba(200, 150, 10, 0.08); }
+    }
+
+    .description-edit .description-field {
+      background-color: #ffffff;
+      border-color: rgba(0, 0, 0, 0.15);
+      color: #1a1a2e;
+      &::placeholder { color: rgba(0, 0, 0, 0.35); }
+      &:focus {
+        border-color: #c8960a;
+        box-shadow: 0 0 0 3px rgba(200, 150, 10, 0.1);
+      }
+    }
+  }
+
+  // ── Detail items ────────────────────────────────────────────────────────────
+  .detail-item {
+    .detail-label { color: rgba(0, 0, 0, 0.6); }
+    .detail-value { color: #1a1a2e; }
+
+    &.platinum-detail .detail-value.platinum-badge {
+      color: #c8960a;
+      .platinum-date { color: rgba(0, 0, 0, 0.45); }
+    }
+  }
+
+  // ── Detail / image edit fields ───────────────────────────────────────────────
+  .detail-edit-field {
+    label { color: rgba(0, 0, 0, 0.65); }
+
+    .detail-input {
+      background-color: #ffffff;
+      border-color: rgba(0, 0, 0, 0.15);
+      color: #1a1a2e;
+      &::placeholder { color: rgba(0, 0, 0, 0.35); }
+      &:focus {
+        border-color: #c8960a;
+        box-shadow: 0 0 0 3px rgba(200, 150, 10, 0.1);
+      }
+      &[type='date']::-webkit-calendar-picker-indicator {
+        filter: none;
+        opacity: 0.6;
+      }
+    }
+  }
+
+  .image-edit-panel .image-edit-title { color: #c8960a; }
+
+  // ── Action buttons (inactive state) ─────────────────────────────────────────
+  .favorite-button {
+    background-color: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.12);
+    color: #1a1a2e;
+    &:hover { background-color: rgba(0, 0, 0, 0.1); }
+  }
+
+  .platinum-button {
+    background-color: rgba(0, 0, 0, 0.06);
+    border-color: rgba(200, 150, 10, 0.35);
+    color: #c8960a;
+    &:hover {
+      background-color: rgba(200, 150, 10, 0.1);
+      border-color: #c8960a;
+    }
+  }
+
+  .currently-playing-button {
+    background-color: rgba(0, 0, 0, 0.06);
+    border-color: rgba(76, 175, 80, 0.35);
+    color: #388e3c;
+    &:hover {
+      background-color: rgba(76, 175, 80, 0.1);
+      border-color: #4caf50;
+    }
+  }
+
+  // ── Review / rating ─────────────────────────────────────────────────────────
+  .score-input .star-rating .star { color: rgba(0, 0, 0, 0.2); }
+
+  .review-edit {
+    .score-input label,
+    .review-input label { color: #1a1a2e; }
+
+    .review-field {
+      background-color: #ffffff;
+      border-color: rgba(0, 0, 0, 0.15);
+      color: #1a1a2e;
+      &::placeholder { color: rgba(0, 0, 0, 0.35); }
+      &:focus {
+        border-color: #c8960a;
+        box-shadow: 0 0 0 3px rgba(200, 150, 10, 0.1);
+      }
+    }
+  }
+
+  .review-display {
+    .label { color: #1a1a2e; }
+    .star-rating .star { color: rgba(0, 0, 0, 0.2); }
+    .score-number { color: rgba(0, 0, 0, 0.5); }
+
+    .review-display-text .review-content {
+      background-color: rgba(0, 0, 0, 0.04);
+      color: rgba(0, 0, 0, 0.7);
+      border-left-color: #c8960a;
+    }
+
+    .no-rating {
+      background-color: rgba(0, 0, 0, 0.03);
+      border-color: rgba(0, 0, 0, 0.12);
+      p { color: rgba(0, 0, 0, 0.5); }
+    }
+  }
+
+  // ── Hours ────────────────────────────────────────────────────────────────────
+  .hours-value { color: #c8960a; }
+
+  .hours-input {
+    background-color: #ffffff;
+    border-color: rgba(0, 0, 0, 0.15);
+    color: #1a1a2e;
+    &:focus {
+      border-color: #c8960a;
+      box-shadow: 0 0 0 3px rgba(200, 150, 10, 0.1);
+    }
+  }
+
+  textarea:disabled {
+    color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}

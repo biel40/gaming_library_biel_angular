@@ -95,6 +95,16 @@ import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.co
 - **Performance**: `will-change`, `transform: translateZ(0)`, `backface-visibility: hidden`
 - **SCSS Imports**: When using `@use` for shared SCSS files, verify relative paths carefully. From `src/app/components/**/`, the path to `src/app/views/dashboard/styles/` is `../../views/dashboard/styles/` (2 levels up), not 3.
 - **Background Consistency**: Use `linear-gradient(135deg, vars.$bg-primary 0%, vars.$bg-secondary 100%)` for components that need to match the main app background. This gradient (#1a1a2e to #16213e) ensures visual consistency across all UI elements like dropdowns, menus, and modals.
+- **Theme Application (CRITICAL)**: The light/dark theme is controlled by the `light-theme` CSS class applied to TWO elements simultaneously: `document.body` AND `document.querySelector('.main')`. Any page-level component (`views/`) that manages its own theme in `ngOnInit` MUST toggle both. Omitting `.main` results in a black background behind the component's card/content, even in light mode. Always pair these two lines:
+  ```typescript
+  document.body.classList.toggle('light-theme', isLight);
+  document.querySelector('.main')?.classList.toggle('light-theme', isLight);
+  ```
+  And remove both in `ngOnDestroy`:
+  ```typescript
+  document.body.classList.remove('light-theme');
+  document.querySelector('.main')?.classList.remove('light-theme');
+  ```
 
 ## Database Schema (Supabase)
 

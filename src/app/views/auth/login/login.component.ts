@@ -74,6 +74,7 @@ export class LoginComponent implements OnInit {
       await this.supabaseService.signInWithGoogle();
     } catch (error: any) {
       this.errorMessage.set(this.translateAuthError(error));
+    } finally {
       this.loading.set(false);
     }
   }
@@ -94,26 +95,17 @@ export class LoginComponent implements OnInit {
       this.errorMessage.set('Por favor, introduce un correo electrónico válido');
       return;
     }
-    
-    this.loading.set(true);
-    this.errorMessage.set('');
-    
-    try {
-      const email = this.resetPasswordForm.get('email')?.value;
-      const { error } = await this.supabaseService.resetPassword(email);
-      
-      if (error) {
-        throw error;
-      }
-      
-      this.errorMessage.set('Se ha enviado un correo electrónico con instrucciones para restablecer tu contraseña');
-      this.isLoginMode.set(true);
-      this.isResetPasswordMode.set(false);
-    } catch (error: any) {
-      this.errorMessage.set(this.translateAuthError(error));
-    } finally {
-      this.loading.set(false);
+
+    const email = this.resetPasswordForm.get('email')?.value;
+    const { error } = await this.supabaseService.resetPassword(email);
+
+    if (error) {
+      throw error;
     }
+
+    this.errorMessage.set('Se ha enviado un correo electrónico con instrucciones para restablecer tu contraseña');
+    this.isLoginMode.set(true);
+    this.isResetPasswordMode.set(false);
   }
 
   async onSubmit(): Promise<void> {
@@ -163,35 +155,28 @@ export class LoginComponent implements OnInit {
     }
 
     const { email, password, name } = this.registerForm.value;
-    
-    try {
-      const { data, error } = await this.supabaseService.signUp(email, password);
-      
-      if (error) {
-        throw error;
-      }
-      
-      if (data.user) {
-        const profile: Profile = {
-          id: data.user.id,
-          name: name
-        };
-        
-        const { error: profileError } = await this.supabaseService.insertProfile(profile);
-        
-        if (profileError) {
-          console.error('Error al crear el perfil:', profileError);
-          this.errorMessage.set('Error al crear el perfil: ' + profileError.message);
-          return;
-        }
-        
-        this.router.navigate(['/dashboard']);
-      }
-    } catch (err: any) {
-      console.error('Error de registro:', err);
-      this.errorMessage.set(this.translateAuthError(err));
-      throw err;
+    const { data, error } = await this.supabaseService.signUp(email, password);
+
+    if (error) {
+      throw error;
     }
+
+    if (!data.user || data.user.identities?.length === 0) {
+      throw new Error('User already registered');
+    }
+
+    const profile: Profile = {
+      id: data.user.id,
+      name: name
+    };
+
+    const { error: profileError } = await this.supabaseService.insertProfile(profile);
+
+    if (profileError) {
+      throw profileError;
+    }
+
+    this.router.navigate(['/dashboard']);
   }
 
   private translateAuthError(error: any): string {
