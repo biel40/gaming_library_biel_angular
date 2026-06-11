@@ -61,6 +61,17 @@ export class SupabaseService {
     }
 
     this._supabaseClient = createClient(environment.supabaseUrl, environment.supabaseKey);
+
+    this._supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        this._session.set(null);
+        this._favorites.set([]);
+        this._favoritesLoaded = false;
+        this._cachedReadOnly = null;
+      } else if (session) {
+        this._session.set(session);
+      }
+    });
   }
 
   // Session management
@@ -143,6 +154,18 @@ export class SupabaseService {
       options: {
         redirectTo: `${window.location.origin}/dashboard`
       }
+    });
+    if (error) throw error;
+  }
+
+  public async signInAsGuest(): Promise<void> {
+    if (!environment.allowGuestAccess || !environment.guestEmail || !environment.guestPassword) {
+      throw new Error('El acceso de invitado no está disponible');
+    }
+    this._session.set(undefined);
+    const { error } = await this._supabaseClient.auth.signInWithPassword({
+      email: environment.guestEmail,
+      password: environment.guestPassword
     });
     if (error) throw error;
   }

@@ -106,6 +106,13 @@
             </svg>
             Continuar con Google
           </button>
+
+          @if (allowGuestAccess()) {
+            <button type="button" class="guest-btn" (click)="loginAsGuest()" [disabled]="loading()">
+              <span class="material-icons">person_outline</span>
+              Continuar como invitado
+            </button>
+          }
         </form>
       } @else {
         <!-- Register Form -->

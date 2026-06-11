@@ -25,6 +25,7 @@ export class LoginComponent implements OnInit {
   loading = signal(false);
   errorMessage = signal('');
   allowRegistration = signal(environment.allowRegistration);
+  allowGuestAccess = signal(environment.allowGuestAccess);
 
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
@@ -72,6 +73,20 @@ export class LoginComponent implements OnInit {
     this.errorMessage.set('');
     try {
       await this.supabaseService.signInWithGoogle();
+    } catch (error: any) {
+      this.errorMessage.set(this.translateAuthError(error));
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async loginAsGuest(): Promise<void> {
+    this.loading.set(true);
+    this.errorMessage.set('');
+    try {
+      await this.supabaseService.signInAsGuest();
+      localStorage.setItem('gaming-library-theme', 'dark');
+      this.router.navigate(['/dashboard']);
     } catch (error: any) {
       this.errorMessage.set(this.translateAuthError(error));
     } finally {

@@ -11,7 +11,10 @@ mkdirSync('./src/app/environments', { recursive: true });
 const envConfigFile = `export const environment = {
   production: false,
   allowRegistration: true,
+  allowGuestAccess: true,
   adminUserId: '${process.env['VITE_ADMIN_USER_ID'] || ''}',
+  guestEmail: '${process.env['VITE_GUEST_EMAIL'] || ''}',
+  guestPassword: '${process.env['VITE_GUEST_PASSWORD'] || ''}',
   supabaseUrl: '${process.env['VITE_SUPABASE_URL'] || ''}',
   supabaseKey: '${process.env['VITE_SUPABASE_KEY'] || ''}',
   rawgApiKey: '${process.env['VITE_RAWG_API_KEY'] || ''}'
@@ -21,7 +24,10 @@ const envConfigFile = `export const environment = {
 const envConfigFileProd = `export const environment = {
   production: true,
   allowRegistration: false,
+  allowGuestAccess: true,
   adminUserId: '${process.env['VITE_ADMIN_USER_ID'] || ''}',
+  guestEmail: '${process.env['VITE_GUEST_EMAIL'] || ''}',
+  guestPassword: '${process.env['VITE_GUEST_PASSWORD'] || ''}',
   supabaseUrl: '${process.env['VITE_SUPABASE_URL'] || ''}',
   supabaseKey: '${process.env['VITE_SUPABASE_KEY'] || ''}',
   rawgApiKey: '${process.env['VITE_RAWG_API_KEY'] || ''}'
