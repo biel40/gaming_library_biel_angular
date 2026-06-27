@@ -220,7 +220,7 @@ export class PlatformNormalizerService {
                 companies.add(this.getPlatformCompany(normalized));
             }
         }
-        return ['All', ...Array.from(companies).sort((a, b) => a.localeCompare(b, 'es'))];
+        return ['Todos', ...Array.from(companies).sort((a, b) => a.localeCompare(b, 'es'))];
     }
 
     private capitalizeFirst(str: string): string {
@@ -238,6 +238,6 @@ export class PlatformNormalizerService {
             }
         }
 
-        return ['All', ...Array.from(normalizedSet).sort((a, b) => a.localeCompare(b, 'es'))];
+        return ['Todos', ...Array.from(normalizedSet).sort((a, b) => a.localeCompare(b, 'es'))];
     }
 }

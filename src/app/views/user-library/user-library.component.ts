@@ -23,7 +23,7 @@ export class UserLibraryComponent implements OnInit {
   private _loading = signal<boolean>(true);
   private _error = signal<string | null>(null);
   private _searchTerm = signal<string>('');
-  private _activeGenre = signal<string>('All');
+  private _activeGenre = signal<string>('Todos');
 
   readonly games = computed(() => this._games());
   readonly profile = computed(() => this._profile());
@@ -38,7 +38,7 @@ export class UserLibraryComponent implements OnInit {
     const genres = this._games()
       .map(g => this._genreNormalizer.normalizeGenre(g.genre))
       .filter((g): g is string => !!g);
-    return ['All', ...new Set(genres)];
+    return ['Todos', ...new Set(genres)];
   });
 
   readonly filteredGames = computed(() => {
@@ -50,7 +50,7 @@ export class UserLibraryComponent implements OnInit {
         g.description?.toLowerCase().includes(search)
       );
     }
-    if (this._activeGenre() !== 'All') {
+    if (this._activeGenre() !== 'Todos') {
       games = games.filter(g =>
         this._genreNormalizer.normalizeGenre(g.genre) === this._activeGenre()
       );

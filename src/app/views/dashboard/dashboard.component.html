@@ -142,13 +142,13 @@
         <!-- Fila de controles: todos los toggles de filtro en una sola línea -->
         <div class="filter-controls">
             <button type="button" class="filter-chip filter-toggle-chip"
-                [class.active]="activeGenre() !== 'All' || showGenrePanel()"
+                [class.active]="activeGenre() !== 'Todos' || showGenrePanel()"
                 (click)="toggleGenrePanel()"
                 title="Filtrar por género">
-                <span>{{ activeGenre() !== 'All' ? activeGenre() : 'Género' }}</span>
-                @if (activeGenre() !== 'All') {
+                <span>{{ activeGenre() !== 'Todos' ? activeGenre() : 'Género' }}</span>
+                @if (activeGenre() !== 'Todos') {
                 <span class="material-icons filter-clear-icon"
-                    (click)="filterByGenre('All'); $event.stopPropagation()"
+                    (click)="filterByGenre('Todos'); $event.stopPropagation()"
                     title="Quitar filtro de género">close</span>
                 }
                 <span class="material-icons filter-arrow">{{ showGenrePanel() ? 'expand_less' : 'expand_more' }}</span>
@@ -156,29 +156,29 @@
 
             @if (uniqueCompanies().length > 2) {
             <button type="button" class="filter-chip filter-toggle-chip"
-                [class.active]="activeCompany() !== 'All' || showCompanyPanel()"
+                [class.active]="activeCompany() !== 'Todos' || showCompanyPanel()"
                 (click)="toggleCompanyPanel()"
                 title="Filtrar por plataforma">
-                <span>{{ activeCompany() !== 'All' ? activeCompany() : 'Plataforma' }}</span>
-                @if (activeCompany() !== 'All') {
+                <span>{{ activeCompany() !== 'Todos' ? activeCompany() : 'Plataforma' }}</span>
+                @if (activeCompany() !== 'Todos') {
                 <span class="material-icons filter-clear-icon"
-                    (click)="filterByCompany('All'); $event.stopPropagation()"
+                    (click)="filterByCompany('Todos'); $event.stopPropagation()"
                     title="Quitar filtro de plataforma">close</span>
                 }
                 <span class="material-icons filter-arrow">{{ showCompanyPanel() ? 'expand_less' : 'expand_more' }}</span>
             </button>
             }
 
-            @if (activeCompany() !== 'All' && filteredPlatformsByCompany().length > 2) {
+            @if (activeCompany() !== 'Todos' && filteredPlatformsByCompany().length > 2) {
             <button type="button" class="filter-chip filter-toggle-chip"
-                [class.active]="activePlatform() !== 'All' || showPlatformPanel()"
+                [class.active]="activePlatform() !== 'Todos' || showPlatformPanel()"
                 (click)="togglePlatformPanel()"
                 title="Filtrar por plataforma">
                 <span class="material-icons">devices</span>
-                <span>{{ activePlatform() !== 'All' ? activePlatform() : 'Plataforma' }}</span>
-                @if (activePlatform() !== 'All') {
+                <span>{{ activePlatform() !== 'Todos' ? activePlatform() : 'Plataforma' }}</span>
+                @if (activePlatform() !== 'Todos') {
                 <span class="material-icons filter-clear-icon"
-                    (click)="filterByPlatform('All'); $event.stopPropagation()"
+                    (click)="filterByPlatform('Todos'); $event.stopPropagation()"
                     title="Quitar filtro de plataforma">close</span>
                 }
                 <span class="material-icons filter-arrow">{{ showPlatformPanel() ? 'expand_less' : 'expand_more' }}</span>
@@ -212,7 +212,7 @@
         <div class="filter-row expandable-panel">
             <div class="filter-chips">
                 @for (genre of uniqueGenres(); track genre) {
-                @if (genre !== 'All') {
+                @if (genre !== 'Todos') {
                 <button type="button" class="filter-chip" [class.active]="activeGenre() === genre"
                     (click)="filterByGenre(genre)" tabindex="0">
                     {{ genre }}
@@ -228,7 +228,7 @@
         <div class="filter-row expandable-panel">
             <div class="filter-chips">
                 @for (company of uniqueCompanies(); track company) {
-                @if (company !== 'All') {
+                @if (company !== 'Todos') {
                 <button type="button" class="filter-chip filter-chip--company"
                     [class.active]="activeCompany() === company"
                     (click)="filterByCompany(company)" tabindex="0">
@@ -241,11 +241,11 @@
         }
 
         <!-- Panel expandible: Plataforma -->
-        @if (showPlatformPanel() && activeCompany() !== 'All' && filteredPlatformsByCompany().length > 2) {
+        @if (showPlatformPanel() && activeCompany() !== 'Todos' && filteredPlatformsByCompany().length > 2) {
         <div class="filter-row expandable-panel">
             <div class="filter-chips">
                 @for (platform of filteredPlatformsByCompany(); track platform) {
-                @if (platform !== 'All') {
+                @if (platform !== 'Todos') {
                 <button type="button" class="filter-chip" [class.active]="activePlatform() === platform"
                     (click)="filterByPlatform(platform)" tabindex="0">
                     {{ platform }}
@@ -287,7 +287,7 @@
         } @else {
         <div class="empty-state">
             <span class="material-icons">favorite_border</span>
-            <p>No hay juegos favoritos{{ activeGenre() !== 'All' ? ' en la categoría ' + activeGenre() : '' }}</p>
+            <p>No hay juegos favoritos{{ activeGenre() !== 'Todos' ? ' en la categoría ' + activeGenre() : '' }}</p>
         </div>
         }
     </section>

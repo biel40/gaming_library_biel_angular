@@ -47,7 +47,7 @@
                 <div class="chips-scroll">
                     @for (genre of uniqueGenres(); track genre) {
                     <button type="button" class="filter-chip" [class.active]="activeGenre() === genre"
-                        (click)="filterByGenre(genre || 'All')">
+                        (click)="filterByGenre(genre || 'Todos')">
                         {{ genre }}
                     </button>
                     }
@@ -61,7 +61,7 @@
                 <div class="chips-scroll">
                     @for (platform of uniquePlatforms(); track platform) {
                     <button type="button" class="filter-chip" [class.active]="activePlatform() === platform"
-                        (click)="filterByPlatform(platform || 'All')">
+                        (click)="filterByPlatform(platform || 'Todos')">
                         {{ platform }}
                     </button>
                     }

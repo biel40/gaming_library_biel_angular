@@ -45,7 +45,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public showMobileMenu = signal(false);
     public games = signal<Videogame[]>([]);
     public searchTerm = signal('');
-    public activeGenre = signal('All');
+    public activeGenre = signal('Todos');
     public viewMode = signal<'grid' | 'list'>('grid');
     public currentPage = signal(0);
     public itemsPerPage = signal(0);
@@ -54,8 +54,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public error = signal<string | null>(null);
 
     // Filter signals
-    public activePlatform = signal<string>('All');
-    public activeCompany = signal<string>('All');
+    public activePlatform = signal<string>('Todos');
+    public activeCompany = signal<string>('Todos');
     public activeYear = signal<number | null>(null);
     public sortMode = signal<'default' | 'best-rated'>('default');
     public showGenrePanel = signal(false);
@@ -212,10 +212,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 gameName.includes(searchTerm) ||
                 gameDescription.includes(searchTerm);
 
-            const matchesGenre = activeGenre === 'All' || normalizedGenre === activeGenre;
-            const matchesPlatform = activePlatform !== 'All'
+            const matchesGenre = activeGenre === 'Todos' || normalizedGenre === activeGenre;
+            const matchesPlatform = activePlatform !== 'Todos'
                 ? this._platformNormalizer.normalizePlatform(game.platform) === activePlatform
-                : activeCompany === 'All' || this._platformNormalizer.gameMatchesCompany(game.platform, activeCompany);
+                : activeCompany === 'Todos' || this._platformNormalizer.gameMatchesCompany(game.platform, activeCompany);
             const matchesYear = activeYear === null ||
                 (game.releaseDate && new Date(game.releaseDate).getFullYear() === activeYear);
 
@@ -247,10 +247,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 gameName.includes(searchTerm) ||
                 gameDescription.includes(searchTerm);
 
-            const matchesGenre = activeGenre === 'All' || normalizedGenre === activeGenre;
-            const matchesPlatform = activePlatform !== 'All'
+            const matchesGenre = activeGenre === 'Todos' || normalizedGenre === activeGenre;
+            const matchesPlatform = activePlatform !== 'Todos'
                 ? this._platformNormalizer.normalizePlatform(game.platform) === activePlatform
-                : activeCompany === 'All' || this._platformNormalizer.gameMatchesCompany(game.platform, activeCompany);
+                : activeCompany === 'Todos' || this._platformNormalizer.gameMatchesCompany(game.platform, activeCompany);
             const matchesYear = activeYear === null ||
                 (game.releaseDate && new Date(game.releaseDate).getFullYear() === activeYear);
 
@@ -283,13 +283,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public filteredPlatformsByCompany = computed(() => {
         const company = this.activeCompany();
         const allPlatforms = this.uniquePlatforms();
-        if (company === 'All') {
+        if (company === 'Todos') {
             return allPlatforms;
         }
         const filtered = allPlatforms.filter(
-            p => p !== 'All' && this._platformNormalizer.normalizedPlatformMatchesCompany(p, company)
+            p => p !== 'Todos' && this._platformNormalizer.normalizedPlatformMatchesCompany(p, company)
         );
-        return ['All', ...filtered];
+        return ['Todos', ...filtered];
     });
 
     // Extract unique years from games for the year filter
@@ -437,9 +437,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentPage.set(0);
 
         const platformsForCompany = this.uniquePlatforms().filter(
-            p => p !== 'All' && this._platformNormalizer.normalizedPlatformMatchesCompany(p, company)
+            p => p !== 'Todos' && this._platformNormalizer.normalizedPlatformMatchesCompany(p, company)
         );
-        this.activePlatform.set(platformsForCompany.length === 1 ? platformsForCompany[0] : 'All');
+        this.activePlatform.set(platformsForCompany.length === 1 ? platformsForCompany[0] : 'Todos');
     }
 
     public filterByYear(year: number | null) {
@@ -478,9 +478,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public resetFilters() {
         this.searchTerm.set('');
-        this.activeGenre.set('All');
-        this.activeCompany.set('All');
-        this.activePlatform.set('All');
+        this.activeGenre.set('Todos');
+        this.activeCompany.set('Todos');
+        this.activePlatform.set('Todos');
         this.activeYear.set(null);
         this._closeAllPanels();
         this.sortMode.set('default');

@@ -145,7 +145,7 @@ export class GenreNormalizerService {
     }
 
     getUniqueNormalizedGenres(genres: (string | undefined | null)[]): string[] {
-        return ['All', ...this.normalizeGenres(genres)];
+        return ['Todos', ...this.normalizeGenres(genres)];
     }
 
     addCustomMapping(normalized: string, variants: string[]): void {

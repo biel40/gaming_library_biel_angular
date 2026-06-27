@@ -29,8 +29,8 @@ export class CurrentlyPlayingComponent implements OnInit {
   private _editingHours = signal<string | null>(null);
   private _tempHours = signal<number>(0);
   private _searchTerm = signal<string>('');
-  private _activeGenre = signal<string>('All');
-  private _activePlatform = signal<string>('All');
+  private _activeGenre = signal<string>('Todos');
+  private _activePlatform = signal<string>('Todos');
 
 
   // Computed signals
@@ -58,14 +58,14 @@ export class CurrentlyPlayingComponent implements OnInit {
     }
 
     // Filter by genre
-    if (this._activeGenre() !== 'All') {
+    if (this._activeGenre() !== 'Todos') {
       games = games.filter(game =>
         this._genreNormalizer.normalizeGenre(game.genre) === this._activeGenre()
       );
     }
 
     // Filter by platform
-    if (this._activePlatform() !== 'All') {
+    if (this._activePlatform() !== 'Todos') {
       games = games.filter(game => game.platform === this._activePlatform());
     }
 
@@ -122,7 +122,7 @@ export class CurrentlyPlayingComponent implements OnInit {
     const platforms = this._currentlyPlayingGames()
       .map(game => game.platform)
       .filter(platform => platform && platform.trim() !== '');
-    return ['All', ...Array.from(new Set(platforms))];
+    return ['Todos', ...Array.from(new Set(platforms))];
   });
 
   ngOnInit(): void {
@@ -254,15 +254,15 @@ export class CurrentlyPlayingComponent implements OnInit {
 
   public resetFilters(): void {
     this._searchTerm.set('');
-    this._activeGenre.set('All');
-    this._activePlatform.set('All');
+    this._activeGenre.set('Todos');
+    this._activePlatform.set('Todos');
   }
 
   public getActiveFiltersCount(): number {
     let count = 0;
     if (this._searchTerm()) count++;
-    if (this._activeGenre() !== 'All') count++;
-    if (this._activePlatform() !== 'All') count++;
+    if (this._activeGenre() !== 'Todos') count++;
+    if (this._activePlatform() !== 'Todos') count++;
     return count;
   }
 

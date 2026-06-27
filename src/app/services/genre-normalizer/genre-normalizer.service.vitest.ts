@@ -32,6 +32,6 @@ describe('GenreNormalizerService', () => {
 
   it('adds All to unique genres list', () => {
     const service = new GenreNormalizerService();
-    expect(service.getUniqueNormalizedGenres(['action'])).toEqual(['All', 'Acción']);
+    expect(service.getUniqueNormalizedGenres(['action'])).toEqual(['Todos', 'Acción']);
   });
 });
