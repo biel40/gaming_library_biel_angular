@@ -1,0 +1,236 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="4800" height="3600" viewBox="0 0 4800 3600">
+  <defs>
+    <linearGradient id="shade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#080a0f"/>
+      <stop offset="0.58" stop-color="#171b24"/>
+      <stop offset="1" stop-color="var(--accent, #b33124)"/>
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0.35" stop-color="#080a0f" stop-opacity="0"/>
+      <stop offset="1" stop-color="#080a0f" stop-opacity="0.94"/>
+    </linearGradient>
+    <radialGradient id="flare">
+      <stop offset="0" stop-color="var(--glow, #ff9f43)" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="var(--glow, #ff9f43)" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M28 0H0V28" fill="none" stroke="#fff" stroke-opacity="0.035"/>
+    </pattern>
+    <filter id="grain" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence baseFrequency="0.8" numOctaves="3" seed="12" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0" result="mono"/>
+      <feBlend in="SourceGraphic" in2="mono" mode="soft-light"/>
+    </filter>
+
+    <symbol id="base" viewBox="0 0 800 450">
+      <rect width="800" height="450" fill="url(#shade)"/>
+      <circle cx="625" cy="130" r="210" fill="url(#flare)"/>
+      <rect width="800" height="450" fill="url(#grid)"/>
+      <path d="M0 348L105 292 177 326 278 230 358 302 456 190 547 275 653 220 800 304V450H0Z" fill="#06070a" fill-opacity="0.72"/>
+      <path d="M0 374L121 325 238 368 356 292 470 348 602 281 800 354V450H0Z" fill="#0d1016" fill-opacity="0.9"/>
+      <rect width="800" height="450" fill="url(#fade)"/>
+    </symbol>
+    <symbol id="theater" viewBox="0 0 800 450">
+      <path d="M88 28h150l-34 278H34zM562 28h150l54 278H596z" fill="var(--accent)" fill-opacity="0.68"/>
+      <path d="M255 72h290v214H255z" fill="#07080b" stroke="var(--glow)" stroke-opacity="0.48" stroke-width="4"/>
+      <path d="M282 96h236v166H282z" fill="url(#grid)"/>
+      <circle cx="400" cy="177" r="38" fill="none" stroke="var(--glow)" stroke-width="8" stroke-dasharray="16 10"/>
+    </symbol>
+    <symbol id="facility" viewBox="0 0 800 450">
+      <path d="M85 312V138h182v174M287 312V82h206v230M517 312V170h198v142" fill="#090b10" stroke="var(--glow)" stroke-opacity="0.45" stroke-width="4"/>
+      <path d="M110 174h130M315 124h150M315 160h150M548 208h135" stroke="var(--accent)" stroke-width="12" stroke-opacity="0.7"/>
+      <circle cx="390" cy="232" r="42" fill="none" stroke="var(--glow)" stroke-width="6"/>
+      <path d="M390 188v88M346 232h88" stroke="var(--glow)" stroke-width="5"/>
+    </symbol>
+    <symbol id="rocket" viewBox="0 0 800 450">
+      <path d="M418 38c54 77 65 167 27 250h-90c-37-83-27-173 28-250z" fill="#c8cbd1" fill-opacity="0.72" stroke="var(--glow)" stroke-width="4"/>
+      <path d="M355 236l-61 67h65M445 236l61 67h-65" fill="var(--accent)"/>
+      <path d="M372 288l28 78 28-78" fill="var(--glow)" fill-opacity="0.8"/>
+      <circle cx="400" cy="128" r="22" fill="#11151d" stroke="var(--glow)" stroke-width="4"/>
+    </symbol>
+    <symbol id="coast" viewBox="0 0 800 450">
+      <circle cx="602" cy="118" r="72" fill="var(--glow)" fill-opacity="0.45"/>
+      <path d="M0 268q90-38 180 0t180 0 180 0 180 0 80 0v120H0z" fill="#142c3a"/>
+      <path d="M0 296q90-38 180 0t180 0 180 0 180 0 80 0" fill="none" stroke="#8fc7cc" stroke-opacity="0.5" stroke-width="8"/>
+      <path d="M102 268l104-174 96 174M530 268l78-142 92 142" fill="#090b10" stroke="var(--accent)" stroke-opacity="0.55" stroke-width="4"/>
+      <path d="M388 132h84v136h-84zM372 112h116" fill="#080a0f" stroke="var(--glow)" stroke-width="4"/>
+    </symbol>
+    <symbol id="temple" viewBox="0 0 800 450">
+      <circle cx="628" cy="96" r="104" fill="var(--glow)" fill-opacity="0.3"/>
+      <path d="M145 292l80-172h350l80 172M188 292h424" fill="#090b10" stroke="var(--glow)" stroke-opacity="0.5" stroke-width="5"/>
+      <path d="M255 120v172M337 120v172M419 120v172M501 120v172" stroke="var(--accent)" stroke-opacity="0.72" stroke-width="20"/>
+      <path d="M202 120h396L548 72H252z" fill="#0b0d12" stroke="var(--glow)" stroke-width="4"/>
+    </symbol>
+    <symbol id="moon" viewBox="0 0 800 450">
+      <circle cx="586" cy="130" r="106" fill="#d7d8d2" fill-opacity="0.74"/>
+      <circle cx="548" cy="98" r="18" fill="#777b7e" fill-opacity="0.45"/>
+      <circle cx="624" cy="160" r="28" fill="#777b7e" fill-opacity="0.38"/>
+      <path d="M120 300V142h120v158M276 300V206h94v94M410 300V176h78v124" fill="#080a0e" stroke="var(--accent)" stroke-opacity="0.58" stroke-width="4"/>
+      <path d="M180 142V92M146 92h68M449 176v-66" stroke="var(--glow)" stroke-width="5"/>
+    </symbol>
+    <symbol id="transit" viewBox="0 0 800 450">
+      <path d="M286 282l68-222h92l68 222" fill="#10131a" stroke="var(--glow)" stroke-opacity="0.45" stroke-width="5"/>
+      <path d="M365 74l-22 75M435 74l22 75" stroke="#fff" stroke-opacity="0.35" stroke-width="5"/>
+      <path d="M104 165h220v126H104z" fill="var(--accent)" fill-opacity="0.68" stroke="var(--glow)" stroke-width="4"/>
+      <rect x="126" y="184" width="70" height="48" fill="#0a1018"/>
+      <rect x="207" y="184" width="70" height="48" fill="#0a1018"/>
+      <circle cx="158" cy="292" r="27" fill="#07080b" stroke="#858b92" stroke-width="7"/>
+      <circle cx="273" cy="292" r="27" fill="#07080b" stroke="#858b92" stroke-width="7"/>
+    </symbol>
+    <symbol id="nuclear" viewBox="0 0 800 450">
+      <circle cx="400" cy="147" r="84" fill="var(--glow)" fill-opacity="0.28"/>
+      <path d="M400 68v158M332 108l136 78M468 108l-136 78" stroke="var(--glow)" stroke-width="22" stroke-opacity="0.62"/>
+      <circle cx="400" cy="147" r="32" fill="#0b0d12"/>
+      <path d="M78 300V194l92-66 94 66v106M536 300V194l92-66 94 66v106" fill="#090b10" stroke="var(--accent)" stroke-width="5"/>
+    </symbol>
+    <symbol id="tower" viewBox="0 0 800 450">
+      <path d="M315 328L350 42h100l35 286z" fill="#090b10" stroke="var(--glow)" stroke-opacity="0.55" stroke-width="5"/>
+      <path d="M338 132h124M329 202h142M320 272h160" stroke="var(--accent)" stroke-width="10" stroke-opacity="0.66"/>
+      <path d="M120 328V195h140v133M540 328V148h140v180" fill="#0b0d12" stroke="#fff" stroke-opacity="0.18" stroke-width="4"/>
+    </symbol>
+    <symbol id="prison" viewBox="0 0 800 450">
+      <path d="M98 304V104h604v200" fill="#0a0c11" stroke="var(--glow)" stroke-opacity="0.48" stroke-width="5"/>
+      <path d="M138 104v200M204 104v200M270 104v200M336 104v200M402 104v200M468 104v200M534 104v200M600 104v200M666 104v200" stroke="var(--accent)" stroke-opacity="0.58" stroke-width="9"/>
+      <circle cx="400" cy="202" r="52" fill="#08090d" stroke="var(--glow)" stroke-width="5"/>
+      <path d="M400 168v68M366 202h68" stroke="var(--glow)" stroke-width="4"/>
+    </symbol>
+    <symbol id="western" viewBox="0 0 800 450">
+      <circle cx="610" cy="112" r="92" fill="var(--glow)" fill-opacity="0.4"/>
+      <path d="M88 308V158h220v150M492 308V112h218v196" fill="#0a0b0d" stroke="var(--accent)" stroke-opacity="0.65" stroke-width="5"/>
+      <path d="M72 158h252M472 112h258M528 174h146" stroke="var(--glow)" stroke-width="8"/>
+      <path d="M358 308V194h82v114" fill="#090a0d" stroke="#fff" stroke-opacity="0.3" stroke-width="4"/>
+    </symbol>
+    <symbol id="battlefield" viewBox="0 0 800 450">
+      <circle cx="628" cy="96" r="88" fill="var(--glow)" fill-opacity="0.32"/>
+      <path d="M96 304l54-164 36 52 52-130 58 242M504 304l48-126 34 42 50-134 76 218" fill="#090b10" stroke="var(--accent)" stroke-opacity="0.64" stroke-width="5"/>
+      <path d="M286 304v-98h228v98M326 206v-64h148v64" fill="#0b0d12" stroke="var(--glow)" stroke-opacity="0.48" stroke-width="5"/>
+    </symbol>
+    <symbol id="noir" viewBox="0 0 800 450">
+      <circle cx="628" cy="108" r="85" fill="var(--glow)" fill-opacity="0.34"/>
+      <path d="M84 314V136h104v178M202 314V78h132v236M350 314V166h96v148M464 314V102h148v212M628 314V182h94v132" fill="#080a0e" stroke="var(--accent)" stroke-opacity="0.5" stroke-width="4"/>
+      <path d="M226 114h84M226 150h84M488 138h100M488 174h100" stroke="var(--glow)" stroke-opacity="0.62" stroke-width="7"/>
+    </symbol>
+    <symbol id="fortress" viewBox="0 0 800 450">
+      <circle cx="608" cy="95" r="88" fill="var(--glow)" fill-opacity="0.3"/>
+      <path d="M126 310V138h92V92h84v46h196V92h84v46h92v172" fill="#090b10" stroke="var(--glow)" stroke-opacity="0.52" stroke-width="5"/>
+      <path d="M170 176h460M268 138v172M532 138v172" stroke="var(--accent)" stroke-opacity="0.64" stroke-width="10"/>
+      <path d="M362 310v-94h76v94" fill="#06070a" stroke="#fff" stroke-opacity="0.25" stroke-width="4"/>
+    </symbol>
+    <symbol id="swamp" viewBox="0 0 800 450">
+      <circle cx="620" cy="92" r="76" fill="var(--glow)" fill-opacity="0.22"/>
+      <path d="M0 284q120-36 240 0t240 0 240 0 80 0v90H0z" fill="#0b2421"/>
+      <path d="M128 294l28-194 18 74 26-116 36 236M528 294l32-224 22 112 30-86 28 198" fill="none" stroke="#101714" stroke-width="26"/>
+      <path d="M260 294V148h280v146M304 148v-46h190v46" fill="#090b0d" stroke="var(--accent)" stroke-opacity="0.6" stroke-width="5"/>
+    </symbol>
+    <symbol id="dragon" viewBox="0 0 800 450">
+      <path d="M94 308V124h124v184M242 308V82h138v226M406 308V154h106v154M536 308V104h172v204" fill="#080a0f" stroke="var(--accent)" stroke-opacity="0.5" stroke-width="5"/>
+      <path d="M202 100c82 14 102 68 160 70 72 2 84-66 166-70-38 42-26 86 26 118-98-28-138 54-220 28-62-20-78-84-132-146z" fill="var(--glow)" fill-opacity="0.44" stroke="var(--glow)" stroke-width="4"/>
+      <circle cx="474" cy="142" r="6" fill="#fff"/>
+    </symbol>
+    <symbol id="dimension" viewBox="0 0 800 450">
+      <circle cx="400" cy="176" r="124" fill="none" stroke="var(--accent)" stroke-width="26" stroke-opacity="0.5"/>
+      <circle cx="400" cy="176" r="86" fill="none" stroke="var(--glow)" stroke-width="7" stroke-dasharray="18 10"/>
+      <circle cx="400" cy="176" r="44" fill="var(--glow)" fill-opacity="0.35"/>
+      <path d="M76 310l114-120 82 120M528 310l86-156 110 156" fill="#080a0e" stroke="#fff" stroke-opacity="0.18" stroke-width="4"/>
+    </symbol>
+    <symbol id="bunker" viewBox="0 0 800 450">
+      <path d="M104 308l70-176h452l70 176" fill="#090b10" stroke="var(--accent)" stroke-opacity="0.6" stroke-width="6"/>
+      <path d="M260 308V178h280v130" fill="#06070a" stroke="var(--glow)" stroke-opacity="0.5" stroke-width="5"/>
+      <circle cx="400" cy="244" r="52" fill="none" stroke="var(--glow)" stroke-width="8"/>
+      <path d="M400 192v104M348 244h104" stroke="var(--glow)" stroke-width="6"/>
+    </symbol>
+    <symbol id="ship" viewBox="0 0 800 450">
+      <path d="M88 262h624l-84 76H174z" fill="#090b10" stroke="var(--glow)" stroke-opacity="0.55" stroke-width="5"/>
+      <path d="M230 262V132h320v130M298 132V78h204v54" fill="#0b0d12" stroke="var(--accent)" stroke-opacity="0.66" stroke-width="5"/>
+      <path d="M400 78V34M400 42l86 44h-86" fill="var(--accent)"/>
+      <path d="M0 350q100-38 200 0t200 0 200 0 200 0" fill="none" stroke="#76a9ba" stroke-opacity="0.46" stroke-width="10"/>
+    </symbol>
+    <symbol id="arena" viewBox="0 0 800 450">
+      <ellipse cx="400" cy="286" rx="292" ry="78" fill="#090b10" stroke="var(--glow)" stroke-opacity="0.58" stroke-width="6"/>
+      <path d="M108 286V154h584v132M156 154l48-82M644 154l-48-82" fill="#0b0d12" stroke="var(--accent)" stroke-opacity="0.65" stroke-width="8"/>
+      <path d="M178 190h444M178 226h444" stroke="var(--glow)" stroke-opacity="0.42" stroke-width="8"/>
+      <text x="400" y="138" text-anchor="middle" font-family="Georgia, serif" font-size="86" font-weight="700" fill="var(--glow)" fill-opacity="0.55">IX</text>
+    </symbol>
+    <symbol id="mansion" viewBox="0 0 800 450">
+      <circle cx="620" cy="92" r="72" fill="var(--glow)" fill-opacity="0.26"/>
+      <path d="M124 310V146h552v164M196 146l68-82h272l68 82M252 310V184h296v126" fill="#090b10" stroke="var(--accent)" stroke-opacity="0.58" stroke-width="5"/>
+      <path d="M298 214h56v62h-56M446 214h56v62h-56" fill="var(--glow)" fill-opacity="0.28"/>
+      <path d="M382 310v-82h36v82" fill="#050609"/>
+    </symbol>
+    <symbol id="ruins" viewBox="0 0 800 450">
+      <circle cx="620" cy="96" r="78" fill="var(--glow)" fill-opacity="0.32"/>
+      <path d="M108 312h584M172 312V142h64v170M286 312V102h64v210M450 312V132h64v180M568 312V78h64v234" stroke="var(--accent)" stroke-opacity="0.68" stroke-width="18"/>
+      <path d="M142 142h124M256 102h124M420 132h124M538 78h124" stroke="var(--glow)" stroke-width="8"/>
+      <path d="M82 312l80-74 84 74M534 312l62-94 112 94" fill="#080a0e"/>
+    </symbol>
+
+    <style>
+      .poster { filter: url(#grain); }
+      .kicker { fill: #ffb454; font: 700 16px 'Segoe UI', sans-serif; letter-spacing: 4px; }
+      .title { fill: #f7f8fa; font: 800 42px 'Arial Narrow', 'Segoe UI', sans-serif; letter-spacing: 1px; }
+      .subtitle { fill: #f7f8fa; fill-opacity: .58; font: 600 15px 'Segoe UI', sans-serif; letter-spacing: 2px; }
+      .number { fill: #fff; fill-opacity: .06; font: 900 168px 'Segoe UI', sans-serif; }
+      .chronicles { fill: #fff; fill-opacity: .68; font: 700 13px 'Segoe UI', sans-serif; letter-spacing: 3px; }
+    </style>
+  </defs>
+
+  <view id="bo1-kino" viewBox="0 0 800 450"/><view id="bo1-five" viewBox="800 0 800 450"/><view id="bo1-ascension" viewBox="1600 0 800 450"/><view id="bo1-call-of-the-dead" viewBox="2400 0 800 450"/><view id="bo1-shangri-la" viewBox="3200 0 800 450"/><view id="bo1-moon" viewBox="4000 0 800 450"/>
+  <view id="bo2-tranzit" viewBox="0 450 800 450"/><view id="bo2-nuketown" viewBox="800 450 800 450"/><view id="bo2-die-rise" viewBox="1600 450 800 450"/><view id="bo2-mob-of-the-dead" viewBox="2400 450 800 450"/><view id="bo2-buried" viewBox="3200 450 800 450"/><view id="bo2-origins" viewBox="4000 450 800 450"/>
+  <view id="bo3-shadows-of-evil" viewBox="0 900 800 450"/><view id="bo3-the-giant" viewBox="800 900 800 450"/><view id="bo3-der-eisendrache" viewBox="1600 900 800 450"/><view id="bo3-zetsubou-no-shima" viewBox="2400 900 800 450"/><view id="bo3-gorod-krovi" viewBox="3200 900 800 450"/><view id="bo3-revelations" viewBox="4000 900 800 450"/>
+  <view id="bo3-zc-nacht-der-untoten" viewBox="0 1350 800 450"/><view id="bo3-zc-verruckt" viewBox="800 1350 800 450"/><view id="bo3-zc-shi-no-numa" viewBox="1600 1350 800 450"/><view id="bo3-zc-kino-der-toten" viewBox="2400 1350 800 450"/><view id="bo3-zc-ascension" viewBox="3200 1350 800 450"/><view id="bo3-zc-shangri-la" viewBox="4000 1350 800 450"/>
+  <view id="bo3-zc-moon" viewBox="0 1800 800 450"/><view id="bo3-zc-origins" viewBox="800 1800 800 450"/><view id="bo4-voyage-of-despair" viewBox="1600 1800 800 450"/><view id="bo4-ix" viewBox="2400 1800 800 450"/><view id="bo4-dead-of-the-night" viewBox="3200 1800 800 450"/><view id="bo4-ancient-evil" viewBox="4000 1800 800 450"/>
+  <view id="bo4-blood-of-the-dead" viewBox="0 2250 800 450"/><view id="bo4-classified" viewBox="800 2250 800 450"/><view id="bo4-alpha-omega" viewBox="1600 2250 800 450"/><view id="bo4-tag-der-toten" viewBox="2400 2250 800 450"/>
+  <view id="hero" viewBox="0 2700 1600 900"/>
+
+  <g class="poster" transform="translate(0 0)" style="--accent:#8e2118;--glow:#ff9a45"><use xlink:href="#base"/><use xlink:href="#theater"/><text class="number" x="610" y="190">01</text><text class="kicker" x="58" y="338">BLACK OPS // 2010</text><text class="title" x="58" y="388">KINO DER TOTEN</text></g>
+  <g class="poster" transform="translate(800 0)" style="--accent:#415667;--glow:#d6e4ee"><use xlink:href="#base"/><use xlink:href="#facility"/><text class="number" x="610" y="190">02</text><text class="kicker" x="58" y="338">PENTÁGONO // 1963</text><text class="title" x="58" y="388">FIVE</text></g>
+  <g class="poster" transform="translate(1600 0)" style="--accent:#7d2d20;--glow:#ffb454"><use xlink:href="#base"/><use xlink:href="#rocket"/><text class="number" x="610" y="190">03</text><text class="kicker" x="58" y="338">COSMÓDROMO // URSS</text><text class="title" x="58" y="388">ASCENSION</text></g>
+  <g class="poster" transform="translate(2400 0)" style="--accent:#194457;--glow:#84d4e5"><use xlink:href="#base"/><use xlink:href="#coast"/><text class="number" x="610" y="190">04</text><text class="kicker" x="58" y="338">SIBERIA // COSTA HELADA</text><text class="title" x="58" y="388">CALL OF THE DEAD</text></g>
+  <g class="poster" transform="translate(3200 0)" style="--accent:#49601e;--glow:#d4c666"><use xlink:href="#base"/><use xlink:href="#temple"/><text class="number" x="610" y="190">05</text><text class="kicker" x="58" y="338">HIMALAYA // TEMPLO</text><text class="title" x="58" y="388">SHANGRI-LA</text></g>
+  <g class="poster" transform="translate(4000 0)" style="--accent:#333760;--glow:#bfc9ff"><use xlink:href="#base"/><use xlink:href="#moon"/><text class="number" x="610" y="190">06</text><text class="kicker" x="58" y="338">GRIFFIN STATION // LUNA</text><text class="title" x="58" y="388">MOON</text></g>
+
+  <g class="poster" transform="translate(0 450)" style="--accent:#7d331d;--glow:#ffad54"><use xlink:href="#base"/><use xlink:href="#transit"/><text class="number" x="610" y="190">07</text><text class="kicker" x="58" y="338">GREEN RUN // AUTOBÚS</text><text class="title" x="58" y="388">TRANZIT</text></g>
+  <g class="poster" transform="translate(800 450)" style="--accent:#536419;--glow:#dcff69"><use xlink:href="#base"/><use xlink:href="#nuclear"/><text class="number" x="610" y="190">08</text><text class="kicker" x="58" y="338">NEVADA // ZONA DE PRUEBAS</text><text class="title" x="58" y="388">NUKETOWN ZOMBIES</text></g>
+  <g class="poster" transform="translate(1600 450)" style="--accent:#334d64;--glow:#8bd4ff"><use xlink:href="#base"/><use xlink:href="#tower"/><text class="number" x="610" y="190">09</text><text class="kicker" x="58" y="338">SHANGHÁI // RASCACIELOS</text><text class="title" x="58" y="388">DIE RISE</text></g>
+  <g class="poster" transform="translate(2400 450)" style="--accent:#5c251f;--glow:#f1a66f"><use xlink:href="#base"/><use xlink:href="#prison"/><text class="number" x="610" y="190">10</text><text class="kicker" x="58" y="338">ALCATRAZ // 1933</text><text class="title" x="58" y="388">MOB OF THE DEAD</text></g>
+  <g class="poster" transform="translate(3200 450)" style="--accent:#67401e;--glow:#ffc46c"><use xlink:href="#base"/><use xlink:href="#western"/><text class="number" x="610" y="190">11</text><text class="kicker" x="58" y="338">ANGOLA // PUEBLO MINERO</text><text class="title" x="58" y="388">BURIED</text></g>
+  <g class="poster" transform="translate(4000 450)" style="--accent:#554127;--glow:#e7b760"><use xlink:href="#base"/><use xlink:href="#battlefield"/><text class="number" x="610" y="190">12</text><text class="kicker" x="58" y="338">FRANCIA // 1918</text><text class="title" x="58" y="388">ORIGINS</text></g>
+
+  <g class="poster" transform="translate(0 900)" style="--accent:#3f365f;--glow:#d59dff"><use xlink:href="#base"/><use xlink:href="#noir"/><text class="number" x="610" y="190">13</text><text class="kicker" x="58" y="338">MORG CITY // 1940</text><text class="title" x="58" y="388">SHADOWS OF EVIL</text></g>
+  <g class="poster" transform="translate(800 900)" style="--accent:#48505a;--glow:#d8e4ef"><use xlink:href="#base"/><use xlink:href="#facility"/><text class="number" x="610" y="190">14</text><text class="kicker" x="58" y="338">BRESLAU // FÁBRICA</text><text class="title" x="58" y="388">THE GIANT</text></g>
+  <g class="poster" transform="translate(1600 900)" style="--accent:#264f68;--glow:#9bdcff"><use xlink:href="#base"/><use xlink:href="#fortress"/><text class="number" x="610" y="190">15</text><text class="kicker" x="58" y="338">AUSTRIA // FORTALEZA</text><text class="title" x="58" y="388">DER EISENDRACHE</text></g>
+  <g class="poster" transform="translate(2400 900)" style="--accent:#245442;--glow:#78deb0"><use xlink:href="#base"/><use xlink:href="#swamp"/><text class="number" x="610" y="190">16</text><text class="kicker" x="58" y="338">PACÍFICO // ISLA DE DIVISION 9</text><text class="title" x="58" y="388">ZETSUBOU NO SHIMA</text></g>
+  <g class="poster" transform="translate(3200 900)" style="--accent:#76291f;--glow:#ff9655"><use xlink:href="#base"/><use xlink:href="#dragon"/><text class="number" x="610" y="190">17</text><text class="kicker" x="58" y="338">STALINGRADO // 1945</text><text class="title" x="58" y="388">GOROD KROVI</text></g>
+  <g class="poster" transform="translate(4000 900)" style="--accent:#4d3268;--glow:#d7a1ff"><use xlink:href="#base"/><use xlink:href="#dimension"/><text class="number" x="610" y="190">18</text><text class="kicker" x="58" y="338">FRACTURAS // AGARTHA</text><text class="title" x="58" y="388">REVELATIONS</text></g>
+
+  <g class="poster" transform="translate(0 1350)" style="--accent:#55606b;--glow:#cdd8df"><use xlink:href="#base"/><use xlink:href="#bunker"/><text class="chronicles" x="58" y="54">ZOMBIES CHRONICLES</text><text class="kicker" x="58" y="338">AERÓDROMO // REMASTER</text><text class="title" x="58" y="388">NACHT DER UNTOTEN</text></g>
+  <g class="poster" transform="translate(800 1350)" style="--accent:#4e5f52;--glow:#b2d8b9"><use xlink:href="#base"/><use xlink:href="#facility"/><text class="chronicles" x="58" y="54">ZOMBIES CHRONICLES</text><text class="kicker" x="58" y="338">SANATORIO // REMASTER</text><text class="title" x="58" y="388">VERRÜCKT</text></g>
+  <g class="poster" transform="translate(1600 1350)" style="--accent:#284c39;--glow:#9fd1a8"><use xlink:href="#base"/><use xlink:href="#swamp"/><text class="chronicles" x="58" y="54">ZOMBIES CHRONICLES</text><text class="kicker" x="58" y="338">JAPÓN // REMASTER</text><text class="title" x="58" y="388">SHI NO NUMA</text></g>
+  <g class="poster" transform="translate(2400 1350)" style="--accent:#9a2b1d;--glow:#ffad5c"><use xlink:href="#base"/><use xlink:href="#theater"/><text class="chronicles" x="58" y="54">ZOMBIES CHRONICLES</text><text class="kicker" x="58" y="338">BERLÍN // REMASTER</text><text class="title" x="58" y="388">KINO DER TOTEN</text></g>
+  <g class="poster" transform="translate(3200 1350)" style="--accent:#9a442a;--glow:#ffc375"><use xlink:href="#base"/><use xlink:href="#rocket"/><text class="chronicles" x="58" y="54">ZOMBIES CHRONICLES</text><text class="kicker" x="58" y="338">COSMÓDROMO // REMASTER</text><text class="title" x="58" y="388">ASCENSION</text></g>
+  <g class="poster" transform="translate(4000 1350)" style="--accent:#59682b;--glow:#e2d97b"><use xlink:href="#base"/><use xlink:href="#temple"/><text class="chronicles" x="58" y="54">ZOMBIES CHRONICLES</text><text class="kicker" x="58" y="338">HIMALAYA // REMASTER</text><text class="title" x="58" y="388">SHANGRI-LA</text></g>
+
+  <g class="poster" transform="translate(0 1800)" style="--accent:#414579;--glow:#d4d9ff"><use xlink:href="#base"/><use xlink:href="#moon"/><text class="chronicles" x="58" y="54">ZOMBIES CHRONICLES</text><text class="kicker" x="58" y="338">GRIFFIN STATION // REMASTER</text><text class="title" x="58" y="388">MOON</text></g>
+  <g class="poster" transform="translate(800 1800)" style="--accent:#674b26;--glow:#ffd078"><use xlink:href="#base"/><use xlink:href="#battlefield"/><text class="chronicles" x="58" y="54">ZOMBIES CHRONICLES</text><text class="kicker" x="58" y="338">FRANCIA // REMASTER</text><text class="title" x="58" y="388">ORIGINS</text></g>
+  <g class="poster" transform="translate(1600 1800)" style="--accent:#16485d;--glow:#78d9ef"><use xlink:href="#base"/><use xlink:href="#ship"/><text class="number" x="610" y="190">27</text><text class="kicker" x="58" y="338">ATLÁNTICO // RMS TITANIC</text><text class="title" x="58" y="388">VOYAGE OF DESPAIR</text></g>
+  <g class="poster" transform="translate(2400 1800)" style="--accent:#6a2f18;--glow:#ffc254"><use xlink:href="#base"/><use xlink:href="#arena"/><text class="number" x="610" y="190">28</text><text class="kicker" x="58" y="338">ROMA // COLISEO</text><text class="title" x="58" y="388">IX</text></g>
+  <g class="poster" transform="translate(3200 1800)" style="--accent:#384c65;--glow:#c2dcff"><use xlink:href="#base"/><use xlink:href="#mansion"/><text class="number" x="610" y="190">29</text><text class="kicker" x="58" y="338">INGLATERRA // 1912</text><text class="title" x="58" y="388">DEAD OF THE NIGHT</text></g>
+  <g class="poster" transform="translate(4000 1800)" style="--accent:#416542;--glow:#c8e477"><use xlink:href="#base"/><use xlink:href="#ruins"/><text class="number" x="610" y="190">30</text><text class="kicker" x="58" y="338">DELFOS // GRECIA</text><text class="title" x="58" y="388">ANCIENT EVIL</text></g>
+
+  <g class="poster" transform="translate(0 2250)" style="--accent:#76271f;--glow:#ff8e58"><use xlink:href="#base"/><use xlink:href="#prison"/><text class="number" x="610" y="190">31</text><text class="kicker" x="58" y="338">ALCATRAZ // PURGATORIO</text><text class="title" x="58" y="388">BLOOD OF THE DEAD</text></g>
+  <g class="poster" transform="translate(800 2250)" style="--accent:#495761;--glow:#d5e0e6"><use xlink:href="#base"/><use xlink:href="#facility"/><text class="number" x="610" y="190">32</text><text class="kicker" x="58" y="338">PENTÁGONO // CLASIFICADO</text><text class="title" x="58" y="388">CLASSIFIED</text></g>
+  <g class="poster" transform="translate(1600 2250)" style="--accent:#697319;--glow:#e9ff58"><use xlink:href="#base"/><use xlink:href="#nuclear"/><text class="number" x="610" y="190">33</text><text class="kicker" x="58" y="338">NEVADA // BROKEN ARROW</text><text class="title" x="58" y="388">ALPHA OMEGA</text></g>
+  <g class="poster" transform="translate(2400 2250)" style="--accent:#1e5264;--glow:#9de5f2"><use xlink:href="#base"/><use xlink:href="#coast"/><text class="number" x="610" y="190">34</text><text class="kicker" x="58" y="338">SIBERIA // FIN DEL AETHER</text><text class="title" x="58" y="388">TAG DER TOTEN</text></g>
+
+  <g transform="translate(0 2700)" style="--accent:#6d211b;--glow:#ff9b4a">
+    <rect width="1600" height="900" fill="#080a0f"/>
+    <circle cx="1210" cy="230" r="410" fill="url(#flare)"/>
+    <rect width="1600" height="900" fill="url(#grid)"/>
+    <g transform="translate(620 70) scale(.82)"><use xlink:href="#theater"/></g>
+    <g transform="translate(930 120) scale(.9)"><use xlink:href="#rocket"/></g>
+    <g transform="translate(1030 300) scale(.72)"><use xlink:href="#prison"/></g>
+    <path d="M0 650L220 520 390 602 586 418 748 560 962 352 1150 532 1362 420 1600 578V900H0Z" fill="#050609" fill-opacity=".84"/>
+    <rect width="1600" height="900" fill="url(#fade)"/>
+    <text x="990" y="720" fill="#fff" fill-opacity=".08" font-family="Segoe UI, sans-serif" font-size="250" font-weight="900">115</text>
+  </g>
+</svg>

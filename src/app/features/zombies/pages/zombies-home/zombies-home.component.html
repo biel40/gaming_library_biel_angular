@@ -1,0 +1,53 @@
+<div class="z-home">
+  <a routerLink="/dashboard" class="z-back-btn" title="Volver al Dashboard">
+    <span class="material-icons" aria-hidden="true">arrow_back</span>
+    <span>Volver al Dashboard</span>
+  </a>
+
+  <header class="z-hero">
+    <img class="z-hero__art" src="/assets/images/zombies/map-posters.svg#hero"
+      alt="Composición visual de los mapas de Call of Duty Zombies" fetchpriority="high" />
+    <div class="z-hero__content">
+      <p class="z-hero__eyebrow">Guías del modo Zombies</p>
+      <h1 class="z-hero__title">Call of Duty Zombies</h1>
+      <p class="z-hero__lead">
+        Consulta guías paso a paso de las misiones principales y Easter Eggs de
+        los mapas de Black Ops I, II, III y IV. Filtra por juego, saga o estado y
+        guarda tu progreso en cada guía.
+      </p>
+    </div>
+  </header>
+
+  <section class="z-controls" aria-label="Búsqueda y filtros">
+    <div class="z-search">
+      <span class="material-icons" aria-hidden="true">search</span>
+      <input type="search" class="z-search__input" placeholder="Buscar mapa o misión..." [value]="criteria().search"
+        (input)="onSearch($event)" aria-label="Buscar mapa o misión" />
+    </div>
+
+    <app-zombies-game-selector [games]="games()" [selectedGameId]="criteria().gameId"
+      (selectGame)="onSelectGame($event)" />
+
+    <app-zombies-guide-filters [criteria]="criteria()" (criteriaChange)="onCriteriaChange($event)" />
+  </section>
+
+  <section class="z-results" aria-live="polite">
+    <div class="z-results__header">
+      <h2 class="z-results__title">Mapas</h2>
+      <span class="z-results__count">{{ resultCount() }} resultados</span>
+    </div>
+
+    @if (filteredMaps().length === 0) {
+    <app-zombies-empty-state variant="empty" title="Sin resultados"
+      message="No se encontraron mapas que coincidan con tu búsqueda o filtros." actionLabel="Reiniciar filtros"
+      (action)="resetAll()" />
+    } @else {
+    <div class="z-grid">
+      @for (map of filteredMaps(); track map.id) {
+      <app-zombies-map-card [map]="map" [game]="gameFor(map)!" [progressPercent]="progressFor(map)"
+        [status]="statusFor(map)" />
+      }
+    </div>
+    }
+  </section>
+</div>

@@ -1,0 +1,28 @@
+<div class="z-progress">
+  <div class="z-progress__info">
+    <span class="z-progress__label">Progreso</span>
+    <span class="z-progress__count">
+      {{ completedCount() }} de {{ totalCount() }} pasos · {{ percent() }}%
+    </span>
+  </div>
+
+  <div class="z-progress__track">
+    <div
+      class="z-progress__bar"
+      [style.width.%]="percent()"
+      role="progressbar"
+      [attr.aria-valuenow]="percent()"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-label]="'Progreso general: ' + percent() + '%'"></div>
+  </div>
+
+  <button
+    type="button"
+    class="z-progress__reset"
+    [disabled]="completedCount() === 0"
+    (click)="reset.emit()">
+    <span class="material-icons" aria-hidden="true">restart_alt</span>
+    Reiniciar progreso
+  </button>
+</div>

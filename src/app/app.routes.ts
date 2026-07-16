@@ -23,4 +23,10 @@ export const routes: Routes = [
     { path: 'currently-playing', component: CurrentlyPlayingComponent, canActivate: [authGuard] },
     { path: 'users', component: UserListComponent, canActivate: [authGuard] },
     { path: 'user/:id', component: UserLibraryComponent, canActivate: [authGuard] },
+    {
+        path: 'zombies',
+        canActivate: [authGuard],
+        loadChildren: () =>
+            import('./features/zombies/zombies.routes').then((m) => m.ZOMBIES_ROUTES),
+    },
 ];

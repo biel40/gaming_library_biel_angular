@@ -1,0 +1,19 @@
+@if (visible()) {
+<div class="z-intro" [class.z-intro--out]="fadingOut()" aria-hidden="true">
+  <div class="z-intro__fog"></div>
+  <div class="z-intro__embers">
+    @for (ember of embers; track $index) {
+    <span class="z-intro__ember"></span>
+    }
+  </div>
+  <div class="z-intro__scanlines"></div>
+  <div class="z-intro__vignette"></div>
+
+  <div class="z-intro__content">
+    <p class="z-intro__kicker">Entrando en zona restringida</p>
+    <h2 class="z-intro__title" data-text="ZONA ZOMBIE">ZONA ZOMBIE</h2>
+    <div class="z-intro__loader"><span></span></div>
+    <p class="z-intro__sub">Protocolo de contención · Cargando…</p>
+  </div>
+</div>
+}

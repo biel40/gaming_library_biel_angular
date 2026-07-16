@@ -1,0 +1,64 @@
+<div class="z-detail">
+  @if (game(); as g) {
+  <nav class="z-breadcrumbs" aria-label="Migas de pan">
+    <a routerLink="/zombies">Zombies</a>
+    <span class="material-icons" aria-hidden="true">chevron_right</span>
+    <span aria-current="page">{{ g.shortTitle }}</span>
+  </nav>
+
+  <header class="z-detail__header">
+    <h1>{{ g.title }}</h1>
+    <p class="z-detail__year">{{ g.releaseYear }}</p>
+    <p class="z-detail__desc">{{ g.description }}</p>
+  </header>
+
+  <section class="z-detail__section" aria-label="Mapas">
+    <h2>Mapas</h2>
+    @if (mainMaps().length === 0) {
+    <app-zombies-empty-state
+      variant="unavailable"
+      title="Sin mapas"
+      message="Todavía no hay mapas disponibles para este juego." />
+    } @else {
+    <div class="z-grid">
+      @for (map of mainMaps(); track map.id) {
+      <app-zombies-map-card
+        [map]="map"
+        [game]="gameForCard(map)"
+        [progressPercent]="progressFor(map)"
+        [status]="statusFor(map)" />
+      }
+    </div>
+    }
+  </section>
+
+  @if (chroniclesMaps().length > 0) {
+  <section class="z-detail__section z-detail__section--chronicles" aria-label="Zombies Chronicles">
+    <h2>
+      Zombies Chronicles
+      <span class="z-detail__badge">Remasterizaciones</span>
+    </h2>
+    <p class="z-detail__desc">
+      Mapas remasterizados de entregas anteriores incluidos en esta edición.
+    </p>
+    <div class="z-grid">
+      @for (map of chroniclesMaps(); track map.id) {
+      <app-zombies-map-card
+        [map]="map"
+        [game]="gameForCard(map)"
+        [progressPercent]="progressFor(map)"
+        [status]="statusFor(map)" />
+      }
+    </div>
+  </section>
+  }
+  } @else {
+  <app-zombies-empty-state
+    variant="error"
+    title="Juego no encontrado"
+    message="El juego que buscas no existe." />
+  <p class="z-detail__back">
+    <a routerLink="/zombies">Volver a Zombies</a>
+  </p>
+  }
+</div>

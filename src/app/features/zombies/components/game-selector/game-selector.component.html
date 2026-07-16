@@ -1,0 +1,25 @@
+<div class="z-game-selector" role="group" aria-label="Seleccionar juego">
+  <button
+    type="button"
+    class="z-game-selector__all"
+    [class.z-game-selector__all--active]="selectedGameId() === null"
+    [attr.aria-pressed]="selectedGameId() === null"
+    (click)="selectGame.emit(null)">
+    <span class="material-icons" aria-hidden="true">apps</span>
+    <span>Todos</span>
+  </button>
+
+  <span class="z-game-selector__divider" aria-hidden="true"></span>
+
+  @for (game of games(); track game.id) {
+  <button
+    type="button"
+    class="z-game-selector__btn"
+    [class.z-game-selector__btn--active]="selectedGameId() === game.id"
+    [attr.aria-pressed]="selectedGameId() === game.id"
+    (click)="selectGame.emit(game.id)">
+    <span class="z-game-selector__title">{{ game.shortTitle }}</span>
+    <span class="z-game-selector__year">{{ game.releaseYear }}</span>
+  </button>
+  }
+</div>

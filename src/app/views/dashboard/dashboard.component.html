@@ -46,6 +46,10 @@
                     <span class="material-icons">people</span>
                     Explorar usuarios
                 </button>
+                <button class="zombies-btn" routerLink="/zombies" title="Guías de Easter Eggs del modo Zombies">
+                    <span class="material-icons">local_fire_department</span>
+                    Zombies
+                </button>
                 <!-- Funcionalidad deshabilitada temporalmente -->
                 @if (false) {
                 <button class="select-btn" [class.active]="selectMode()" (click)="toggleSelectMode()"
@@ -108,6 +112,13 @@
                     <span>Explorar usuarios</span>
                 </button>
             </li>
+            <li>
+                <button class="mobile-menu-item" (click)="navigateAndCloseMenu('/zombies')">
+                    <span class="material-icons">local_fire_department</span>
+                    <span>Zombies</span>
+                </button>
+            </li>
+
             <!-- Funcionalidad deshabilitada temporalmente -->
             @if (false) {
             <li>
@@ -142,8 +153,7 @@
         <!-- Fila de controles: todos los toggles de filtro en una sola línea -->
         <div class="filter-controls">
             <button type="button" class="filter-chip filter-toggle-chip"
-                [class.active]="activeGenre() !== 'Todos' || showGenrePanel()"
-                (click)="toggleGenrePanel()"
+                [class.active]="activeGenre() !== 'Todos' || showGenrePanel()" (click)="toggleGenrePanel()"
                 title="Filtrar por género">
                 <span>{{ activeGenre() !== 'Todos' ? activeGenre() : 'Género' }}</span>
                 @if (activeGenre() !== 'Todos') {
@@ -156,8 +166,7 @@
 
             @if (uniqueCompanies().length > 2) {
             <button type="button" class="filter-chip filter-toggle-chip"
-                [class.active]="activeCompany() !== 'Todos' || showCompanyPanel()"
-                (click)="toggleCompanyPanel()"
+                [class.active]="activeCompany() !== 'Todos' || showCompanyPanel()" (click)="toggleCompanyPanel()"
                 title="Filtrar por plataforma">
                 <span>{{ activeCompany() !== 'Todos' ? activeCompany() : 'Plataforma' }}</span>
                 @if (activeCompany() !== 'Todos') {
@@ -165,14 +174,14 @@
                     (click)="filterByCompany('Todos'); $event.stopPropagation()"
                     title="Quitar filtro de plataforma">close</span>
                 }
-                <span class="material-icons filter-arrow">{{ showCompanyPanel() ? 'expand_less' : 'expand_more' }}</span>
+                <span class="material-icons filter-arrow">{{ showCompanyPanel() ? 'expand_less' : 'expand_more'
+                    }}</span>
             </button>
             }
 
             @if (activeCompany() !== 'Todos' && filteredPlatformsByCompany().length > 2) {
             <button type="button" class="filter-chip filter-toggle-chip"
-                [class.active]="activePlatform() !== 'Todos' || showPlatformPanel()"
-                (click)="togglePlatformPanel()"
+                [class.active]="activePlatform() !== 'Todos' || showPlatformPanel()" (click)="togglePlatformPanel()"
                 title="Filtrar por plataforma">
                 <span class="material-icons">devices</span>
                 <span>{{ activePlatform() !== 'Todos' ? activePlatform() : 'Plataforma' }}</span>
@@ -181,19 +190,18 @@
                     (click)="filterByPlatform('Todos'); $event.stopPropagation()"
                     title="Quitar filtro de plataforma">close</span>
                 }
-                <span class="material-icons filter-arrow">{{ showPlatformPanel() ? 'expand_less' : 'expand_more' }}</span>
+                <span class="material-icons filter-arrow">{{ showPlatformPanel() ? 'expand_less' : 'expand_more'
+                    }}</span>
             </button>
             }
 
             @if (uniqueYears().length > 0) {
             <button type="button" class="filter-chip filter-toggle-chip"
-                [class.active]="activeYear() !== null || showYearPanel()"
-                (click)="toggleYearPanel()"
+                [class.active]="activeYear() !== null || showYearPanel()" (click)="toggleYearPanel()"
                 title="Filtrar por año de lanzamiento">
                 <span class="year-label">{{ activeYear() !== null ? activeYear() : 'Año' }}</span>
                 @if (activeYear() !== null) {
-                <span class="material-icons filter-clear-icon"
-                    (click)="filterByYear(null); $event.stopPropagation()"
+                <span class="material-icons filter-clear-icon" (click)="filterByYear(null); $event.stopPropagation()"
                     title="Quitar filtro de año">close</span>
                 }
                 <span class="material-icons filter-arrow">{{ showYearPanel() ? 'expand_less' : 'expand_more' }}</span>
@@ -230,8 +238,7 @@
                 @for (company of uniqueCompanies(); track company) {
                 @if (company !== 'Todos') {
                 <button type="button" class="filter-chip filter-chip--company"
-                    [class.active]="activeCompany() === company"
-                    (click)="filterByCompany(company)" tabindex="0">
+                    [class.active]="activeCompany() === company" (click)="filterByCompany(company)" tabindex="0">
                     {{ company }}
                 </button>
                 }
@@ -281,7 +288,8 @@
         @if (favoriteGames().length > 0) {
         <div class="game-grid favorites-grid">
             @for (game of favoriteGames(); track game.id) {
-            <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()" [theme]="theme()"></app-game-card>
+            <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()"
+                [theme]="theme()"></app-game-card>
             }
         </div>
         } @else {
@@ -352,7 +360,8 @@
                     <span class="checkmark"></span>
                 </label>
                 }
-                <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()" [theme]="theme()"></app-game-card>
+                <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()"
+                    [theme]="theme()"></app-game-card>
             </div>
             }
         </div>
@@ -418,8 +427,7 @@
     }
 
     @if (isAnimating()) {
-    <div class="theme-ripple-overlay"
-        [class.to-dark]="pendingTheme() === 'dark'"
+    <div class="theme-ripple-overlay" [class.to-dark]="pendingTheme() === 'dark'"
         [class.to-light]="pendingTheme() === 'light'"></div>
     }
 </div>

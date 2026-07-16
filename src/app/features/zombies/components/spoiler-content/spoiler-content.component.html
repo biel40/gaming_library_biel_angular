@@ -1,0 +1,11 @@
+@if (revealed()) {
+<ng-content></ng-content>
+} @else {
+<div class="z-spoiler">
+  <span class="material-icons" aria-hidden="true">visibility_off</span>
+  <p class="z-spoiler__label">{{ label() }}</p>
+  <button type="button" class="z-spoiler__btn" (click)="reveal()">
+    Mostrar contenido
+  </button>
+</div>
+}

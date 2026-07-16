@@ -1,0 +1,242 @@
+<div class="z-guide">
+  @if (map(); as m) {
+  <nav class="z-breadcrumbs" aria-label="Migas de pan">
+    <a routerLink="/zombies">Zombies</a>
+    <span class="material-icons" aria-hidden="true">chevron_right</span>
+    @if (game(); as g) {
+    <a [routerLink]="['/zombies', g.slug]">{{ g.shortTitle }}</a>
+    <span class="material-icons" aria-hidden="true">chevron_right</span>
+    }
+    <span aria-current="page">{{ m.name }}</span>
+  </nav>
+
+  <header class="z-guide__header">
+    <div class="z-guide__title-row">
+      <h1>{{ m.name }}</h1>
+      <span class="z-badge" [class.z-badge--chaos]="m.saga === 'chaos'">{{ sagaLabel() }}</span>
+    </div>
+
+    <ul class="z-guide__facts">
+      @if (game(); as g) {
+      <li><span class="material-icons" aria-hidden="true">videogame_asset</span>{{ g.shortTitle }} · {{ g.releaseYear }}</li>
+      }
+      @if (difficultyLabel()) {
+      <li><span class="material-icons" aria-hidden="true">whatshot</span>Dificultad: {{ difficultyLabel() }}</li>
+      }
+      @if (m.estimatedMinutes) {
+      <li><span class="material-icons" aria-hidden="true">schedule</span>~{{ m.estimatedMinutes }} min</li>
+      }
+      <li><span class="material-icons" aria-hidden="true">group</span>{{ m.minimumPlayers }}–{{ m.maximumPlayers }} jugadores</li>
+      @if (m.mainQuestName) {
+      <li><span class="material-icons" aria-hidden="true">flag</span>Misión: {{ m.mainQuestName }}</li>
+      }
+    </ul>
+
+    <div class="z-guide__spoiler-warning" role="note">
+      <span class="material-icons" aria-hidden="true">warning</span>
+      <p>Esta guía puede contener spoilers de la historia y del final del mapa.</p>
+      <button type="button" class="z-guide__spoiler-toggle" (click)="toggleSpoilers()"
+        [attr.aria-pressed]="revealSpoilers()">
+        {{ revealSpoilers() ? 'Ocultar spoilers' : 'Mostrar spoilers' }}
+      </button>
+    </div>
+  </header>
+
+  @if (isPending()) {
+  <app-zombies-empty-state
+    variant="unavailable"
+    title="Guía detallada pendiente de verificación"
+    [message]="m.description" />
+  } @else {
+  <div class="z-guide__layout">
+    <aside class="z-guide__index" aria-label="Índice de pasos">
+      <h2 class="z-guide__index-title">Índice</h2>
+      <nav>
+        <ol>
+          @for (step of steps(); track step.id) {
+          <li>
+            <button type="button" class="z-guide__index-link"
+              [class.z-guide__index-link--active]="activeStepId() === step.id"
+              [class.z-guide__index-link--done]="isStepCompleted(step.id)"
+              [attr.aria-current]="activeStepId() === step.id ? 'true' : null"
+              (click)="scrollToStep(step.id)">
+              <span class="z-guide__index-num">{{ step.order }}</span>
+              <span class="z-guide__index-text">{{ step.title }}</span>
+            </button>
+          </li>
+          }
+        </ol>
+      </nav>
+    </aside>
+
+    <div class="z-guide__main">
+      <app-zombies-guide-progress
+        [percent]="percent()"
+        [completedCount]="completedCount()"
+        [totalCount]="steps().length"
+        (reset)="requestReset()" />
+
+      @if (m.summary) {
+      <section class="z-guide__block">
+        <h2>Resumen de la misión</h2>
+        <p>{{ m.summary }}</p>
+      </section>
+      }
+
+      @if (m.prerequisites?.length) {
+      <section class="z-guide__block">
+        <h2>Requisitos previos</h2>
+        <ul class="z-guide__list">
+          @for (req of m.prerequisites; track $index) {
+          <li>{{ req }}</li>
+          }
+        </ul>
+      </section>
+      }
+
+      @if (m.recommendedLoadout) {
+      <section class="z-guide__block">
+        <h2>Preparación recomendada</h2>
+        <div class="z-guide__loadout">
+          @if (m.recommendedLoadout.weapons?.length) {
+          <div>
+            <h3>Armas</h3>
+            <ul class="z-guide__list">
+              @for (item of m.recommendedLoadout.weapons; track $index) {
+              <li>{{ item }}</li>
+              }
+            </ul>
+          </div>
+          }
+          @if (m.recommendedLoadout.perks?.length) {
+          <div>
+            <h3>Ventajas</h3>
+            <ul class="z-guide__list">
+              @for (item of m.recommendedLoadout.perks; track $index) {
+              <li>{{ item }}</li>
+              }
+            </ul>
+          </div>
+          }
+          @if (m.recommendedLoadout.consumables?.length) {
+          <div>
+            <h3>Equipamiento</h3>
+            <ul class="z-guide__list">
+              @for (item of m.recommendedLoadout.consumables; track $index) {
+              <li>{{ item }}</li>
+              }
+            </ul>
+          </div>
+          }
+        </div>
+      </section>
+      }
+
+      <section class="z-guide__block" aria-label="Guía paso a paso">
+        <h2>Guía paso a paso</h2>
+        <div class="z-guide__steps">
+          @for (step of steps(); track step.id) {
+          <app-zombies-guide-step
+            [step]="step"
+            [stepNumber]="step.order"
+            [completed]="isStepCompleted(step.id)"
+            [revealSpoilers]="revealSpoilers()"
+            (completedChange)="onStepCompletedChange(step.id, $event)" />
+          }
+        </div>
+      </section>
+
+      @if (m.sideEasterEggs.length > 0) {
+      <section class="z-guide__block z-guide__block--side" aria-label="Easter Eggs secundarios">
+        <h2>Easter Eggs secundarios</h2>
+        <p class="z-guide__side-note">Contenido opcional, independiente de la misión principal.</p>
+        @for (side of m.sideEasterEggs; track side.id) {
+        <article class="z-side">
+          <h3>{{ side.title }}</h3>
+          <p>{{ side.summary }}</p>
+          @if (side.steps.length > 0) {
+          <ol class="z-guide__list">
+            @for (s of side.steps; track $index) {
+            <li>{{ s }}</li>
+            }
+          </ol>
+          }
+          @if (side.reward) {
+          <p class="z-side__reward">
+            <span class="material-icons" aria-hidden="true">redeem</span>
+            Recompensa: {{ side.reward }}
+          </p>
+          }
+        </article>
+        }
+      </section>
+      }
+
+      @if (m.sources?.length) {
+      <section class="z-guide__block z-guide__sources">
+        <h2>Fuentes</h2>
+        <ul class="z-guide__list">
+          @for (source of m.sources; track $index) {
+          <li>
+            @if (source.url) {
+            <a [href]="source.url" target="_blank" rel="noopener noreferrer">{{ source.label }}</a>
+            } @else {
+            {{ source.label }}
+            }
+          </li>
+          }
+        </ul>
+      </section>
+      }
+    </div>
+  </div>
+  }
+
+  <nav class="z-guide__pager" aria-label="Navegación entre mapas">
+    @if (prevMap(); as prev) {
+    <a class="z-guide__pager-link" [routerLink]="linkFor(prev)">
+      <span class="material-icons" aria-hidden="true">chevron_left</span>
+      <span class="z-guide__pager-text">
+        <span class="z-guide__pager-label">Anterior</span>
+        <span class="z-guide__pager-name">{{ prev.name }}</span>
+      </span>
+    </a>
+    } @else {
+    <span></span>
+    }
+
+    @if (nextMap(); as next) {
+    <a class="z-guide__pager-link z-guide__pager-link--next" [routerLink]="linkFor(next)">
+      <span class="z-guide__pager-text">
+        <span class="z-guide__pager-label">Siguiente</span>
+        <span class="z-guide__pager-name">{{ next.name }}</span>
+      </span>
+      <span class="material-icons" aria-hidden="true">chevron_right</span>
+    </a>
+    }
+  </nav>
+  } @else {
+  <app-zombies-empty-state
+    variant="error"
+    title="Guía no encontrada"
+    message="La guía que buscas no existe o todavía no está disponible." />
+  <p class="z-guide__back">
+    <a routerLink="/zombies">Volver a Zombies</a>
+  </p>
+  }
+
+  @if (showResetConfirm()) {
+  <div class="z-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="z-reset-title">
+    <div class="z-modal">
+      <h2 id="z-reset-title">Reiniciar progreso</h2>
+      <p>¿Seguro que quieres reiniciar el progreso de esta guía? Esta acción no se puede deshacer.</p>
+      <div class="z-modal__actions">
+        <button type="button" class="z-modal__btn" (click)="cancelReset()">Cancelar</button>
+        <button type="button" class="z-modal__btn z-modal__btn--danger" (click)="confirmReset()">
+          Reiniciar
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+</div>

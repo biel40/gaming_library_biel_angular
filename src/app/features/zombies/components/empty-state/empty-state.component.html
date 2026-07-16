@@ -1,0 +1,21 @@
+<div class="z-empty" [class.z-empty--error]="variant() === 'error'" role="status">
+  @if (variant() === 'loading') {
+  <span class="z-empty__spinner" aria-hidden="true"></span>
+  } @else {
+  <span class="material-icons z-empty__icon" aria-hidden="true">{{ icons[variant()] }}</span>
+  }
+
+  @if (title()) {
+  <h3 class="z-empty__title">{{ title() }}</h3>
+  }
+
+  @if (message()) {
+  <p class="z-empty__message">{{ message() }}</p>
+  }
+
+  @if (actionLabel()) {
+  <button type="button" class="z-empty__action" (click)="action.emit()">
+    {{ actionLabel() }}
+  </button>
+  }
+</div>

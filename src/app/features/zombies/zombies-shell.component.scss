@@ -1,0 +1,29 @@
+@use './styles/tokens' as z;
+
+.z-audio-toggle {
+  @include z.z-button-reset;
+
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: z.$z-radius-pill;
+  background: z.$z-surface;
+  border: 1px solid z.$z-border;
+  color: z.$z-text;
+  box-shadow: z.$z-shadow-md;
+  backdrop-filter: blur(6px);
+
+  .material-icons {
+    font-size: 1.4rem;
+  }
+
+  &:hover {
+    background: z.$z-surface-hover;
+  }
+}

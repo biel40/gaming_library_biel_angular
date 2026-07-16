@@ -1,0 +1,340 @@
+@use '../../styles/tokens' as z;
+@use 'sass:math';
+
+.z-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(
+      ellipse 70% 55% at 50% 48%,
+      rgba(124, 28, 20, 0.35) 0%,
+      rgba(40, 8, 6, 0.15) 45%,
+      transparent 72%
+    ),
+    #000;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 650ms ease;
+  pointer-events: none;
+
+  &--out {
+    opacity: 0;
+
+    .z-intro__title {
+      transform: scale(1.06);
+      filter: blur(2px);
+    }
+  }
+}
+
+/* Niebla lenta que se arrastra por la escena */
+.z-intro__fog {
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(
+      circle at 30% 40%,
+      rgba(124, 28, 20, 0.18),
+      transparent 45%
+    ),
+    radial-gradient(circle at 70% 60%, rgba(255, 143, 31, 0.1), transparent 42%);
+  filter: blur(40px);
+  animation: z-fog-drift 9s ease-in-out infinite alternate;
+}
+
+/* Brasas ascendentes */
+.z-intro__embers {
+  position: absolute;
+  inset: 0;
+}
+
+.z-intro__ember {
+  position: absolute;
+  bottom: -10px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: z.$z-amber-soft;
+  box-shadow: 0 0 6px 1px rgba(255, 143, 31, 0.8);
+  opacity: 0;
+  animation: z-ember-rise linear infinite;
+}
+
+@for $i from 1 through 18 {
+  .z-intro__ember:nth-child(#{$i}) {
+    left: (($i * 53) % 100) * 1%;
+    $scale: 0.5 + math.div(($i * 7) % 10, 10);
+    $dur: 3.2s + (($i * 3) % 5) * 0.6s;
+    $delay: (($i * 5) % 20) * 0.18s;
+    transform: scale($scale);
+    animation-duration: $dur;
+    animation-delay: -$delay;
+  }
+}
+
+.z-intro__scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.04) 0px,
+    rgba(255, 255, 255, 0.04) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  animation: z-scanline-shift 120ms linear infinite;
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+}
+
+.z-intro__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 38%,
+    rgba(0, 0, 0, 0.92) 100%
+  );
+}
+
+.z-intro__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 0 1.5rem;
+}
+
+.z-intro__kicker {
+  margin: 0;
+  font-size: clamp(0.6rem, 2.2vw, 0.82rem);
+  font-weight: 600;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  text-transform: uppercase;
+  color: z.$z-amber-soft;
+  opacity: 0;
+  animation: z-fade-up 700ms 180ms ease-out forwards;
+}
+
+.z-intro__title {
+  position: relative;
+  margin: 0;
+  font-size: clamp(2.4rem, 11vw, 6rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: z.$z-text;
+  text-shadow:
+    0 0 18px rgba(226, 59, 46, 0.55),
+    0 0 44px rgba(226, 59, 46, 0.35),
+    0 4px 2px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: scale(1.18);
+  transition:
+    transform 650ms ease,
+    filter 650ms ease;
+  animation:
+    z-title-in 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    z-title-flicker 3.4s 0.9s steps(1) infinite;
+
+  &::before,
+  &::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  &::before {
+    color: z.$z-accent;
+    mix-blend-mode: screen;
+    animation: z-glitch-shift-1 2.6s 1s infinite steps(2, end);
+    clip-path: polygon(0 0, 100% 0, 100% 44%, 0 44%);
+  }
+
+  &::after {
+    color: z.$z-amber;
+    mix-blend-mode: screen;
+    animation: z-glitch-shift-2 3.1s 1s infinite steps(2, end);
+    clip-path: polygon(0 58%, 100% 58%, 100% 100%, 0 100%);
+  }
+}
+
+.z-intro__loader {
+  width: min(240px, 60vw);
+  height: 3px;
+  border-radius: z.$z-radius-pill;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  opacity: 0;
+  animation: z-fade-up 700ms 500ms ease-out forwards;
+
+  span {
+    display: block;
+    height: 100%;
+    width: 40%;
+    border-radius: inherit;
+    background: z.$z-gradient-accent;
+    box-shadow: 0 0 12px rgba(255, 143, 31, 0.6);
+    animation: z-loader-sweep 1.4s ease-in-out infinite;
+  }
+}
+
+.z-intro__sub {
+  margin: 0;
+  color: z.$z-text-muted;
+  font-size: clamp(0.72rem, 2.4vw, 0.9rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: z-fade-up 700ms 620ms ease-out forwards;
+}
+
+/* ---------- Keyframes ---------- */
+
+@keyframes z-fog-drift {
+  from {
+    transform: translate3d(-3%, -2%, 0) scale(1.05);
+  }
+  to {
+    transform: translate3d(3%, 2%, 0) scale(1.15);
+  }
+}
+
+@keyframes z-ember-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(1);
+  }
+  12% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-102vh) translateX(14px) scale(0.3);
+  }
+}
+
+@keyframes z-scanline-shift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 3px;
+  }
+}
+
+@keyframes z-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes z-title-in {
+  0% {
+    opacity: 0;
+    transform: scale(1.18);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes z-title-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.72;
+  }
+  94% {
+    opacity: 1;
+  }
+  96% {
+    opacity: 0.55;
+  }
+  97% {
+    opacity: 1;
+  }
+}
+
+@keyframes z-loader-sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+@keyframes z-glitch-shift-1 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-3px, 1px);
+  }
+}
+
+@keyframes z-glitch-shift-2 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(3px, -1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .z-intro__fog,
+  .z-intro__ember,
+  .z-intro__scanlines,
+  .z-intro__loader span,
+  .z-intro__title,
+  .z-intro__title::before,
+  .z-intro__title::after,
+  .z-intro__kicker,
+  .z-intro__sub,
+  .z-intro__loader {
+    animation: none;
+  }
+
+  .z-intro__title {
+    opacity: 1;
+    transform: none;
+  }
+
+  .z-intro__kicker,
+  .z-intro__sub,
+  .z-intro__loader {
+    opacity: 1;
+  }
+}
+

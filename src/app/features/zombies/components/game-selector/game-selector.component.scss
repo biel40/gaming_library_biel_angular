@@ -1,0 +1,124 @@
+@use '../../styles/tokens' as z;
+
+.z-game-selector {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+
+  &__all {
+    @include z.z-button-reset;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.7rem 1.15rem;
+    border-radius: z.$z-radius-pill;
+    border: 1px solid z.$z-border;
+    background: z.$z-surface;
+    color: z.$z-text-muted;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: transform 0.15s ease, border-color 0.15s ease,
+      background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+
+    .material-icons {
+      font-size: 1.1rem;
+    }
+
+    &:hover {
+      background: z.$z-surface-hover;
+      border-color: z.$z-border-strong;
+      color: z.$z-text;
+      transform: translateY(-2px);
+    }
+
+    &--active {
+      background: z.$z-gradient-accent;
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(226, 59, 46, 0.35);
+    }
+  }
+
+  &__divider {
+    align-self: stretch;
+    width: 1px;
+    flex: 0 0 auto;
+    background: z.$z-border;
+    margin: 0.25rem 0.15rem;
+  }
+
+  &__btn {
+    @include z.z-button-reset;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.15rem;
+    padding: 0.7rem 1.1rem;
+    border-radius: z.$z-radius-md;
+    border: 1px solid z.$z-border;
+    background: z.$z-surface;
+    color: z.$z-text-muted;
+    transition: transform 0.15s ease, border-color 0.15s ease,
+      background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+      background: z.$z-surface-hover;
+      border-color: z.$z-border-strong;
+      color: z.$z-text;
+      transform: translateY(-2px);
+    }
+
+    &--active {
+      background: z.$z-gradient-accent;
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(226, 59, 46, 0.35);
+
+      .z-game-selector__year {
+        color: rgba(255, 255, 255, 0.85);
+      }
+    }
+  }
+
+  &__title {
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+
+  &__year {
+    font-size: 0.8rem;
+    color: z.$z-text-dim;
+  }
+}
+
+@media (max-width: 767px) {
+  .z-game-selector {
+    // Scroll horizontal en móvil con desvanecido a la derecha.
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    padding-bottom: 0.35rem;
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+
+    &__all,
+    &__btn {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+    }
+
+    &__divider {
+      scroll-snap-align: none;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .z-game-selector__all,
+  .z-game-selector__btn {
+    transition-duration: 0.01ms;
+  }
+}

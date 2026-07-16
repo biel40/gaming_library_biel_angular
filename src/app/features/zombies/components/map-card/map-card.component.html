@@ -1,0 +1,94 @@
+<article class="z-card" [class.z-card--pending]="isPending()">
+  <div class="z-card__media">
+    <div class="z-card__placeholder" aria-hidden="true">
+      <span class="material-icons">map</span>
+      <span>{{ map().name }}</span>
+    </div>
+
+    @if (map().imageUrl) {
+    <img
+      [src]="map().imageUrl"
+      [alt]="map().imageAlt || map().name"
+      [style.object-position]="map().imagePosition || 'center'"
+      loading="lazy"
+      decoding="async"
+      (error)="onImageError($event)" />
+    }
+
+    <div class="z-card__saga" [class.z-card__saga--chaos]="map().saga === 'chaos'">
+      {{ sagaLabel() }}
+    </div>
+
+    @if (map().collection === 'zombies-chronicles') {
+    <div class="z-card__collection">Zombies Chronicles</div>
+    }
+  </div>
+
+  <div class="z-card__body">
+    <div class="z-card__heading">
+      <h3 class="z-card__name">{{ map().name }}</h3>
+      <span class="z-card__game">{{ game().shortTitle }} · {{ game().releaseYear }}</span>
+    </div>
+
+    @if (map().hasMainQuest && map().mainQuestName) {
+    <p class="z-card__quest">
+      <span class="material-icons" aria-hidden="true">flag</span>
+      {{ map().mainQuestName }}
+    </p>
+    }
+
+    <ul class="z-card__meta">
+      @if (difficultyLabel()) {
+      <li><span class="z-card__meta-label">Dificultad</span>{{ difficultyLabel() }}</li>
+      }
+      @if (map().estimatedMinutes) {
+      <li><span class="z-card__meta-label">Duración</span>~{{ map().estimatedMinutes }} min</li>
+      }
+      <li>
+        <span class="z-card__meta-label">Jugadores</span>
+        {{ map().minimumPlayers }}–{{ map().maximumPlayers }}
+      </li>
+    </ul>
+
+    <ul class="z-card__tags" aria-label="Características">
+      @if (map().hasMainQuest) {
+      <li class="z-tag z-tag--quest">Misión principal</li>
+      }
+      @if (map().sideEasterEggs.length > 0) {
+      <li class="z-tag z-tag--side">Easter Eggs secundarios</li>
+      }
+      @if (map().soloAvailable) {
+      <li class="z-tag">Solo</li>
+      }
+      @if (map().maximumPlayers >= 4) {
+      <li class="z-tag">4 jugadores</li>
+      }
+    </ul>
+
+    @if (isPending()) {
+    <p class="z-card__pending-note">
+      <span class="material-icons" aria-hidden="true">construction</span>
+      Guía detallada pendiente de verificación
+    </p>
+    } @else {
+    <div class="z-card__progress">
+      <div class="z-card__progress-track">
+        <div
+          class="z-card__progress-bar"
+          [style.width.%]="progressPercent()"
+          role="progressbar"
+          [attr.aria-valuenow]="progressPercent()"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          [attr.aria-label]="'Progreso de la guía: ' + progressPercent() + '%'"></div>
+      </div>
+      <span class="z-card__progress-label">{{ progressPercent() }}%</span>
+    </div>
+    }
+
+    <a class="z-card__action" [routerLink]="routerLinkTo()">
+      {{ actionLabel() }}
+      <span class="material-icons" aria-hidden="true">arrow_forward</span>
+    </a>
+  </div>
+</article>

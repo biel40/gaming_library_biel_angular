@@ -1,0 +1,37 @@
+@use '../../styles/tokens' as z;
+
+.z-spoiler {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 1.25rem;
+  border-radius: z.$z-radius-md;
+  border: 1px dashed rgba(255, 143, 31, 0.5);
+  background: rgba(255, 143, 31, 0.08);
+  color: z.$z-text-muted;
+
+  .material-icons {
+    color: z.$z-amber;
+  }
+
+  &__label {
+    margin: 0;
+    font-weight: 600;
+    color: z.$z-text;
+  }
+
+  &__btn {
+    @include z.z-button-reset;
+    padding: 0.5rem 1rem;
+    border-radius: z.$z-radius-pill;
+    background: z.$z-gradient-accent;
+    color: #fff;
+    font-weight: 600;
+    transition: filter 0.15s ease;
+
+    &:hover {
+      filter: brightness(1.1);
+    }
+  }
+}

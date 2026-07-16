@@ -1,0 +1,219 @@
+@use '../../styles/tokens' as z;
+
+.z-filters-panel {
+  border-radius: z.$z-radius-lg;
+  border: 1px solid z.$z-border;
+  background: z.$z-surface;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.z-filters-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+}
+
+.z-filters-panel__toggle {
+  @include z.z-button-reset;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: z.$z-text;
+
+  > .material-icons:first-child {
+    color: z.$z-amber;
+    font-size: 1.2rem;
+  }
+}
+
+.z-filters-panel__toggle-label {
+  white-space: nowrap;
+}
+
+.z-filters-panel__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.4rem;
+  border-radius: z.$z-radius-pill;
+  background: z.$z-gradient-accent;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.z-filters-panel__chevron {
+  margin-left: auto;
+  font-size: 1.35rem;
+  color: z.$z-text-dim;
+  transition: transform 0.2s ease;
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+.z-filters-panel__clear {
+  @include z.z-button-reset;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  padding: 0.45rem 0.85rem;
+  border-radius: z.$z-radius-pill;
+  border: 1px solid rgba(226, 59, 46, 0.5);
+  color: z.$z-amber-soft;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: rgba(226, 59, 46, 0.12);
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(226, 59, 46, 0.2);
+  }
+
+  .material-icons {
+    font-size: 1rem;
+  }
+}
+
+.z-filters-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.28s ease;
+
+  &--open {
+    grid-template-rows: 1fr;
+  }
+}
+
+.z-filters-collapse__inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.z-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.35rem 2.25rem;
+  padding: 1.1rem 1.1rem 1.15rem;
+  border-top: 1px solid z.$z-border;
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: z.$z-text-dim;
+
+    .material-icons {
+      font-size: 0.95rem;
+      color: z.$z-amber-soft;
+    }
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+}
+
+.z-chip {
+  @include z.z-button-reset;
+  padding: 0.45rem 0.9rem;
+  border-radius: z.$z-radius-pill;
+  border: 1px solid z.$z-border;
+  background: z.$z-surface;
+  color: z.$z-text-muted;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover {
+    background: z.$z-surface-hover;
+    color: z.$z-text;
+    transform: translateY(-1px);
+  }
+
+  &--active {
+    background: z.$z-gradient-accent;
+    border-color: transparent;
+    color: #fff;
+  }
+}
+
+.z-segmented {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: z.$z-radius-pill;
+  border: 1px solid z.$z-border;
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+
+  &__btn {
+    @include z.z-button-reset;
+    min-width: 2.75rem;
+    padding: 0.5rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: z.$z-text-muted;
+    border-right: 1px solid z.$z-border;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &:hover {
+      background: z.$z-surface-hover;
+      color: z.$z-text;
+    }
+
+    &--active {
+      background: z.$z-gradient-accent;
+      color: #fff;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .z-filters-panel__header {
+    padding: 0.75rem 0.9rem;
+  }
+
+  .z-filters {
+    gap: 1.1rem 1.5rem;
+    padding: 1rem 0.9rem 1.05rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .z-chip,
+  .z-segmented__btn,
+  .z-filters-panel__clear,
+  .z-filters-panel__chevron,
+  .z-filters-collapse {
+    transition-duration: 0.01ms;
+  }
+}
+

@@ -1,0 +1,15 @@
+<button
+  type="button"
+  class="z-audio-toggle"
+  [attr.aria-pressed]="audioMuted()"
+  [attr.aria-label]="audioMuted() ? 'Activar música de fondo' : 'Silenciar música de fondo'"
+  (click)="onToggleMute()"
+>
+  <span class="material-icons" aria-hidden="true">{{
+    audioMuted() ? 'volume_off' : 'volume_up'
+  }}</span>
+</button>
+
+<app-zombies-intro-transition />
+
+<router-outlet />

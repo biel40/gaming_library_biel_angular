@@ -65,6 +65,23 @@
   }
 }
 
+.zombies-btn {
+  @include mix.button-base;
+  background: linear-gradient(135deg, #e23b2e, #ff8f1f);
+  color: white;
+  margin-left: 0.5rem;
+
+  &:hover {
+    background: linear-gradient(135deg, #b71c0f, #e23b2e);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(226, 59, 46, 0.4);
+  }
+
+  .material-icons {
+    color: white;
+  }
+}
+
 .logout-btn {
   @include mix.button-base;
   background: linear-gradient(90deg, vars.$primary-color, vars.$primary-dark);

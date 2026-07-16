@@ -1,0 +1,79 @@
+<section class="z-step" [class.z-step--done]="completed()" [id]="'step-' + step().id">
+  <div class="z-step__head">
+    <button
+      type="button"
+      class="z-step__toggle"
+      [attr.aria-expanded]="expanded()"
+      [attr.aria-controls]="'step-body-' + step().id"
+      (click)="toggleExpanded()">
+      <span class="z-step__number" aria-hidden="true">{{ stepNumber() }}</span>
+      <span class="z-step__title">{{ step().title }}</span>
+      @if (step().spoiler) {
+      <span class="z-step__spoiler-tag">Spoiler</span>
+      }
+      <span class="material-icons z-step__chevron" aria-hidden="true">
+        {{ expanded() ? 'expand_less' : 'expand_more' }}
+      </span>
+    </button>
+
+    <label class="z-step__check">
+      <input
+        type="checkbox"
+        [checked]="completed()"
+        (change)="onToggleComplete($event)" />
+      <span class="z-step__check-text">
+        {{ completed() ? 'Completado' : 'Marcar' }}
+      </span>
+    </label>
+  </div>
+
+  @if (expanded()) {
+  <div class="z-step__body" [id]="'step-body-' + step().id">
+    <app-zombies-spoiler-content
+      [isSpoiler]="!!step().spoiler"
+      [forceReveal]="revealSpoilers()"
+      label="Este paso contiene spoilers">
+      <p class="z-step__desc">{{ step().description }}</p>
+
+      @if (step().instructions.length > 0) {
+      <ol class="z-step__instructions">
+        @for (instruction of step().instructions; track $index) {
+        <li>{{ instruction }}</li>
+        }
+      </ol>
+      }
+
+      @if (step().tips?.length) {
+      <div class="z-step__note z-step__note--tip">
+        <span class="material-icons" aria-hidden="true">lightbulb</span>
+        <ul>
+          @for (tip of step().tips; track $index) {
+          <li>{{ tip }}</li>
+          }
+        </ul>
+      </div>
+      }
+
+      @if (step().warnings?.length) {
+      <div class="z-step__note z-step__note--warning" role="note">
+        <span class="material-icons" aria-hidden="true">warning</span>
+        <ul>
+          @for (warning of step().warnings; track $index) {
+          <li>{{ warning }}</li>
+          }
+        </ul>
+      </div>
+      }
+
+      @if (step().imageUrl) {
+      <img
+        class="z-step__image"
+        [src]="step().imageUrl"
+        [alt]="'Imagen del paso: ' + step().title"
+        loading="lazy"
+        decoding="async" />
+      }
+    </app-zombies-spoiler-content>
+  </div>
+  }
+</section>

@@ -1,0 +1,70 @@
+// Design tokens de la sección Zombies.
+// Autocontenido para evitar rutas relativas frágiles hacia otros features.
+// Tema oscuro militar con acentos rojo/ámbar.
+
+$z-bg-0: #0b0c10;
+$z-bg-1: #121319;
+$z-bg-2: #191b23;
+$z-surface: rgba(255, 255, 255, 0.04);
+$z-surface-hover: rgba(255, 255, 255, 0.07);
+$z-border: rgba(255, 255, 255, 0.1);
+$z-border-strong: rgba(255, 255, 255, 0.18);
+
+// Acentos
+$z-accent: #e23b2e; // rojo
+$z-accent-strong: #b71c0f;
+$z-amber: #ff8f1f; // ámbar/naranja
+$z-amber-soft: #ffb454;
+$z-blood: #7c1c14;
+$z-success: #4caf50;
+$z-warning: #ffb454;
+
+// Texto (contraste WCAG AA sobre fondos oscuros)
+$z-text: #f5f6f8;
+$z-text-muted: rgba(245, 246, 248, 0.72);
+$z-text-dim: rgba(245, 246, 248, 0.55);
+
+// Radios
+$z-radius-sm: 6px;
+$z-radius-md: 10px;
+$z-radius-lg: 16px;
+$z-radius-pill: 999px;
+
+// Sombras
+$z-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+$z-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+$z-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+
+// Gradientes
+$z-gradient-bg: linear-gradient(160deg, $z-bg-0 0%, $z-bg-1 55%, $z-bg-2 100%);
+$z-gradient-accent: linear-gradient(135deg, $z-accent, $z-amber);
+$z-gradient-danger: linear-gradient(135deg, $z-accent-strong, $z-accent);
+
+// Textura sutil de puntos (sin reducir legibilidad).
+@mixin z-noise {
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px
+  );
+  background-size: 4px 4px;
+}
+
+// Focus visible accesible y consistente.
+@mixin z-focus-ring {
+  outline: none;
+  &:focus-visible {
+    outline: 3px solid $z-amber;
+    outline-offset: 2px;
+  }
+}
+
+// Reset de botones para iOS Safari.
+@mixin z-button-reset {
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  @include z-focus-ring;
+}

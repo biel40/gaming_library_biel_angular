@@ -1,0 +1,79 @@
+@use '../../styles/tokens' as z;
+
+.z-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 1.15rem;
+  border-radius: z.$z-radius-md;
+  border: 1px solid z.$z-border;
+  background: z.$z-surface;
+
+  &__info {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  &__label {
+    font-weight: 700;
+    color: z.$z-text;
+  }
+
+  &__count {
+    font-size: 0.88rem;
+    color: z.$z-text-muted;
+  }
+
+  &__track {
+    height: 10px;
+    border-radius: z.$z-radius-pill;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+  }
+
+  &__bar {
+    height: 100%;
+    border-radius: inherit;
+    background: z.$z-gradient-accent;
+    transition: width 0.3s ease;
+  }
+
+  &__reset {
+    @include z.z-button-reset;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: z.$z-radius-pill;
+    border: 1px solid z.$z-border-strong;
+    color: z.$z-text-muted;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: z.$z-surface;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover:not(:disabled) {
+      background: rgba(226, 59, 46, 0.15);
+      color: z.$z-amber-soft;
+      border-color: rgba(226, 59, 46, 0.5);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .material-icons {
+      font-size: 1.05rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .z-progress__bar {
+    transition-duration: 0.01ms;
+  }
+}
