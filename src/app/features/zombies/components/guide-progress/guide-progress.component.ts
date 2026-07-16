@@ -16,6 +16,7 @@ export class GuideProgressComponent {
   readonly percent = input<number>(0);
   readonly completedCount = input<number>(0);
   readonly totalCount = input<number>(0);
+  readonly readOnly = input<boolean>(false);
 
   readonly reset = output<void>();
 }

@@ -1,19 +1,48 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 
+import { SupabaseService } from '../../../services/supabase/supabase.service';
 import { ZOMBIES_CONTENT_VERSION } from '../data/zombies-maps.data';
 import { ZombiesProgressService } from './zombies-progress.service';
 
 const MAP_ID = 'bo1-ascension';
-const keyFor = (mapId: string) =>
-  `zombies-guide::${mapId}::v${ZOMBIES_CONTENT_VERSION}`;
+
+/** Deja resolver la carga asíncrona del constructor (isReadOnlyUser + fetch). */
+function flush(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
+interface SupabaseMockOverrides {
+  isReadOnlyUser?: () => Promise<boolean>;
+  getZombiesMapProgress?: () => Promise<any[]>;
+}
+
+function setup(overrides: SupabaseMockOverrides = {}) {
+  const supabaseMock = {
+    isReadOnlyUser: vi.fn(overrides.isReadOnlyUser ?? (async () => false)),
+    getZombiesMapProgress: vi.fn(
+      overrides.getZombiesMapProgress ?? (async () => [] as any[])
+    ),
+    upsertZombiesMapProgress: vi.fn(async () => {}),
+    deleteZombiesMapProgress: vi.fn(async () => {}),
+  };
+
+  TestBed.resetTestingModule();
+  TestBed.configureTestingModule({
+    providers: [
+      ZombiesProgressService,
+      { provide: SupabaseService, useValue: supabaseMock },
+    ],
+  });
+  const service = TestBed.inject(ZombiesProgressService);
+  return { service, supabaseMock };
+}
 
 describe('ZombiesProgressService', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
+  it('marca y desmarca pasos', async () => {
+    const { service } = setup();
+    await flush();
 
-  it('marca y desmarca pasos', () => {
-    const service = new ZombiesProgressService();
     expect(service.isStepCompleted(MAP_ID, 'step-1')).toBe(false);
 
     service.toggleStep(MAP_ID, 'step-1');
@@ -23,62 +52,82 @@ describe('ZombiesProgressService', () => {
     expect(service.isStepCompleted(MAP_ID, 'step-1')).toBe(false);
   });
 
-  it('calcula el porcentaje de progreso', () => {
-    const service = new ZombiesProgressService();
+  it('calcula el porcentaje de progreso', async () => {
+    const { service } = setup();
+    await flush();
+
     service.setStepCompleted(MAP_ID, 'step-1', true);
     service.setStepCompleted(MAP_ID, 'step-2', true);
     expect(service.getProgressPercent(MAP_ID, 4)).toBe(50);
     expect(service.getStatus(MAP_ID, 4)).toBe('in-progress');
   });
 
-  it('persiste el progreso en localStorage', () => {
-    const service = new ZombiesProgressService();
+  it('persiste el progreso en Supabase', async () => {
+    const { service, supabaseMock } = setup();
+    await flush();
+
     service.setStepCompleted(MAP_ID, 'step-1', true);
-
-    const raw = localStorage.getItem(keyFor(MAP_ID));
-    expect(raw).not.toBeNull();
-    expect(JSON.parse(raw as string).completedStepIds).toEqual(['step-1']);
-  });
-
-  it('recupera el progreso al crear una nueva instancia', () => {
-    const first = new ZombiesProgressService();
-    first.setStepCompleted(MAP_ID, 'step-1', true);
-    first.setStepCompleted(MAP_ID, 'step-2', true);
-
-    const second = new ZombiesProgressService();
-    expect(second.getCompletedStepIds(MAP_ID).sort()).toEqual(['step-1', 'step-2']);
-  });
-
-  it('ignora datos corruptos sin lanzar errores', () => {
-    localStorage.setItem(keyFor(MAP_ID), '{esto no es json valido');
-    localStorage.setItem(keyFor('bo1-moon'), JSON.stringify({ unexpected: true }));
-
-    const service = new ZombiesProgressService();
-    expect(service.getCompletedStepIds(MAP_ID)).toEqual([]);
-    expect(service.getCompletedStepIds('bo1-moon')).toEqual([]);
-  });
-
-  it('ignora progreso de una versión de contenido distinta', () => {
-    localStorage.setItem(
-      `zombies-guide::${MAP_ID}::v${ZOMBIES_CONTENT_VERSION + 99}`,
-      JSON.stringify({
-        mapId: MAP_ID,
-        contentVersion: ZOMBIES_CONTENT_VERSION + 99,
-        completedStepIds: ['step-1'],
-        updatedAt: new Date().toISOString(),
-      })
+    expect(supabaseMock.upsertZombiesMapProgress).toHaveBeenCalledWith(
+      MAP_ID,
+      ['step-1'],
+      expect.any(Number)
     );
+  });
 
-    const service = new ZombiesProgressService();
+  it('hidrata el progreso desde Supabase al iniciar', async () => {
+    const { service } = setup({
+      getZombiesMapProgress: async () => [
+        {
+          map_id: MAP_ID,
+          completed_step_ids: ['step-1', 'step-2'],
+          content_version: ZOMBIES_CONTENT_VERSION,
+          updated_at: new Date().toISOString(),
+        },
+      ],
+    });
+    await flush();
+
+    expect(service.getCompletedStepIds(MAP_ID).sort()).toEqual([
+      'step-1',
+      'step-2',
+    ]);
+  });
+
+  it('ignora progreso de una versión de contenido distinta', async () => {
+    const { service } = setup({
+      getZombiesMapProgress: async () => [
+        {
+          map_id: MAP_ID,
+          completed_step_ids: ['step-1'],
+          content_version: ZOMBIES_CONTENT_VERSION + 99,
+          updated_at: new Date().toISOString(),
+        },
+      ],
+    });
+    await flush();
+
     expect(service.getCompletedStepIds(MAP_ID)).toEqual([]);
   });
 
-  it('reinicia el progreso de un mapa', () => {
-    const service = new ZombiesProgressService();
+  it('reinicia el progreso de un mapa', async () => {
+    const { service, supabaseMock } = setup();
+    await flush();
+
     service.setStepCompleted(MAP_ID, 'step-1', true);
     service.resetMap(MAP_ID);
 
     expect(service.getCompletedStepIds(MAP_ID)).toEqual([]);
-    expect(localStorage.getItem(keyFor(MAP_ID))).toBeNull();
+    expect(supabaseMock.deleteZombiesMapProgress).toHaveBeenCalledWith(MAP_ID);
+  });
+
+  it('no permite escribir progreso en modo solo lectura', async () => {
+    const { service, supabaseMock } = setup({
+      isReadOnlyUser: async () => true,
+    });
+    await flush();
+
+    service.setStepCompleted(MAP_ID, 'step-1', true);
+    expect(service.isStepCompleted(MAP_ID, 'step-1')).toBe(false);
+    expect(supabaseMock.upsertZombiesMapProgress).not.toHaveBeenCalled();
   });
 });

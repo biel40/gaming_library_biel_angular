@@ -22,6 +22,7 @@ export class GuideStepComponent {
   readonly stepNumber = input.required<number>();
   readonly completed = input<boolean>(false);
   readonly revealSpoilers = input<boolean>(false);
+  readonly readOnly = input<boolean>(false);
 
   readonly completedChange = output<boolean>();
 

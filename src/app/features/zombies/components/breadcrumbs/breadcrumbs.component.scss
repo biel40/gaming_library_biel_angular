@@ -1,0 +1,56 @@
+@use '../../styles/tokens' as z;
+
+.z-breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 0.25rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: z.$z-radius-pill;
+  background: z.$z-surface;
+  border: 1px solid z.$z-border;
+  font-size: 0.85rem;
+  color: z.$z-text-dim;
+
+  a {
+    color: z.$z-text-muted;
+    text-decoration: none;
+    border-radius: z.$z-radius-sm;
+    transition: color 0.15s ease;
+    @include z.z-focus-ring;
+
+    &:hover {
+      color: z.$z-amber;
+      text-decoration: underline;
+    }
+  }
+
+  .material-icons {
+    font-size: 1.05rem;
+    color: z.$z-text-dim;
+  }
+
+  [aria-current='page'] {
+    max-width: 45vw;
+    overflow: hidden;
+    color: z.$z-text;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .z-breadcrumbs {
+    gap: 0.25rem;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  .z-breadcrumbs [aria-current='page'] {
+    max-width: 55vw;
+  }
+}

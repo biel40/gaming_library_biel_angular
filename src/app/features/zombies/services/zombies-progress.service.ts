@@ -1,35 +1,38 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 
+import { SupabaseService } from '../../../services/supabase/supabase.service';
 import { ZOMBIES_CONTENT_VERSION } from '../data/zombies-maps.data';
-import {
-  GuideStatus,
-  MapProgress,
-} from '../models/zombies.models';
+import { GuideStatus, MapProgress } from '../models/zombies.models';
 import {
   computeProgressPercent,
   resolveGuideStatus,
 } from '../utils/zombies-filter.util';
 
 /**
- * Persistencia del progreso de cada guía en localStorage.
+ * Persistencia del progreso de cada guía en Supabase (tabla `zombies_map_progress`).
  *
- * - Ningún componente accede directamente a localStorage: esa responsabilidad
- *   vive aquí.
- * - La clave incluye el identificador del mapa y la versión del contenido.
- * - Es tolerante a errores de lectura, ausencia de `window` (contexto sin SSR)
- *   y datos corruptos.
+ * - El estado se expone de forma reactiva y SÍNCRONA mediante un signal, para que
+ *   los componentes (OnPush + signals) reaccionen sin cambiar su API pública.
+ * - La carga inicial y las escrituras son asíncronas contra Supabase.
+ * - Igual que la biblioteca de videojuegos, el progreso mostrado es el del
+ *   usuario efectivo (el del admin para usuarios de solo lectura) y solo el
+ *   admin puede modificarlo.
  */
 @Injectable({ providedIn: 'root' })
 export class ZombiesProgressService {
-  private static readonly STORAGE_PREFIX = 'zombies-guide';
+  private readonly supabase = inject(SupabaseService);
   private readonly contentVersion = ZOMBIES_CONTENT_VERSION;
 
-  /** Estado reactivo: mapId -> conjunto de ids de pasos completados. */
+  /** Estado reactivo: mapId -> progreso del mapa. */
   private readonly _progress = signal<Record<string, MapProgress>>({});
   readonly progress = this._progress.asReadonly();
 
+  /** true hasta confirmar que el usuario es admin; bloquea escrituras. */
+  private readonly _readOnly = signal<boolean>(true);
+  readonly isReadOnly = this._readOnly.asReadonly();
+
   constructor() {
-    this.hydrate();
+    void this.load();
   }
 
   getCompletedStepIds(mapId: string): string[] {
@@ -41,6 +44,9 @@ export class ZombiesProgressService {
   }
 
   setStepCompleted(mapId: string, stepId: string, completed: boolean): void {
+    if (this._readOnly()) {
+      return;
+    }
     const current = new Set(this.getCompletedStepIds(mapId));
     if (completed) {
       current.add(stepId);
@@ -55,16 +61,22 @@ export class ZombiesProgressService {
   }
 
   resetMap(mapId: string): void {
+    if (this._readOnly()) {
+      return;
+    }
     this._progress.update((state) => {
       const next = { ...state };
       delete next[mapId];
       return next;
     });
-    this.removeKey(mapId);
+    void this.remove(mapId);
   }
 
   getProgressPercent(mapId: string, totalSteps: number): number {
-    return computeProgressPercent(this.getCompletedStepIds(mapId).length, totalSteps);
+    return computeProgressPercent(
+      this.getCompletedStepIds(mapId).length,
+      totalSteps
+    );
   }
 
   getStatus(mapId: string, totalSteps: number): GuideStatus {
@@ -75,6 +87,33 @@ export class ZombiesProgressService {
   // Implementación privada
   // ---------------------------------------------------------------------------
 
+  private async load(): Promise<void> {
+    try {
+      this._readOnly.set(await this.supabase.isReadOnlyUser());
+      const rows = await this.supabase.getZombiesMapProgress();
+      const restored: Record<string, MapProgress> = {};
+      for (const row of rows) {
+        if (row.content_version !== this.contentVersion) {
+          continue;
+        }
+        restored[row.map_id] = {
+          mapId: row.map_id,
+          contentVersion: row.content_version,
+          completedStepIds: Array.isArray(row.completed_step_ids)
+            ? row.completed_step_ids
+            : [],
+          updatedAt:
+            typeof row.updated_at === 'string'
+              ? row.updated_at
+              : new Date().toISOString(),
+        };
+      }
+      this._progress.set(restored);
+    } catch (error) {
+      console.error('Error al cargar el progreso de Zombies:', error);
+    }
+  }
+
   private writeMap(mapId: string, completedStepIds: string[]): void {
     const entry: MapProgress = {
       mapId,
@@ -83,93 +122,29 @@ export class ZombiesProgressService {
       updatedAt: new Date().toISOString(),
     };
     this._progress.update((state) => ({ ...state, [mapId]: entry }));
-    this.persist(mapId, entry);
+    void this.persist(mapId, completedStepIds);
   }
 
-  private hydrate(): void {
-    const storage = this.getStorage();
-    if (!storage) {
-      return;
-    }
-
-    const restored: Record<string, MapProgress> = {};
-    for (let i = 0; i < storage.length; i++) {
-      const key = storage.key(i);
-      if (!key || !key.startsWith(`${ZombiesProgressService.STORAGE_PREFIX}::`)) {
-        continue;
-      }
-      const entry = this.safeParse(storage.getItem(key));
-      if (entry && entry.contentVersion === this.contentVersion) {
-        restored[entry.mapId] = entry;
-      }
-    }
-    this._progress.set(restored);
-  }
-
-  private safeParse(raw: string | null): MapProgress | null {
-    if (!raw) {
-      return null;
-    }
+  private async persist(
+    mapId: string,
+    completedStepIds: string[]
+  ): Promise<void> {
     try {
-      const parsed = JSON.parse(raw) as Partial<MapProgress>;
-      if (
-        typeof parsed?.mapId === 'string' &&
-        typeof parsed?.contentVersion === 'number' &&
-        Array.isArray(parsed?.completedStepIds) &&
-        parsed.completedStepIds.every((id) => typeof id === 'string')
-      ) {
-        return {
-          mapId: parsed.mapId,
-          contentVersion: parsed.contentVersion,
-          completedStepIds: parsed.completedStepIds,
-          updatedAt:
-            typeof parsed.updatedAt === 'string'
-              ? parsed.updatedAt
-              : new Date(0).toISOString(),
-        };
-      }
-      return null;
-    } catch {
-      return null;
+      await this.supabase.upsertZombiesMapProgress(
+        mapId,
+        completedStepIds,
+        this.contentVersion
+      );
+    } catch (error) {
+      console.error('Error al guardar el progreso de Zombies:', error);
     }
   }
 
-  private persist(mapId: string, entry: MapProgress): void {
-    const storage = this.getStorage();
-    if (!storage) {
-      return;
-    }
+  private async remove(mapId: string): Promise<void> {
     try {
-      storage.setItem(this.keyFor(mapId), JSON.stringify(entry));
-    } catch {
-      // Cuota superada o almacenamiento no disponible: se ignora sin romper la UI.
-    }
-  }
-
-  private removeKey(mapId: string): void {
-    const storage = this.getStorage();
-    if (!storage) {
-      return;
-    }
-    try {
-      storage.removeItem(this.keyFor(mapId));
-    } catch {
-      // Se ignora cualquier error de escritura.
-    }
-  }
-
-  private keyFor(mapId: string): string {
-    return `${ZombiesProgressService.STORAGE_PREFIX}::${mapId}::v${this.contentVersion}`;
-  }
-
-  private getStorage(): Storage | null {
-    try {
-      if (typeof window === 'undefined' || !window.localStorage) {
-        return null;
-      }
-      return window.localStorage;
-    } catch {
-      return null;
+      await this.supabase.deleteZombiesMapProgress(mapId);
+    } catch (error) {
+      console.error('Error al borrar el progreso de Zombies:', error);
     }
   }
 }

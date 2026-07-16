@@ -70,33 +70,6 @@
   }
 }
 
-.z-breadcrumbs {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.9rem;
-  color: z.$z-text-dim;
-
-  a {
-    color: z.$z-text-muted;
-    text-decoration: none;
-
-    &:hover {
-      color: z.$z-amber;
-      text-decoration: underline;
-    }
-  }
-
-  .material-icons {
-    font-size: 1.1rem;
-  }
-
-  [aria-current='page'] {
-    color: z.$z-text;
-    font-weight: 600;
-  }
-}
-
 .z-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));

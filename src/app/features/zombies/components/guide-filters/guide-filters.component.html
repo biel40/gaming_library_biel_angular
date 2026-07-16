@@ -66,62 +66,6 @@
             </button>
           </div>
         </div>
-
-        <div class="z-filters__group">
-          <span class="z-filters__label" id="z-filter-flags">
-            <span class="material-icons" aria-hidden="true"
-              >event_available</span
-            >
-            Disponibilidad
-          </span>
-          <div
-            class="z-filters__chips"
-            role="group"
-            aria-labelledby="z-filter-flags">
-            <button
-              type="button"
-              class="z-chip"
-              [class.z-chip--active]="criteria().hasMainQuest === true"
-              [attr.aria-pressed]="criteria().hasMainQuest === true"
-              (click)="toggleMainQuest()">
-              Con misión principal
-            </button>
-            <button
-              type="button"
-              class="z-chip"
-              [class.z-chip--active]="criteria().soloOnly"
-              [attr.aria-pressed]="criteria().soloOnly"
-              (click)="toggleSolo()">
-              Disponible en solitario
-            </button>
-          </div>
-        </div>
-
-        <div class="z-filters__group">
-          <span class="z-filters__label" id="z-filter-players">
-            <span class="material-icons" aria-hidden="true">groups</span>
-            Puedo reunir a
-          </span>
-          <div
-            class="z-segmented"
-            role="group"
-            aria-labelledby="z-filter-players">
-            @for (n of playerOptions; track n) {
-            <button
-              type="button"
-              class="z-segmented__btn"
-              [class.z-segmented__btn--active]="
-                criteria().minimumPlayers === n
-              "
-              [attr.aria-pressed]="criteria().minimumPlayers === n"
-              [attr.aria-label]="n + (n === 1 ? ' jugador' : ' jugadores')"
-              (click)="setPlayers(n)">
-              {{ n }}
-            </button>
-            }
-          </div>
-        </div>
-
         <div class="z-filters__group">
           <span class="z-filters__label" id="z-filter-status">
             <span class="material-icons" aria-hidden="true">flag</span>

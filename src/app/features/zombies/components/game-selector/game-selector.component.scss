@@ -79,13 +79,40 @@
       .z-game-selector__year {
         color: rgba(255, 255, 255, 0.85);
       }
+
+      .z-game-selector__logo-numeral {
+        color: #fff;
+      }
     }
   }
 
-  &__title {
-    font-weight: 700;
-    font-size: 1rem;
+  &__logo {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
     line-height: 1.1;
+  }
+
+  &__logo-text {
+    font-weight: 800;
+    font-style: italic;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  // Numeral estilo "palitos" del logo oficial de Black Ops: trazos gruesos
+  // e inclinados en vez de una tipografía romana clásica. BO4 usa "IIII"
+  // (cuatro palitos), tal y como lo diseñó Treyarch, en lugar de "IV".
+  &__logo-numeral {
+    display: inline-flex;
+    gap: 0.15rem;
+    font-weight: 900;
+    font-size: 1rem;
+    font-style: normal;
+    letter-spacing: 0.05em;
+    transform: skewX(-12deg);
+    color: z.$z-accent;
   }
 
   &__year {

@@ -6,12 +6,8 @@
     </div>
 
     @if (map().imageUrl) {
-    <img
-      [src]="map().imageUrl"
-      [alt]="map().imageAlt || map().name"
-      [style.object-position]="map().imagePosition || 'center'"
-      loading="lazy"
-      decoding="async"
+    <img [src]="map().imageUrl" [alt]="map().imageAlt || map().name"
+      [style.object-position]="map().imagePosition || 'center'" loading="lazy" decoding="async"
       (error)="onImageError($event)" />
     }
 
@@ -65,26 +61,16 @@
       }
     </ul>
 
-    @if (isPending()) {
-    <p class="z-card__pending-note">
-      <span class="material-icons" aria-hidden="true">construction</span>
-      Guía detallada pendiente de verificación
-    </p>
-    } @else {
+
     <div class="z-card__progress">
       <div class="z-card__progress-track">
-        <div
-          class="z-card__progress-bar"
-          [style.width.%]="progressPercent()"
-          role="progressbar"
-          [attr.aria-valuenow]="progressPercent()"
-          aria-valuemin="0"
-          aria-valuemax="100"
+        <div class="z-card__progress-bar" [style.width.%]="progressPercent()" role="progressbar"
+          [attr.aria-valuenow]="progressPercent()" aria-valuemin="0" aria-valuemax="100"
           [attr.aria-label]="'Progreso de la guía: ' + progressPercent() + '%'"></div>
       </div>
       <span class="z-card__progress-label">{{ progressPercent() }}%</span>
     </div>
-    }
+
 
     <a class="z-card__action" [routerLink]="routerLinkTo()">
       {{ actionLabel() }}

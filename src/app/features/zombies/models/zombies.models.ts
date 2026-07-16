@@ -11,6 +11,11 @@ export interface ZombiesGame {
   slug: string;
   title: string;
   shortTitle: string;
+
+  /**
+   * Numeral estilo logo oficial: Black Ops usa "palitos" (I, II, III) y, para
+  */
+  numeral: string;
   releaseYear: number;
   description: string;
   order: number;

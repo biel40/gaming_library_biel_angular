@@ -1,0 +1,11 @@
+<nav class="z-breadcrumbs" aria-label="Migas de pan">
+  @for (item of items(); track item.label; let last = $last) {
+  @if (item.link && !last) {
+  <a [routerLink]="item.link">{{ item.label }}</a>
+  } @else {
+  <span [attr.aria-current]="last ? 'page' : null">{{ item.label }}</span>
+  } @if (!last) {
+  <span class="material-icons" aria-hidden="true">chevron_right</span>
+  }
+  }
+</nav>

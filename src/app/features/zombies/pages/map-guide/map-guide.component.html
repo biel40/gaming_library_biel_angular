@@ -1,16 +1,60 @@
 <div class="z-guide">
   @if (map(); as m) {
-  <nav class="z-breadcrumbs" aria-label="Migas de pan">
-    <a routerLink="/zombies">Zombies</a>
-    <span class="material-icons" aria-hidden="true">chevron_right</span>
-    @if (game(); as g) {
-    <a [routerLink]="['/zombies', g.slug]">{{ g.shortTitle }}</a>
-    <span class="material-icons" aria-hidden="true">chevron_right</span>
-    }
-    <span aria-current="page">{{ m.name }}</span>
-  </nav>
+  <app-zombies-breadcrumbs [items]="breadcrumbItems()" />
 
   <header class="z-guide__header">
+    <div class="z-guide__poster" [class.z-guide__poster--editing]="isEditingImage()">
+      @if (!isEditingImage()) {
+        @if (m.imageUrl && !imageFailed()) {
+        <img class="z-guide__poster-img" [src]="m.imageUrl" [alt]="m.imageAlt || m.name"
+          [style.object-position]="m.imagePosition || 'center'" loading="lazy" decoding="async"
+          (error)="onPosterError()" />
+        } @else {
+        <div class="z-guide__poster-placeholder" aria-hidden="true">
+          <span class="material-icons">map</span>
+          <span>{{ m.name }}</span>
+        </div>
+        }
+
+        @if (isAdmin()) {
+        <button type="button" class="z-guide__poster-edit" (click)="startEditingImage()"
+          title="Cambiar imagen del mapa">
+          <span class="material-icons" aria-hidden="true">photo_camera</span>
+          <span>Cambiar imagen</span>
+        </button>
+        }
+      } @else {
+        <div class="z-guide__poster-panel">
+          <h2 class="z-guide__poster-title">
+            <span class="material-icons" aria-hidden="true">photo_camera</span>
+            Nueva imagen del mapa
+          </h2>
+          <label class="z-guide__poster-field">
+            <span>URL de la imagen</span>
+            <input type="url" [ngModel]="editImageUrl()" (ngModelChange)="setEditImageUrl($event)"
+              placeholder="https://..." autocomplete="off" />
+          </label>
+          @if (editImageUrl().trim()) {
+          <div class="z-guide__poster-preview">
+            <img [src]="editImageUrl()" alt="Vista previa de la nueva imagen" />
+          </div>
+          }
+          <div class="z-guide__poster-actions">
+            <button type="button" class="z-guide__poster-btn z-guide__poster-btn--primary"
+              (click)="saveImage()" [disabled]="savingImage() || !editImageUrl().trim()">
+              <span class="material-icons" aria-hidden="true">save</span>
+              {{ savingImage() ? 'Guardando…' : 'Guardar' }}
+            </button>
+            <button type="button" class="z-guide__poster-btn" (click)="cancelEditingImage()"
+              [disabled]="savingImage()">
+              <span class="material-icons" aria-hidden="true">close</span>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
     <div class="z-guide__title-row">
       <h1>{{ m.name }}</h1>
       <span class="z-badge" [class.z-badge--chaos]="m.saga === 'chaos'">{{ sagaLabel() }}</span>
@@ -74,6 +118,7 @@
         [percent]="percent()"
         [completedCount]="completedCount()"
         [totalCount]="steps().length"
+        [readOnly]="!isAdmin()"
         (reset)="requestReset()" />
 
       @if (m.summary) {
@@ -141,6 +186,7 @@
             [stepNumber]="step.order"
             [completed]="isStepCompleted(step.id)"
             [revealSpoilers]="revealSpoilers()"
+            [readOnly]="!isAdmin()"
             (completedChange)="onStepCompletedChange(step.id, $event)" />
           }
         </div>

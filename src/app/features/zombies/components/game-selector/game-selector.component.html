@@ -17,8 +17,14 @@
     class="z-game-selector__btn"
     [class.z-game-selector__btn--active]="selectedGameId() === game.id"
     [attr.aria-pressed]="selectedGameId() === game.id"
+    [attr.aria-label]="game.shortTitle"
     (click)="selectGame.emit(game.id)">
-    <span class="z-game-selector__title">{{ game.shortTitle }}</span>
+    <span class="z-game-selector__logo">
+      <span class="z-game-selector__logo-text">Black Ops</span>
+      @if (game.numeral) {
+      <span class="z-game-selector__logo-numeral">{{ game.numeral }}</span>
+      }
+    </span>
     <span class="z-game-selector__year">{{ game.releaseYear }}</span>
   </button>
   }

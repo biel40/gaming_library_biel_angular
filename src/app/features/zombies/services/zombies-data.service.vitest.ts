@@ -1,9 +1,29 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
+import { TestBed } from '@angular/core/testing';
 
+import { SupabaseService } from '../../../services/supabase/supabase.service';
 import { ZombiesDataService } from './zombies-data.service';
 
+// Mock mínimo: sin filas en Supabase, el servicio conserva el catálogo estático
+// local como fallback, que es lo que verifican estos tests.
+const supabaseMock = {
+  getZombiesMaps: async () => [] as any[],
+  updateZombiesMapImage: async () => {},
+};
+
 describe('ZombiesDataService', () => {
-  const service = new ZombiesDataService();
+  let service: ZombiesDataService;
+
+  beforeEach(() => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        ZombiesDataService,
+        { provide: SupabaseService, useValue: supabaseMock },
+      ],
+    });
+    service = TestBed.inject(ZombiesDataService);
+  });
 
   it('expone los cuatro juegos ordenados', () => {
     const games = service.games();

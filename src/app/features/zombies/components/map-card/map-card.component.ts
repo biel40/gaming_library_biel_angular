@@ -47,8 +47,9 @@ export class MapCardComponent {
 
   readonly actionLabel = computed(() => {
     if (this.isPending()) {
-      return 'Ver estado';
+      return 'Ver';
     }
+
     return this.status() === 'in-progress' ? 'Continuar guía' : 'Ver guía';
   });
 

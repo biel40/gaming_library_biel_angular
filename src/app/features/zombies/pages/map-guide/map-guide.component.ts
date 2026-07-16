@@ -2,18 +2,25 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 
+import {
+  BreadcrumbsComponent,
+  ZombiesBreadcrumbItem,
+} from '../../components/breadcrumbs/breadcrumbs.component';
 import { EmptyStateComponent } from '../../components/empty-state/empty-state.component';
 import { GuideProgressComponent } from '../../components/guide-progress/guide-progress.component';
 import { GuideStepComponent } from '../../components/guide-step/guide-step.component';
 import { EasterEggStep, ZombiesMap } from '../../models/zombies.models';
 import { ZombiesDataService } from '../../services/zombies-data.service';
 import { ZombiesProgressService } from '../../services/zombies-progress.service';
+import { SupabaseService } from '../../../../services/supabase/supabase.service';
 
 const DIFFICULTY_LABELS: Record<string, string> = {
   easy: 'Fácil',
@@ -30,6 +37,8 @@ const DIFFICULTY_LABELS: Record<string, string> = {
     GuideStepComponent,
     GuideProgressComponent,
     EmptyStateComponent,
+    BreadcrumbsComponent,
+    FormsModule,
   ],
   templateUrl: './map-guide.component.html',
   styleUrl: './map-guide.component.scss',
@@ -39,6 +48,7 @@ export class ZombiesMapGuideComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly dataService = inject(ZombiesDataService);
   private readonly progress = inject(ZombiesProgressService);
+  private readonly supabase = inject(SupabaseService);
 
   private readonly paramMap = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,
@@ -47,6 +57,31 @@ export class ZombiesMapGuideComponent {
   readonly revealSpoilers = signal(false);
   readonly showResetConfirm = signal(false);
   readonly activeStepId = signal<string | null>(null);
+
+  readonly isAdmin = signal(false);
+  readonly isEditingImage = signal(false);
+  readonly editImageUrl = signal('');
+  readonly savingImage = signal(false);
+  readonly imageFailed = signal(false);
+
+  constructor() {
+    void this.resolveAdmin();
+  }
+
+  private async resolveAdmin(): Promise<void> {
+    try {
+      this.isAdmin.set(await this.supabase.isAdminUser());
+    } catch {
+      this.isAdmin.set(false);
+    }
+  }
+
+  private readonly _resetImageStateOnMapChange = effect(() => {
+    // Al cambiar de mapa (navegación entre guías) se reinicia el estado de imagen.
+    this.map();
+    this.imageFailed.set(false);
+    this.isEditingImage.set(false);
+  });
 
   readonly game = computed(() => {
     const slug = this.paramMap().get('gameSlug');
@@ -65,6 +100,19 @@ export class ZombiesMapGuideComponent {
   readonly isPending = computed(
     () => this.map()?.contentStatus === 'pending' || this.steps().length === 0
   );
+
+  readonly breadcrumbItems = computed<ZombiesBreadcrumbItem[]>(() => {
+    const items: ZombiesBreadcrumbItem[] = [{ label: 'Zombies', link: '/zombies' }];
+    const g = this.game();
+    if (g) {
+      items.push({ label: g.shortTitle, link: ['/zombies', g.slug] });
+    }
+    const m = this.map();
+    if (m) {
+      items.push({ label: m.name });
+    }
+    return items;
+  });
 
   readonly sagaLabel = computed(() =>
     this.map()?.saga === 'chaos' ? 'Chaos' : 'Aether'
@@ -167,5 +215,40 @@ export class ZombiesMapGuideComponent {
       behavior: prefersReducedMotion ? 'auto' : 'smooth',
       block: 'start',
     });
+  }
+
+  protected startEditingImage(): void {
+    this.editImageUrl.set(this.map()?.imageUrl ?? '');
+    this.isEditingImage.set(true);
+  }
+
+  protected cancelEditingImage(): void {
+    this.isEditingImage.set(false);
+  }
+
+  protected setEditImageUrl(value: string): void {
+    this.editImageUrl.set(value);
+  }
+
+  protected async saveImage(): Promise<void> {
+    const map = this.map();
+    const url = this.editImageUrl().trim();
+    if (!map || !url || this.savingImage()) {
+      return;
+    }
+    this.savingImage.set(true);
+    try {
+      await this.dataService.setMapImage(map.id, url);
+      this.imageFailed.set(false);
+      this.isEditingImage.set(false);
+    } catch (error) {
+      console.error('Error al actualizar la imagen del mapa:', error);
+    } finally {
+      this.savingImage.set(false);
+    }
+  }
+
+  protected onPosterError(): void {
+    this.imageFailed.set(true);
   }
 }

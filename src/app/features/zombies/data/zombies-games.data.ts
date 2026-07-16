@@ -10,6 +10,7 @@ export const ZOMBIES_GAMES: ZombiesGame[] = [
     slug: 'black-ops',
     title: 'Call of Duty: Black Ops',
     shortTitle: 'Black Ops',
+    numeral: '',
     releaseYear: 2010,
     description:
       'Primera entrega de Black Ops. El modo Zombies continúa la historia Aether iniciada en World at War.',
@@ -20,6 +21,7 @@ export const ZOMBIES_GAMES: ZombiesGame[] = [
     slug: 'black-ops-2',
     title: 'Call of Duty: Black Ops II',
     shortTitle: 'Black Ops II',
+    numeral: 'II',
     releaseYear: 2012,
     description:
       'Segunda entrega. Introduce las misiones principales con ramas narrativas de Richtofen y Maxis.',
@@ -30,6 +32,7 @@ export const ZOMBIES_GAMES: ZombiesGame[] = [
     slug: 'black-ops-3',
     title: 'Call of Duty: Black Ops III',
     shortTitle: 'Black Ops III',
+    numeral: 'III',
     releaseYear: 2015,
     description:
       'Tercera entrega. Cierra el arco Aether original e incluye la colección remasterizada Zombies Chronicles.',
@@ -40,6 +43,7 @@ export const ZOMBIES_GAMES: ZombiesGame[] = [
     slug: 'black-ops-4',
     title: 'Call of Duty: Black Ops 4',
     shortTitle: 'Black Ops 4',
+    numeral: 'IIII',
     releaseYear: 2018,
     description:
       'Cuarta entrega. Divide el modo Zombies en dos sagas paralelas: Aether y Chaos.',

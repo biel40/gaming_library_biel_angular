@@ -17,6 +17,7 @@
       [attr.aria-label]="'Progreso general: ' + percent() + '%'"></div>
   </div>
 
+  @if (!readOnly()) {
   <button
     type="button"
     class="z-progress__reset"
@@ -25,4 +26,5 @@
     <span class="material-icons" aria-hidden="true">restart_alt</span>
     Reiniciar progreso
   </button>
+  }
 </div>

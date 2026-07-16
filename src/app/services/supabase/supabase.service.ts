@@ -475,6 +475,110 @@ export class SupabaseService {
   }
 
   /**
+   * Fetch the full Zombies map catalog (shared, global table).
+   * Mirrors the `videogames` catalog: read by any authenticated user.
+   */
+  public async getZombiesMaps(): Promise<any[]> {
+    const { data, error } = await this._supabaseClient
+      .from('zombies_maps')
+      .select('*');
+
+    if (error) throw error;
+
+    return data ?? [];
+  }
+
+  /**
+   * Update the image of a Zombies map. Admin-only (enforced by RLS).
+   * Behaves like `updateGameImageUrl` for the videogames catalog.
+   * @param mapId The Zombies map identifier
+   * @param imageUrl The new image URL
+   * @param imagePosition Optional CSS object-position value
+   */
+  public async updateZombiesMapImage(
+    mapId: string,
+    imageUrl: string,
+    imagePosition: string = 'center'
+  ): Promise<void> {
+    const { error } = await this._supabaseClient
+      .from('zombies_maps')
+      .update({
+        image_url: imageUrl,
+        image_position: imagePosition,
+        updated_at: new Date(),
+      })
+      .eq('id', mapId);
+
+    if (error) throw error;
+  }
+
+  /**
+   * Fetch the Zombies guide progress rows for the effective user.
+   * Read-only users see the admin's progress, mirroring the videogames library.
+   */
+  public async getZombiesMapProgress(): Promise<any[]> {
+    const session = await this.getSession();
+    if (!session) return [];
+
+    const effectiveUserId = await this._getEffectiveUserId(session);
+    const { data, error } = await this._supabaseClient
+      .from('zombies_map_progress')
+      .select('map_id, completed_step_ids, content_version, updated_at')
+      .eq('user_id', effectiveUserId);
+
+    if (error) throw error;
+
+    return data ?? [];
+  }
+
+  /**
+   * Create or update the current user's progress for a Zombies map.
+   * @param mapId The Zombies map identifier
+   * @param completedStepIds The ids of the completed steps
+   * @param contentVersion The guide content version
+   */
+  public async upsertZombiesMapProgress(
+    mapId: string,
+    completedStepIds: string[],
+    contentVersion: number
+  ): Promise<void> {
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
+
+    const { error } = await this._supabaseClient
+      .from('zombies_map_progress')
+      .upsert(
+        {
+          user_id: session.user.id,
+          map_id: mapId,
+          completed_step_ids: completedStepIds,
+          content_version: contentVersion,
+          updated_at: new Date(),
+        },
+        { onConflict: 'user_id,map_id' }
+      );
+
+    if (error) throw error;
+  }
+
+  /**
+   * Remove the current user's progress for a Zombies map.
+   * @param mapId The Zombies map identifier
+   */
+  public async deleteZombiesMapProgress(mapId: string): Promise<void> {
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
+
+    const { error } = await this._supabaseClient
+      .from('zombies_map_progress')
+      .delete()
+      .eq('user_id', session.user.id)
+      .eq('map_id', mapId);
+
+    if (error) throw error;
+  }
+
+  /**
    * Remove the review and score for a specific game
    * @param gameId The ID of the game to update
    */

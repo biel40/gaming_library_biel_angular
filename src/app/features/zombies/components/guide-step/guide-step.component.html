@@ -16,10 +16,11 @@
       </span>
     </button>
 
-    <label class="z-step__check">
+    <label class="z-step__check" [class.z-step__check--readonly]="readOnly()">
       <input
         type="checkbox"
         [checked]="completed()"
+        [disabled]="readOnly()"
         (change)="onToggleComplete($event)" />
       <span class="z-step__check-text">
         {{ completed() ? 'Completado' : 'Marcar' }}

@@ -7,6 +7,10 @@ import {
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 
+import {
+  BreadcrumbsComponent,
+  ZombiesBreadcrumbItem,
+} from '../../components/breadcrumbs/breadcrumbs.component';
 import { EmptyStateComponent } from '../../components/empty-state/empty-state.component';
 import { MapCardComponent } from '../../components/map-card/map-card.component';
 import { ZombiesMap } from '../../models/zombies.models';
@@ -16,7 +20,7 @@ import { ZombiesProgressService } from '../../services/zombies-progress.service'
 @Component({
   selector: 'app-zombies-game-detail',
   standalone: true,
-  imports: [RouterLink, MapCardComponent, EmptyStateComponent],
+  imports: [RouterLink, MapCardComponent, EmptyStateComponent, BreadcrumbsComponent],
   templateUrl: './game-detail.component.html',
   styleUrl: './game-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +37,14 @@ export class ZombiesGameDetailComponent {
   readonly game = computed(() => {
     const slug = this.paramMap().get('gameSlug');
     return slug ? this.dataService.getGameBySlug(slug) : undefined;
+  });
+
+  readonly breadcrumbItems = computed<ZombiesBreadcrumbItem[]>(() => {
+    const g = this.game();
+    if (!g) {
+      return [];
+    }
+    return [{ label: 'Zombies', link: '/zombies' }, { label: g.shortTitle }];
   });
 
   private readonly maps = computed(() => {

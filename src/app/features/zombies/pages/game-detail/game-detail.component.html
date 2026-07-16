@@ -1,10 +1,6 @@
 <div class="z-detail">
   @if (game(); as g) {
-  <nav class="z-breadcrumbs" aria-label="Migas de pan">
-    <a routerLink="/zombies">Zombies</a>
-    <span class="material-icons" aria-hidden="true">chevron_right</span>
-    <span aria-current="page">{{ g.shortTitle }}</span>
-  </nav>
+  <app-zombies-breadcrumbs [items]="breadcrumbItems()" />
 
   <header class="z-detail__header">
     <h1>{{ g.title }}</h1>

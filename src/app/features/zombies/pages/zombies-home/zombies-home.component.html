@@ -5,15 +5,13 @@
   </a>
 
   <header class="z-hero">
-    <img class="z-hero__art" src="/assets/images/zombies/map-posters.svg#hero"
+    <img class="z-hero__art" src="/assets/images/zombies/banner-zombies.png" width="1920" height="1080"
       alt="Composición visual de los mapas de Call of Duty Zombies" fetchpriority="high" />
     <div class="z-hero__content">
-      <p class="z-hero__eyebrow">Guías del modo Zombies</p>
-      <h1 class="z-hero__title">Call of Duty Zombies</h1>
+      <p class="z-hero__eyebrow">Guía del modo Zombies</p>
       <p class="z-hero__lead">
-        Consulta guías paso a paso de las misiones principales y Easter Eggs de
-        los mapas de Black Ops I, II, III y IV. Filtra por juego, saga o estado y
-        guarda tu progreso en cada guía.
+        Consulta guías paso a paso de los Easter Eggs de
+        los mapas de zombies Black Ops I, II, III y IIII
       </p>
     </div>
   </header>
@@ -21,8 +19,8 @@
   <section class="z-controls" aria-label="Búsqueda y filtros">
     <div class="z-search">
       <span class="material-icons" aria-hidden="true">search</span>
-      <input type="search" class="z-search__input" placeholder="Buscar mapa o misión..." [value]="criteria().search"
-        (input)="onSearch($event)" aria-label="Buscar mapa o misión" />
+      <input type="search" class="z-search__input" placeholder="Buscar mapa..." [value]="criteria().search"
+        (input)="onSearch($event)" aria-label="Buscar mapa" />
     </div>
 
     <app-zombies-game-selector [games]="games()" [selectedGameId]="criteria().gameId"
