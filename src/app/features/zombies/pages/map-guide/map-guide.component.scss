@@ -257,22 +257,41 @@
     }
   }
 
-  &__layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    gap: 1.75rem;
-    align-items: start;
+  &__ee-btn {
+    @include z.z-button-reset;
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    border-radius: z.$z-radius-pill;
+    background: z.$z-gradient-accent;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: z.$z-shadow-sm;
+    transition: filter 0.18s ease, transform 0.18s ease;
+
+    .material-icons {
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
   }
 
   &__index {
-    position: sticky;
-    top: 1rem;
     padding: 1rem;
     border-radius: z.$z-radius-md;
     border: 1px solid z.$z-border;
     background: z.$z-surface;
-    max-height: calc(100vh - 2rem);
     overflow-y: auto;
+
+    &--modal {
+      max-height: 14rem;
+    }
 
     &-title {
       margin: 0 0 0.75rem;
@@ -333,13 +352,6 @@
     border: 1px solid z.$z-border-strong;
     font-size: 0.75rem;
     font-weight: 700;
-  }
-
-  &__main {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    min-width: 0;
   }
 
   &__block {
@@ -561,20 +573,61 @@
       }
     }
   }
-}
 
-// Índice desplegable/sticky en móvil.
-@media (max-width: 900px) {
-  .z-guide__layout {
-    grid-template-columns: 1fr;
+  &--steps {
+    width: min(760px, 100%);
+    max-height: min(85vh, 900px);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
   }
 
-  .z-guide__index {
-    position: static;
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid z.$z-border;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  &__close {
+    @include z.z-button-reset;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    color: z.$z-text-muted;
+    transition: background 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background: z.$z-surface-hover;
+      color: z.$z-text;
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.25rem 1.5rem 1.5rem;
+    overflow-y: auto;
+  }
+}
+
+// Índice desplegable en móvil dentro del modal de pasos.
+@media (max-width: 900px) {
+  .z-guide__index--modal {
     max-height: none;
 
     ol {
-      max-height: 40vh;
+      max-height: 30vh;
       overflow-y: auto;
     }
   }

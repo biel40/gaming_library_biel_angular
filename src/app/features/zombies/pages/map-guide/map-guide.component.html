@@ -75,167 +75,119 @@
       <li><span class="material-icons" aria-hidden="true">flag</span>Misión: {{ m.mainQuestName }}</li>
       }
     </ul>
-
-    <div class="z-guide__spoiler-warning" role="note">
-      <span class="material-icons" aria-hidden="true">warning</span>
-      <p>Esta guía puede contener spoilers de la historia y del final del mapa.</p>
-      <button type="button" class="z-guide__spoiler-toggle" (click)="toggleSpoilers()"
-        [attr.aria-pressed]="revealSpoilers()">
-        {{ revealSpoilers() ? 'Ocultar spoilers' : 'Mostrar spoilers' }}
-      </button>
-    </div>
   </header>
 
-  @if (isPending()) {
-  <app-zombies-empty-state
-    variant="unavailable"
-    title="Guía detallada pendiente de verificación"
-    [message]="m.description" />
-  } @else {
-  <div class="z-guide__layout">
-    <aside class="z-guide__index" aria-label="Índice de pasos">
-      <h2 class="z-guide__index-title">Índice</h2>
-      <nav>
-        <ol>
-          @for (step of steps(); track step.id) {
-          <li>
-            <button type="button" class="z-guide__index-link"
-              [class.z-guide__index-link--active]="activeStepId() === step.id"
-              [class.z-guide__index-link--done]="isStepCompleted(step.id)"
-              [attr.aria-current]="activeStepId() === step.id ? 'true' : null"
-              (click)="scrollToStep(step.id)">
-              <span class="z-guide__index-num">{{ step.order }}</span>
-              <span class="z-guide__index-text">{{ step.title }}</span>
-            </button>
-          </li>
-          }
-        </ol>
-      </nav>
-    </aside>
+  @if (m.description) {
+  <section class="z-guide__block">
+    <h2>Descripción</h2>
+    <p>{{ m.description }}</p>
+  </section>
+  }
 
-    <div class="z-guide__main">
-      <app-zombies-guide-progress
-        [percent]="percent()"
-        [completedCount]="completedCount()"
-        [totalCount]="steps().length"
-        [readOnly]="!isAdmin()"
-        (reset)="requestReset()" />
+  @if (m.summary) {
+  <section class="z-guide__block">
+    <h2>Resumen de la misión</h2>
+    <p>{{ m.summary }}</p>
+  </section>
+  }
 
-      @if (m.summary) {
-      <section class="z-guide__block">
-        <h2>Resumen de la misión</h2>
-        <p>{{ m.summary }}</p>
-      </section>
+  @if (steps().length > 0) {
+  <button type="button" class="z-guide__ee-btn" (click)="openStepsModal()">
+    <span class="material-icons" aria-hidden="true">checklist</span>
+    Ver guía del Easter Egg
+  </button>
+  }
+
+  @if (m.prerequisites?.length) {
+  <section class="z-guide__block">
+    <h2>Requisitos previos</h2>
+    <ul class="z-guide__list">
+      @for (req of m.prerequisites; track $index) {
+      <li>{{ req }}</li>
       }
+    </ul>
+  </section>
+  }
 
-      @if (m.prerequisites?.length) {
-      <section class="z-guide__block">
-        <h2>Requisitos previos</h2>
+  @if (m.recommendedLoadout) {
+  <section class="z-guide__block">
+    <h2>Preparación recomendada</h2>
+    <div class="z-guide__loadout">
+      @if (m.recommendedLoadout.weapons?.length) {
+      <div>
+        <h3>Armas</h3>
         <ul class="z-guide__list">
-          @for (req of m.prerequisites; track $index) {
-          <li>{{ req }}</li>
+          @for (item of m.recommendedLoadout.weapons; track $index) {
+          <li>{{ item }}</li>
           }
         </ul>
-      </section>
+      </div>
       }
-
-      @if (m.recommendedLoadout) {
-      <section class="z-guide__block">
-        <h2>Preparación recomendada</h2>
-        <div class="z-guide__loadout">
-          @if (m.recommendedLoadout.weapons?.length) {
-          <div>
-            <h3>Armas</h3>
-            <ul class="z-guide__list">
-              @for (item of m.recommendedLoadout.weapons; track $index) {
-              <li>{{ item }}</li>
-              }
-            </ul>
-          </div>
-          }
-          @if (m.recommendedLoadout.perks?.length) {
-          <div>
-            <h3>Ventajas</h3>
-            <ul class="z-guide__list">
-              @for (item of m.recommendedLoadout.perks; track $index) {
-              <li>{{ item }}</li>
-              }
-            </ul>
-          </div>
-          }
-          @if (m.recommendedLoadout.consumables?.length) {
-          <div>
-            <h3>Equipamiento</h3>
-            <ul class="z-guide__list">
-              @for (item of m.recommendedLoadout.consumables; track $index) {
-              <li>{{ item }}</li>
-              }
-            </ul>
-          </div>
-          }
-        </div>
-      </section>
-      }
-
-      <section class="z-guide__block" aria-label="Guía paso a paso">
-        <h2>Guía paso a paso</h2>
-        <div class="z-guide__steps">
-          @for (step of steps(); track step.id) {
-          <app-zombies-guide-step
-            [step]="step"
-            [stepNumber]="step.order"
-            [completed]="isStepCompleted(step.id)"
-            [revealSpoilers]="revealSpoilers()"
-            [readOnly]="!isAdmin()"
-            (completedChange)="onStepCompletedChange(step.id, $event)" />
-          }
-        </div>
-      </section>
-
-      @if (m.sideEasterEggs.length > 0) {
-      <section class="z-guide__block z-guide__block--side" aria-label="Easter Eggs secundarios">
-        <h2>Easter Eggs secundarios</h2>
-        <p class="z-guide__side-note">Contenido opcional, independiente de la misión principal.</p>
-        @for (side of m.sideEasterEggs; track side.id) {
-        <article class="z-side">
-          <h3>{{ side.title }}</h3>
-          <p>{{ side.summary }}</p>
-          @if (side.steps.length > 0) {
-          <ol class="z-guide__list">
-            @for (s of side.steps; track $index) {
-            <li>{{ s }}</li>
-            }
-          </ol>
-          }
-          @if (side.reward) {
-          <p class="z-side__reward">
-            <span class="material-icons" aria-hidden="true">redeem</span>
-            Recompensa: {{ side.reward }}
-          </p>
-          }
-        </article>
-        }
-      </section>
-      }
-
-      @if (m.sources?.length) {
-      <section class="z-guide__block z-guide__sources">
-        <h2>Fuentes</h2>
+      @if (m.recommendedLoadout.perks?.length) {
+      <div>
+        <h3>Ventajas</h3>
         <ul class="z-guide__list">
-          @for (source of m.sources; track $index) {
-          <li>
-            @if (source.url) {
-            <a [href]="source.url" target="_blank" rel="noopener noreferrer">{{ source.label }}</a>
-            } @else {
-            {{ source.label }}
-            }
-          </li>
+          @for (item of m.recommendedLoadout.perks; track $index) {
+          <li>{{ item }}</li>
           }
         </ul>
-      </section>
+      </div>
+      }
+      @if (m.recommendedLoadout.consumables?.length) {
+      <div>
+        <h3>Equipamiento</h3>
+        <ul class="z-guide__list">
+          @for (item of m.recommendedLoadout.consumables; track $index) {
+          <li>{{ item }}</li>
+          }
+        </ul>
+      </div>
       }
     </div>
-  </div>
+  </section>
+  }
+
+  @if (m.sideEasterEggs.length > 0) {
+  <section class="z-guide__block z-guide__block--side" aria-label="Easter Eggs secundarios">
+    <h2>Easter Eggs secundarios</h2>
+    <p class="z-guide__side-note">Contenido opcional, independiente de la misión principal.</p>
+    @for (side of m.sideEasterEggs; track side.id) {
+    <article class="z-side">
+      <h3>{{ side.title }}</h3>
+      <p>{{ side.summary }}</p>
+      @if (side.steps.length > 0) {
+      <ol class="z-guide__list">
+        @for (s of side.steps; track $index) {
+        <li>{{ s }}</li>
+        }
+      </ol>
+      }
+      @if (side.reward) {
+      <p class="z-side__reward">
+        <span class="material-icons" aria-hidden="true">redeem</span>
+        Recompensa: {{ side.reward }}
+      </p>
+      }
+    </article>
+    }
+  </section>
+  }
+
+  @if (m.sources?.length) {
+  <section class="z-guide__block z-guide__sources">
+    <h2>Fuentes</h2>
+    <ul class="z-guide__list">
+      @for (source of m.sources; track $index) {
+      <li>
+        @if (source.url) {
+        <a [href]="source.url" target="_blank" rel="noopener noreferrer">{{ source.label }}</a>
+        } @else {
+        {{ source.label }}
+        }
+      </li>
+      }
+    </ul>
+  </section>
   }
 
   <nav class="z-guide__pager" aria-label="Navegación entre mapas">
@@ -281,6 +233,58 @@
         <button type="button" class="z-modal__btn z-modal__btn--danger" (click)="confirmReset()">
           Reiniciar
         </button>
+      </div>
+    </div>
+  </div>
+  }
+
+  @if (showStepsModal()) {
+  <div class="z-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="z-steps-title"
+    (click)="closeStepsModal()">
+    <div class="z-modal z-modal--steps" (click)="$event.stopPropagation()">
+      <div class="z-modal__header">
+        <h2 id="z-steps-title">Guía paso a paso</h2>
+        <button type="button" class="z-modal__close" (click)="closeStepsModal()" aria-label="Cerrar guía">
+          <span class="material-icons" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <div class="z-modal__body">
+        <app-zombies-guide-progress
+          [percent]="percent()"
+          [completedCount]="completedCount()"
+          [totalCount]="steps().length"
+          [readOnly]="!isAdmin()"
+          (reset)="requestReset()" />
+
+        <nav class="z-guide__index z-guide__index--modal" aria-label="Índice de pasos">
+          <ol>
+            @for (step of steps(); track step.id) {
+            <li>
+              <button type="button" class="z-guide__index-link"
+                [class.z-guide__index-link--active]="activeStepId() === step.id"
+                [class.z-guide__index-link--done]="isStepCompleted(step.id)"
+                [attr.aria-current]="activeStepId() === step.id ? 'true' : null"
+                (click)="scrollToStep(step.id)">
+                <span class="z-guide__index-num">{{ step.order }}</span>
+                <span class="z-guide__index-text">{{ step.title }}</span>
+              </button>
+            </li>
+            }
+          </ol>
+        </nav>
+
+        <div class="z-guide__steps">
+          @for (step of steps(); track step.id) {
+          <app-zombies-guide-step
+            [step]="step"
+            [stepNumber]="step.order"
+            [completed]="isStepCompleted(step.id)"
+            [revealSpoilers]="revealSpoilers()"
+            [readOnly]="!isAdmin()"
+            (completedChange)="onStepCompletedChange(step.id, $event)" />
+          }
+        </div>
       </div>
     </div>
   </div>

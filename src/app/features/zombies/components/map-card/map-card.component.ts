@@ -22,10 +22,10 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapCardComponent {
-  readonly map = input.required<ZombiesMap>();
-  readonly game = input.required<ZombiesGame>();
-  readonly progressPercent = input<number>(0);
-  readonly status = input<GuideStatus>('not-started');
+  public readonly map = input.required<ZombiesMap>();
+  public readonly game = input.required<ZombiesGame>();
+  public readonly progressPercent = input<number>(0);
+  public readonly status = input<GuideStatus>('not-started');
 
   private readonly difficultyLabels: Record<GuideDifficulty, string> = {
     easy: 'Fácil',
@@ -34,18 +34,18 @@ export class MapCardComponent {
     'very-hard': 'Muy difícil',
   };
 
-  readonly sagaLabel = computed(() =>
+  public readonly sagaLabel = computed(() =>
     this.map().saga === 'aether' ? 'Aether' : 'Chaos'
   );
 
-  readonly difficultyLabel = computed(() => {
+  public readonly difficultyLabel = computed(() => {
     const difficulty = this.map().difficulty;
     return difficulty ? this.difficultyLabels[difficulty] : null;
   });
 
-  readonly isPending = computed(() => this.map().contentStatus === 'pending');
+  public readonly isPending = computed(() => this.map().contentStatus === 'pending');
 
-  readonly actionLabel = computed(() => {
+  public readonly actionLabel = computed(() => {
     if (this.isPending()) {
       return 'Ver';
     }
@@ -53,7 +53,7 @@ export class MapCardComponent {
     return this.status() === 'in-progress' ? 'Continuar guía' : 'Ver guía';
   });
 
-  readonly routerLinkTo = computed(() => [
+  public readonly routerLinkTo = computed(() => [
     '/zombies',
     this.game().slug,
     this.map().slug,

@@ -59,7 +59,7 @@ import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.co
 - **Strict Typing**: Avoid `any`. Define interfaces or types for all data structures.
 - **Immutability**: Treat signal values as immutable. Use spread operators for updates.
 - **Error Handling**: Use try/catch in async operations and update error signals.
-- **Access Modifiers**: Every method must have an explicit access modifier (`public`, `private`, or `protected`). Never leave a method without one.
+- **Access Modifiers**: Every method and class member that can have one must explicitly declare `public`, `private`, or `protected`. This includes Angular methods, helpers, and computed/read-only members such as `readonly routerLinkTo = computed(...)`. Never leave a class member unqualified.
 
 ## Development Workflows
 

@@ -56,6 +56,7 @@ export class ZombiesMapGuideComponent {
 
   readonly revealSpoilers = signal(false);
   readonly showResetConfirm = signal(false);
+  readonly showStepsModal = signal(false);
   readonly activeStepId = signal<string | null>(null);
 
   readonly isAdmin = signal(false);
@@ -81,6 +82,7 @@ export class ZombiesMapGuideComponent {
     this.map();
     this.imageFailed.set(false);
     this.isEditingImage.set(false);
+    this.showStepsModal.set(false);
   });
 
   readonly game = computed(() => {
@@ -96,10 +98,6 @@ export class ZombiesMapGuideComponent {
     }
     return this.dataService.getMapBySlug(gameSlug, mapSlug);
   });
-
-  readonly isPending = computed(
-    () => this.map()?.contentStatus === 'pending' || this.steps().length === 0
-  );
 
   readonly breadcrumbItems = computed<ZombiesBreadcrumbItem[]>(() => {
     const items: ZombiesBreadcrumbItem[] = [{ label: 'Zombies', link: '/zombies' }];
@@ -181,6 +179,14 @@ export class ZombiesMapGuideComponent {
 
   protected toggleSpoilers(): void {
     this.revealSpoilers.update((value) => !value);
+  }
+
+  protected openStepsModal(): void {
+    this.showStepsModal.set(true);
+  }
+
+  protected closeStepsModal(): void {
+    this.showStepsModal.set(false);
   }
 
   protected requestReset(): void {

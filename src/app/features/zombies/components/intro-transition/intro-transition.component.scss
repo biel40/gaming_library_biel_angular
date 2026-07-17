@@ -155,14 +155,14 @@
     color: z.$z-accent;
     mix-blend-mode: screen;
     animation: z-glitch-shift-1 2.6s 1s infinite steps(2, end);
-    clip-path: polygon(0 0, 100% 0, 100% 44%, 0 44%);
+    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
   }
 
   &::after {
     color: z.$z-amber;
     mix-blend-mode: screen;
     animation: z-glitch-shift-2 3.1s 1s infinite steps(2, end);
-    clip-path: polygon(0 58%, 100% 58%, 100% 100%, 0 100%);
+    clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
   }
 }
 
