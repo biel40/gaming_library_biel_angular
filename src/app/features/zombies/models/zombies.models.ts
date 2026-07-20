@@ -29,6 +29,7 @@ export interface EasterEggStep {
   instructions: string[];
   tips?: string[];
   warnings?: string[];
+  verification?: string[];
   imageUrl?: string;
   spoiler?: boolean;
 }
@@ -50,6 +51,7 @@ export interface RecommendedLoadout {
   weapons?: string[];
   perks?: string[];
   consumables?: string[];
+  note?: string;
 }
 
 export interface ZombiesMap {
@@ -77,6 +79,9 @@ export interface ZombiesMap {
   collection?: string;
   steps: EasterEggStep[];
   sideEasterEggs: SideEasterEgg[];
+  mainQuestReward?: string[];
+  commonMistakes?: string[];
+  tips?: string[];
   contentStatus: ContentStatus;
   sources?: GuideSource[];
 }

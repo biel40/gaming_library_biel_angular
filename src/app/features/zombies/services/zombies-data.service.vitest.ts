@@ -89,9 +89,9 @@ describe('ZombiesDataService', () => {
     }
   });
 
-  it('marca la demo de Ascension como borrador con pasos', () => {
+  it('publica la guía verificada de Ascension con pasos', () => {
     const ascension = service.getMapById('bo1-ascension');
-    expect(ascension?.contentStatus).toBe('draft');
+    expect(ascension?.contentStatus).toBe('verified');
     expect(ascension?.steps.length).toBeGreaterThan(0);
   });
 });

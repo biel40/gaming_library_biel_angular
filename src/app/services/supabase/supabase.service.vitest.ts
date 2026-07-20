@@ -19,6 +19,7 @@ describe('SupabaseService (critical local behavior)', () => {
         error: { message: 'Invalid JWT' },
       }),
       signOut: vi.fn().mockResolvedValue(undefined),
+      onAuthStateChange: vi.fn(),
     };
 
     (createClient as unknown as any).mockReturnValue({ auth });
@@ -46,7 +47,10 @@ describe('SupabaseService (critical local behavior)', () => {
       return {};
     });
 
-    (createClient as unknown as any).mockReturnValue({ auth: { getSession: vi.fn() }, from });
+    (createClient as unknown as any).mockReturnValue({
+      auth: { getSession: vi.fn(), onAuthStateChange: vi.fn() },
+      from,
+    });
 
     const service = new SupabaseService();
     vi.spyOn(service, 'getSession').mockResolvedValue({ user: { id: 'user-1', email: 'test@test.com' } } as any);
@@ -68,7 +72,9 @@ describe('SupabaseService (critical local behavior)', () => {
   });
 
   it('isReadOnlyUser returns false for admin user (biel40aws@gmail.com)', async () => {
-    (createClient as unknown as any).mockReturnValue({ auth: { getSession: vi.fn() } });
+    (createClient as unknown as any).mockReturnValue({
+      auth: { getSession: vi.fn(), onAuthStateChange: vi.fn() },
+    });
 
     const service = new SupabaseService();
     vi.spyOn(service, 'getSession').mockResolvedValue({ user: { email: 'biel40aws@gmail.com' } } as any);
@@ -77,7 +83,9 @@ describe('SupabaseService (critical local behavior)', () => {
   });
 
   it('isReadOnlyUser returns true for non-admin users', async () => {
-    (createClient as unknown as any).mockReturnValue({ auth: { getSession: vi.fn() } });
+    (createClient as unknown as any).mockReturnValue({
+      auth: { getSession: vi.fn(), onAuthStateChange: vi.fn() },
+    });
 
     const service = new SupabaseService();
     vi.spyOn(service, 'getSession').mockResolvedValue({ user: { email: 'test@testuser.com' } } as any);

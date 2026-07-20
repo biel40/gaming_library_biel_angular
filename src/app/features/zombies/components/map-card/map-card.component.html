@@ -48,29 +48,9 @@
 
     <ul class="z-card__tags" aria-label="Características">
       @if (map().hasMainQuest) {
-      <li class="z-tag z-tag--quest">Misión principal</li>
-      }
-      @if (map().sideEasterEggs.length > 0) {
-      <li class="z-tag z-tag--side">Easter Eggs secundarios</li>
-      }
-      @if (map().soloAvailable) {
-      <li class="z-tag">Solo</li>
-      }
-      @if (map().maximumPlayers >= 4) {
-      <li class="z-tag">4 jugadores</li>
+      <li class="z-tag z-tag--quest">Easter Egg</li>
       }
     </ul>
-
-
-    <div class="z-card__progress">
-      <div class="z-card__progress-track">
-        <div class="z-card__progress-bar" [style.width.%]="progressPercent()" role="progressbar"
-          [attr.aria-valuenow]="progressPercent()" aria-valuemin="0" aria-valuemax="100"
-          [attr.aria-label]="'Progreso de la guía: ' + progressPercent() + '%'"></div>
-      </div>
-      <span class="z-card__progress-label">{{ progressPercent() }}%</span>
-    </div>
-
 
     <a class="z-card__action" [routerLink]="routerLinkTo()">
       {{ actionLabel() }}

@@ -62,17 +62,17 @@
 
     <ul class="z-guide__facts">
       @if (game(); as g) {
-      <li><span class="material-icons" aria-hidden="true">videogame_asset</span>{{ g.shortTitle }} · {{ g.releaseYear }}</li>
+      <li>{{ g.shortTitle }} · {{ g.releaseYear }}</li>
       }
       @if (difficultyLabel()) {
-      <li><span class="material-icons" aria-hidden="true">whatshot</span>Dificultad: {{ difficultyLabel() }}</li>
+      <li>Dificultad: {{ difficultyLabel() }}</li>
       }
       @if (m.estimatedMinutes) {
       <li><span class="material-icons" aria-hidden="true">schedule</span>~{{ m.estimatedMinutes }} min</li>
       }
       <li><span class="material-icons" aria-hidden="true">group</span>{{ m.minimumPlayers }}–{{ m.maximumPlayers }} jugadores</li>
       @if (m.mainQuestName) {
-      <li><span class="material-icons" aria-hidden="true">flag</span>Misión: {{ m.mainQuestName }}</li>
+      <li><span class="material-icons" aria-hidden="true">flag</span>Easter Egg: {{ m.mainQuestName }}</li>
       }
     </ul>
   </header>
@@ -144,13 +144,18 @@
       </div>
       }
     </div>
+    @if (m.recommendedLoadout.note) {
+    <div class="z-guide__note z-guide__note--tip" role="note">
+      <span class="material-icons" aria-hidden="true">lightbulb</span>
+      <p>{{ m.recommendedLoadout.note }}</p>
+    </div>
+    }
   </section>
   }
 
   @if (m.sideEasterEggs.length > 0) {
   <section class="z-guide__block z-guide__block--side" aria-label="Easter Eggs secundarios">
     <h2>Easter Eggs secundarios</h2>
-    <p class="z-guide__side-note">Contenido opcional, independiente de la misión principal.</p>
     @for (side of m.sideEasterEggs; track side.id) {
     <article class="z-side">
       <h3>{{ side.title }}</h3>
@@ -173,23 +178,39 @@
   </section>
   }
 
-  @if (m.sources?.length) {
-  <section class="z-guide__block z-guide__sources">
-    <h2>Fuentes</h2>
+  @if (m.mainQuestReward?.length) {
+  <section class="z-guide__block">
+    <h2>Recompensa</h2>
     <ul class="z-guide__list">
-      @for (source of m.sources; track $index) {
-      <li>
-        @if (source.url) {
-        <a [href]="source.url" target="_blank" rel="noopener noreferrer">{{ source.label }}</a>
-        } @else {
-        {{ source.label }}
-        }
-      </li>
+      @for (reward of m.mainQuestReward; track $index) {
+      <li>{{ reward }}</li>
       }
     </ul>
   </section>
   }
 
+  @if (m.commonMistakes?.length) {
+  <section class="z-guide__block">
+    <h2>Errores frecuentes</h2>
+    <ul class="z-guide__list">
+      @for (mistake of m.commonMistakes; track $index) {
+      <li>{{ mistake }}</li>
+      }
+    </ul>
+  </section>
+  }
+
+  @if (m.tips?.length) {
+  <section class="z-guide__block">
+    <h2>Consejos</h2>
+    <ul class="z-guide__list">
+      @for (tip of m.tips; track $index) {
+      <li>{{ tip }}</li>
+      }
+    </ul>
+  </section>
+  }
+  
   <nav class="z-guide__pager" aria-label="Navegación entre mapas">
     @if (prevMap(); as prev) {
     <a class="z-guide__pager-link" [routerLink]="linkFor(prev)">

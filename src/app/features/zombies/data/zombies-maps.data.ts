@@ -70,84 +70,232 @@ export const ZOMBIES_MAPS: ZombiesMap[] = [
     mainQuestName: 'Casimir Mechanism',
     hasMainQuest: true,
     description:
-      'Mapa ambientado en un complejo de cosmódromo soviético. Incluye una misión principal.',
+      'Ascension está ambientado en un cosmódromo soviético abandonado tomado por los no muertos. El mapa introduce los Lunar Landers, los monos espaciales, PhD Flopper, Stamin-Up, el Dispositivo Gersh y las muñecas Matryoshka. Su misión principal, Casimir Mechanism, consiste en reparar el mecanismo y liberar al científico Anton Gersh.',
     summary:
-      'CONTENIDO PROVISIONAL DE DEMOSTRACIÓN. Resumen de ejemplo para probar la interfaz de detalle. No representa una guía real verificada.',
+      'El equipo deberá activar los cuatro nodos del Mecanismo Casimir mediante el Dispositivo Gersh, una ronda de monos espaciales, una placa de presión y los Lunar Landers. Finalmente, será necesario utilizar varias armas especiales mejoradas para liberar a Gersh de la influencia de Samantha.',
     prerequisites: [
-      'Requisito de ejemplo 1 (provisional).',
-      'Requisito de ejemplo 2 (provisional).',
+      'IMPORTANTE: el Easter Egg requiere EXACTAMENTE cuatro jugadores. En Black Ops 1 no puede completarse de forma legítima con menos de cuatro, aunque el mapa admita de 1 a 4 jugadores.',
+      'Partida cooperativa de exactamente cuatro jugadores.',
+      'Comunicación por voz o buena coordinación para pulsar cuatro botones simultáneamente.',
+      'Corriente activada.',
+      'Los tres Lunar Landers enlazados.',
+      'Cohete lanzado y Pack-a-Punch desbloqueado.',
+      'Al menos un jugador debe comprar una ventaja para provocar las rondas de monos espaciales.',
+      'Dispositivo Gersh obtenido en la Caja Misteriosa.',
+      'Muñecas Matryoshka obtenidas en la Caja Misteriosa.',
+      'Thundergun mejorada en Pack-a-Punch como Zeus Cannon.',
+      'Ray Gun mejorada en Pack-a-Punch como Porter’s X2 Ray Gun.',
+      'Las armas y el equipamiento pueden repartirse entre los cuatro jugadores: un mismo jugador no necesita llevarlo todo.',
     ],
     recommendedLoadout: {
-      weapons: ['Arma de ejemplo (provisional).'],
-      perks: ['Ventaja de ejemplo (provisional).'],
-      consumables: ['Equipamiento de ejemplo (provisional).'],
+      weapons: [
+        'Zeus Cannon: obligatoria para el paso final.',
+        'Porter’s X2 Ray Gun: obligatoria para el paso final.',
+        'Armas automáticas con mucha munición para controlar zombis y monos.',
+      ],
+      perks: [
+        'Jugger-Nog para aumentar la supervivencia.',
+        'Stamin-Up para desplazarse rápidamente entre botones y plataformas.',
+        'Speed Cola para recargar más rápido.',
+        'PhD Flopper para evitar el daño explosivo de la Ray Gun.',
+      ],
+      consumables: [
+        'Dispositivo Gersh.',
+        'Muñecas Matryoshka.',
+        'Micrófono o sistema de coordinación entre los cuatro jugadores.',
+      ],
+      note: 'Conservad puntos para la Caja Misteriosa y el Pack-a-Punch. Antes del paso final comprobad que el equipo dispone de un Dispositivo Gersh, Matryoshka, Zeus Cannon y Porter’s X2 Ray Gun.',
     },
     difficulty: 'hard',
-    estimatedMinutes: 45,
+    estimatedMinutes: 60,
     minimumPlayers: 1,
     maximumPlayers: 4,
     soloAvailable: true,
     releaseOrder: 3,
-    contentStatus: 'draft',
+    contentStatus: 'verified',
     sources: [
       {
-        label: 'Contenido provisional de demostración — pendiente de verificación',
-        url: '',
+        label: 'CoD Zombies Guides — Ascension (Black Ops 1)',
+        url: 'https://www.codzombiesguides.com/main-quests/black-ops-1/ascension',
+      },
+      {
+        label: 'Call of Duty Wiki — Casimir Mechanism',
+        url: 'https://callofduty.fandom.com/wiki/Casimir_Mechanism',
+      },
+      {
+        label: 'Call of Duty Wiki — Ascension',
+        url: 'https://callofduty.fandom.com/wiki/Ascension',
       },
     ],
     steps: [
       {
         id: 'bo1-ascension-step-1',
         order: 1,
-        title: 'Paso de demostración 1 — Preparación (contenido provisional)',
+        title: 'Activar la corriente',
         description:
-          'CONTENIDO PROVISIONAL DE DEMOSTRACIÓN. Este paso existe únicamente para probar la interfaz y no representa una guía real verificada.',
+          'Abre las puertas desde la zona inicial hasta llegar al edificio central y activa el interruptor principal. Al encender la corriente, el mapa recuperará el color y se habilitarán las ventajas, los Lunar Landers y los sistemas necesarios para la misión.',
         instructions: [
-          'Instrucción de ejemplo A.',
-          'Instrucción de ejemplo B.',
-          'Instrucción de ejemplo C.',
+          'Abre las puertas desde la zona inicial hasta el edificio central.',
+          'Activa el interruptor principal de corriente.',
         ],
-        tips: ['Consejo de ejemplo para verificar la visualización de consejos.'],
-        warnings: [
-          'Advertencia de ejemplo para verificar la visualización de advertencias.',
+        verification: [
+          'La instalación queda iluminada.',
+          'Las máquinas de ventajas pasan a estar disponibles.',
         ],
       },
       {
         id: 'bo1-ascension-step-2',
         order: 2,
-        title: 'Paso de demostración 2 — Activación (contenido provisional)',
+        title: 'Enlazar los Lunar Landers y abrir Pack-a-Punch',
         description:
-          'CONTENIDO PROVISIONAL DE DEMOSTRACIÓN. Sirve para comprobar el marcado de pasos como completados.',
+          'Utiliza una vez cada uno de los tres Lunar Landers y regresa con ellos a la zona inicial. Al enlazarlos, el cohete quedará listo para lanzarse.',
         instructions: [
-          'Instrucción de ejemplo D.',
-          'Instrucción de ejemplo E.',
+          'Usa el Lunar Lander de la plataforma de PhD Flopper.',
+          'Usa el Lunar Lander de la plataforma de Stamin-Up.',
+          'Usa el Lunar Lander de la zona próxima a Speed Cola y la plataforma de lanzamiento.',
+          'Comprueba junto al interruptor de corriente que el dibujo del cohete está completamente iluminado.',
+          'Pulsa el botón de lanzamiento y espera a que despegue el cohete.',
         ],
-        tips: ['Otro consejo de ejemplo.'],
+        tips: ['No es necesario destruir el cohete para completar el Easter Egg.'],
+        verification: ['La puerta del Pack-a-Punch se abrirá.'],
       },
       {
         id: 'bo1-ascension-step-3',
         order: 3,
-        title: 'Paso de demostración 3 — Desenlace (contenido provisional)',
+        title: 'Activar el primer nodo',
         description:
-          'CONTENIDO PROVISIONAL DE DEMOSTRACIÓN. Este paso está marcado como spoiler para probar el ocultado de contenido sensible.',
+          'Usa el Dispositivo Gersh para absorber un generador situado fuera del mapa y desbloquea el ordenador que activa la primera luz del Mecanismo Casimir.',
         instructions: [
-          'Instrucción de ejemplo F.',
-          'Instrucción de ejemplo G.',
+          'Obtén un Dispositivo Gersh en la Caja Misteriosa.',
+          'Ve hacia las escaleras de la plataforma de PhD Flopper.',
+          'Antes de subir, busca fuera del mapa un generador tumbado junto a la barricada de hormigón.',
+          'Lanza un Dispositivo Gersh suficientemente cerca para que el generador sea absorbido.',
+          'Dirígete a la plataforma de Stamin-Up.',
+          'Busca el pequeño ordenador situado debajo de las escaleras, junto a una ventana de zombis.',
+          'Interactúa con el ordenador.',
         ],
-        warnings: ['Advertencia de ejemplo asociada a un spoiler.'],
+        verification: [
+          'La pantalla mostrará un símbolo Illuminati y se encenderá la primera luz del Mecanismo Casimir.',
+        ],
+      },
+      {
+        id: 'bo1-ascension-step-4',
+        order: 4,
+        title: 'Pulsar los cuatro botones',
+        description:
+          'Espera a una ronda de monos espaciales. Durante esa ronda aparecerán cuatro pequeños botones rojos. Cada jugador debe colocarse delante de uno y los cuatro deben pulsarlos exactamente al mismo tiempo.',
+        instructions: [
+          'Botón 1: en la pared situada frente a Jugger-Nog.',
+          'Botón 2: en la pared a la izquierda de PhD Flopper.',
+          'Botón 3: en la pared a la izquierda de Stamin-Up.',
+          'Botón 4: en la zona de Speed Cola, junto al marco de la puerta orientada hacia el Lunar Lander.',
+        ],
+        tips: [
+          'Antes de pulsarlos, confirma por voz que los cuatro jugadores están preparados y utiliza una cuenta atrás: tres, dos, uno, pulsar.',
+        ],
+        verification: [
+          'Los botones desaparecerán, sonará una confirmación y se encenderá la segunda luz del mecanismo.',
+        ],
+      },
+      {
+        id: 'bo1-ascension-step-5',
+        order: 5,
+        title: 'Completar la prueba del reloj',
+        description:
+          'Con el cohete ya lanzado, reúne a los cuatro jugadores sobre la placa metálica situada delante del reloj de la pared y permaneced en ella durante dos minutos completos.',
+        instructions: [
+          'El cohete debe haberse lanzado previamente.',
+          'Deja un último zombi lento o un crawler en una zona segura.',
+          'Reúne a los cuatro jugadores frente a la entrada del Pack-a-Punch.',
+          'Colocaos sobre la gran placa metálica situada delante del reloj de la pared.',
+          'Permaneced todos dentro de la placa durante dos minutos completos.',
+        ],
+        warnings: [
+          'Los jugadores pueden moverse dentro de la placa, pero ninguno puede abandonarla.',
+        ],
+        verification: [
+          'El reloj completará su recorrido, desaparecerá y se activará la tercera luz del Mecanismo Casimir.',
+        ],
+      },
+      {
+        id: 'bo1-ascension-step-6',
+        order: 6,
+        title: 'Formar la palabra LUNA',
+        description:
+          'Coloca el Lunar Lander en la zona inicial. Un jugador debe permanecer montado sobre él mientras otro lo llama desde las distintas plataformas. Los trayectos deben realizarse en el orden exacto para recoger las letras flotantes.',
+        instructions: [
+          'Zona inicial → Stamin-Up: letra L.',
+          'Stamin-Up → Zona inicial: letra U.',
+          'Zona inicial → Speed Cola: letra N.',
+          'Speed Cola → Stamin-Up: letra A.',
+        ],
+        verification: [
+          'Al completar correctamente los cuatro trayectos se formará la palabra LUNA y se encenderá la cuarta luz del Mecanismo Casimir.',
+        ],
+      },
+      {
+        id: 'bo1-ascension-step-7',
+        order: 7,
+        title: 'Preparar el enfrentamiento final',
+        description:
+          'Regresa al Mecanismo Casimir, situado cerca de Stamin-Up, y comprueba que sus cuatro luces están encendidas. Reparte el equipo mínimo necesario entre todo el grupo antes de atacar la esfera.',
+        instructions: [
+          'Un Dispositivo Gersh.',
+          'Un lanzamiento de muñecas Matryoshka.',
+          'Una Zeus Cannon.',
+          'Una Porter’s X2 Ray Gun.',
+        ],
+        warnings: [
+          'No inicies este paso hasta que todos estén colocados y tengan munición. El daño debe aplicarse mientras permanezca activo el agujero negro del Dispositivo Gersh.',
+        ],
+        verification: [
+          'Con las cuatro luces encendidas, en el suelo delante del mecanismo aparecerá una esfera blanca brillante.',
+        ],
+      },
+      {
+        id: 'bo1-ascension-step-8',
+        order: 8,
+        title: 'Liberar a Gersh',
+        description:
+          'Aplica el daño en el orden correcto sobre la esfera blanca mientras el agujero negro del Dispositivo Gersh permanezca activo, hasta que la esfera ascienda.',
+        instructions: [
+          'Lanza un Dispositivo Gersh directamente sobre la esfera blanca.',
+          'Lanza las muñecas Matryoshka hacia el agujero negro.',
+          'Dispara repetidamente con la Porter’s X2 Ray Gun.',
+          'Dispara aproximadamente dos veces con la Zeus Cannon.',
+          'Continúa causando daño hasta que la esfera ascienda.',
+        ],
+        verification: [
+          'Anton Gersh dará las gracias al equipo, la esfera ascenderá, la imagen pasará brevemente a blanco y negro y Samantha gritará.',
+        ],
         spoiler: true,
       },
     ],
-    sideEasterEggs: [
-      {
-        id: 'bo1-ascension-side-1',
-        title: 'Easter egg secundario de demostración',
-        summary:
-          'CONTENIDO PROVISIONAL DE DEMOSTRACIÓN. Ejemplo de easter egg secundario para probar la sección separada.',
-        steps: ['Sub-paso de ejemplo 1.', 'Sub-paso de ejemplo 2.'],
-        reward: 'Recompensa de ejemplo (provisional).',
-      },
+    mainQuestReward: [
+      'Cada jugador recibe una Death Machine durante 90 segundos.',
+      'En la versión original de Black Ops 1 no se reciben todas las ventajas.',
+      'Las ventajas gratuitas son una recompensa exclusiva de la versión de Black Ops 3.',
+      'Black Ops 1 no incluye un logro o trofeo específico por completar Casimir Mechanism.',
     ],
+    commonMistakes: [
+      'Intentar completar el Easter Egg con menos de cuatro jugadores.',
+      'Confundir el número de jugadores del mapa con el requisito de la misión.',
+      'No haber comprado ninguna ventaja y, por tanto, no activar rondas de monos.',
+      'Pulsar los cuatro botones con demasiado retraso entre jugadores.',
+      'Abandonar la placa metálica antes de terminar el reloj.',
+      'Realizar los trayectos de LUNA en un orden incorrecto.',
+      'Comenzar el paso final sin todas las armas necesarias o sin munición.',
+      'Confundir elementos de Black Ops 3 con la versión original de Black Ops 1.',
+    ],
+    tips: [
+      'Dejad un crawler para realizar con tranquilidad el paso del reloj.',
+      'Repartid las armas especiales entre varios jugadores.',
+      'Acordad previamente qué botón pulsará cada jugador durante la ronda de monos.',
+      'Proteged especialmente las máquinas de las ventajas más importantes durante las rondas de monos.',
+      'No gastéis el último Dispositivo Gersh antes del paso final.',
+      'Comprobad visualmente las cuatro luces del Mecanismo Casimir antes de atacar la esfera.',
+    ],
+    sideEasterEggs: [],
   },
   {
     id: 'bo1-call-of-the-dead',

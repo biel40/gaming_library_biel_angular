@@ -159,6 +159,16 @@
         color: z.$z-accent;
       }
     }
+
+    &--check {
+      background: rgba(76, 175, 80, 0.1);
+      border: 1px solid rgba(76, 175, 80, 0.4);
+      color: z.$z-text-muted;
+
+      .material-icons {
+        color: z.$z-success;
+      }
+    }
   }
 
   &__image {

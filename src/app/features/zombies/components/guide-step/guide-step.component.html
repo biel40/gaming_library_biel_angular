@@ -66,6 +66,17 @@
       </div>
       }
 
+      @if (step().verification?.length) {
+      <div class="z-step__note z-step__note--check" role="note">
+        <span class="material-icons" aria-hidden="true">check_circle</span>
+        <ul>
+          @for (check of step().verification; track $index) {
+          <li>{{ check }}</li>
+          }
+        </ul>
+      </div>
+      }
+
       @if (step().imageUrl) {
       <img
         class="z-step__image"

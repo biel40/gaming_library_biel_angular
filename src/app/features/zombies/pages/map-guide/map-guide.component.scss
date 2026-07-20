@@ -392,6 +392,34 @@
     line-height: 1.5;
   }
 
+  &__note {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    padding: 0.75rem 0.9rem;
+    border-radius: z.$z-radius-sm;
+
+    p {
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .material-icons {
+      flex: 0 0 auto;
+      font-size: 1.2rem;
+    }
+
+    &--tip {
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      color: z.$z-text-muted;
+
+      .material-icons {
+        color: #ffd54a;
+      }
+    }
+  }
+
   &__loadout {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
