@@ -1,7 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 
 import { SupabaseService } from '../../../services/supabase/supabase.service';
-import { ZOMBIES_CONTENT_VERSION } from '../data/zombies-content-version.data';
 import { GuideStatus, MapProgress } from '../models/zombies.models';
 import {
   computeProgressPercent,
@@ -21,7 +20,13 @@ import {
 @Injectable({ providedIn: 'root' })
 export class ZombiesProgressService {
   private readonly supabase = inject(SupabaseService);
-  private readonly contentVersion = ZOMBIES_CONTENT_VERSION;
+
+  /**
+   * Versión del esquema de progreso. Se incrementa manualmente cuando un
+   * cambio de contenido (pasos renumerados, guía rehecha, etc.) debe invalidar
+   * el progreso ya guardado por los usuarios.
+   */
+  private readonly contentVersion = 1;
 
   /** Estado reactivo: mapId -> progreso del mapa. */
   private readonly _progress = signal<Record<string, MapProgress>>({});

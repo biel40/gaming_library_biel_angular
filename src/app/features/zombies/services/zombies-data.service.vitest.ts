@@ -116,12 +116,57 @@ const zombiRows = [
   },
 ];
 
+const zombiGameRows = [
+  {
+    id: 'bo1',
+    slug: 'black-ops',
+    title: 'Call of Duty: Black Ops',
+    short_title: 'Black Ops',
+    numeral: '',
+    release_year: 2010,
+    description: 'Primera entrega.',
+    order: 1,
+  },
+  {
+    id: 'bo2',
+    slug: 'black-ops-2',
+    title: 'Call of Duty: Black Ops II',
+    short_title: 'Black Ops II',
+    numeral: 'II',
+    release_year: 2012,
+    description: 'Segunda entrega.',
+    order: 2,
+  },
+  {
+    id: 'bo3',
+    slug: 'black-ops-3',
+    title: 'Call of Duty: Black Ops III',
+    short_title: 'Black Ops III',
+    numeral: 'III',
+    release_year: 2015,
+    description: 'Tercera entrega.',
+    order: 3,
+  },
+  {
+    id: 'bo4',
+    slug: 'black-ops-4',
+    title: 'Call of Duty: Black Ops 4',
+    short_title: 'Black Ops 4',
+    numeral: 'IIII',
+    release_year: 2018,
+    description: 'Cuarta entrega.',
+    order: 4,
+  },
+];
+
 interface SetupOptions {
   rows?: any[];
+  gameRows?: any[];
 }
 
 function setup(options: SetupOptions = {}) {
   const supabaseMock = {
+    getZombiesGames: vi.fn(async () => options.gameRows ?? zombiGameRows),
     getZombiesMaps: vi.fn(async () => options.rows ?? zombiRows),
     updateZombiesMapImage: vi.fn(async () => {}),
   };
@@ -140,8 +185,9 @@ function setup(options: SetupOptions = {}) {
 describe('ZombiesDataService', () => {
   let service: ZombiesDataService;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     ({ service } = setup());
+    await flush();
   });
 
   it('expone los cuatro juegos ordenados', () => {
@@ -160,9 +206,10 @@ describe('ZombiesDataService', () => {
   });
 
   it('no usa fallback local cuando Supabase no devuelve filas', async () => {
-    const { service: emptyService } = setup({ rows: [] });
+    const { service: emptyService } = setup({ rows: [], gameRows: [] });
     await flush();
 
+    expect(emptyService.games()).toEqual([]);
     expect(emptyService.maps()).toEqual([]);
     expect(emptyService.getMapBySlug('black-ops', 'ascension')).toBeUndefined();
   });
@@ -194,13 +241,13 @@ describe('ZombiesDataService', () => {
     }
   });
 
-  it('completa visuales locales si Supabase no define imagen', async () => {
+  it('usa las visuales de Supabase tal cual, sin fallback local', async () => {
     await flush();
 
     const kino = service.getMapById('bo1-kino');
-    expect(kino?.imageUrl).toBe('/assets/images/zombies/map-posters.svg#bo1-kino');
-    expect(kino?.imageAlt).toContain('Kino der Toten');
-    expect(kino?.imagePosition).toBe('center');
+    expect(kino?.imageUrl).toBeUndefined();
+    expect(kino?.imageAlt).toBeUndefined();
+    expect(kino?.imagePosition).toBeUndefined();
 
     const chronicles = service.getMapById('bo3-zc-kino-der-toten');
     expect(chronicles?.imageUrl).toBe('https://cdn.example/zombies/zc-kino.webp');

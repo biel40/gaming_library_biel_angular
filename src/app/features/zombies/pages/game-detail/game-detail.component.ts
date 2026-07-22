@@ -61,7 +61,7 @@ export class ZombiesGameDetailComponent {
   );
 
   gameForCard(map: ZombiesMap) {
-    return this.dataService.getGameById(map.gameId)!;
+    return this.dataService.getGameById(map.gameId);
   }
 
   progressFor(map: ZombiesMap): number {

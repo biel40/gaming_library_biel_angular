@@ -1,4 +1,0 @@
-{
-  "extends": "./tsconfig.node.json",
-  "include": ["scripts/generate-zombies-seed.ts"]
-}

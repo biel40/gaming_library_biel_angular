@@ -18,11 +18,13 @@
     } @else {
     <div class="z-grid">
       @for (map of mainMaps(); track map.id) {
+      @if (gameForCard(map); as cardGame) {
       <app-zombies-map-card
         [map]="map"
-        [game]="gameForCard(map)"
+        [game]="cardGame"
         [progressPercent]="progressFor(map)"
         [status]="statusFor(map)" />
+      }
       }
     </div>
     }
@@ -39,11 +41,13 @@
     </p>
     <div class="z-grid">
       @for (map of chroniclesMaps(); track map.id) {
+      @if (gameForCard(map); as cardGame) {
       <app-zombies-map-card
         [map]="map"
-        [game]="gameForCard(map)"
+        [game]="cardGame"
         [progressPercent]="progressFor(map)"
         [status]="statusFor(map)" />
+      }
       }
     </div>
   </section>

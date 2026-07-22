@@ -1,1 +1,0 @@
-export const ZOMBIES_CONTENT_VERSION = 1;

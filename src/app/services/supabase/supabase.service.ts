@@ -475,6 +475,20 @@ export class SupabaseService {
   }
 
   /**
+   * Fetch the Zombies games catalog (shared, global table).
+   * Mirrors the `videogames` catalog: read by any authenticated user.
+   */
+  public async getZombiesGames(): Promise<any[]> {
+    const { data, error } = await this._supabaseClient
+      .from('zombies_games')
+      .select('*');
+
+    if (error) throw error;
+
+    return data ?? [];
+  }
+
+  /**
    * Fetch the full Zombies map catalog (shared, global table).
    * Mirrors the `videogames` catalog: read by any authenticated user.
    */

@@ -1,8 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { SupabaseService } from '../../../services/supabase/supabase.service';
-import { ZOMBIES_GAMES } from '../data/zombies-games.data';
-import { withMapVisual } from '../data/zombies-map-visuals.data';
 import {
   ContentStatus,
   GuideDifficulty,
@@ -14,18 +12,20 @@ import {
 /**
  * Fuente de datos de la sección Zombies.
  *
- * El catálogo de mapas vive en la tabla global `zombies_maps` de Supabase
- * (mismo patrón que `videogames`). Se carga al iniciar y se cachea en un signal.
- * No existe fallback local: la fuente de verdad en runtime es Supabase.
+ * Tanto el catálogo de juegos (`zombies_games`) como el de mapas
+ * (`zombies_maps`) viven en Supabase (mismo patrón que `videogames`). Se
+ * cargan al iniciar y se cachean en sendos signals. No existe fallback local:
+ * la fuente de verdad en runtime es siempre Supabase.
  */
 @Injectable({ providedIn: 'root' })
 export class ZombiesDataService {
   private readonly supabase = inject(SupabaseService);
 
-  private readonly _games = signal<readonly ZombiesGame[]>(ZOMBIES_GAMES);
+  private readonly _games = signal<readonly ZombiesGame[]>([]);
   private readonly _maps = signal<readonly ZombiesMap[]>([]);
 
   constructor() {
+    void this.loadGames();
     void this.loadMaps();
   }
 
@@ -64,6 +64,18 @@ export class ZombiesDataService {
   }
 
   /**
+   * Carga el catálogo de juegos desde Supabase.
+   */
+  async loadGames(): Promise<void> {
+    try {
+      const rows = await this.supabase.getZombiesGames();
+      this._games.set(rows.map((row) => this.mapGameRow(row)));
+    } catch (error) {
+      console.error('Error al cargar los juegos de Zombies:', error);
+    }
+  }
+
+  /**
    * Carga el catálogo de mapas desde Supabase.
    */
   async loadMaps(): Promise<void> {
@@ -92,8 +104,21 @@ export class ZombiesDataService {
     );
   }
 
+  private mapGameRow(row: any): ZombiesGame {
+    return {
+      id: row.id,
+      slug: row.slug,
+      title: row.title,
+      shortTitle: row.short_title,
+      numeral: row.numeral,
+      releaseYear: row.release_year,
+      description: row.description,
+      order: row.order,
+    };
+  }
+
   private mapRow(row: any): ZombiesMap {
-    return withMapVisual({
+    return {
       id: row.id,
       slug: row.slug,
       gameId: row.game_id,
@@ -120,6 +145,6 @@ export class ZombiesDataService {
       recommendedLoadout: row.recommended_loadout ?? undefined,
       sources: row.sources ?? undefined,
       contentStatus: row.content_status as ContentStatus,
-    });
+    };
   }
 }

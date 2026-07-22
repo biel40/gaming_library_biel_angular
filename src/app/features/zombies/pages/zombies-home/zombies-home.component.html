@@ -42,8 +42,10 @@
     } @else {
     <div class="z-grid">
       @for (map of filteredMaps(); track map.id) {
-      <app-zombies-map-card [map]="map" [game]="gameFor(map)!" [progressPercent]="progressFor(map)"
+      @if (gameFor(map); as g) {
+      <app-zombies-map-card [map]="map" [game]="g" [progressPercent]="progressFor(map)"
         [status]="statusFor(map)" />
+      }
       }
     </div>
     }
