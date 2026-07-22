@@ -1,13 +1,6 @@
 import { ZombiesMap } from '../models/zombies.models';
 
 /**
- * Versión del contenido de las guías. Se incluye en la clave de persistencia:
- * si el contenido de las guías cambia de forma incompatible, se incrementa este
- * número y el progreso anterior deja de aplicarse automáticamente.
- */
-export const ZOMBIES_CONTENT_VERSION = 1;
-
-/**
  * Catálogo de mapas.
  *
  * IMPORTANTE SOBRE EL CONTENIDO:

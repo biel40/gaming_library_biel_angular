@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 
 import { SupabaseService } from '../../../services/supabase/supabase.service';
-import { ZOMBIES_CONTENT_VERSION } from '../data/zombies-maps.data';
+import { ZOMBIES_CONTENT_VERSION } from '../data/zombies-content-version.data';
 import { GuideStatus, MapProgress } from '../models/zombies.models';
 import {
   computeProgressPercent,

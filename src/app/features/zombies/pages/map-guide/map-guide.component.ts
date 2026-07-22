@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   signal,
@@ -15,7 +16,6 @@ import {
   ZombiesBreadcrumbItem,
 } from '../../components/breadcrumbs/breadcrumbs.component';
 import { EmptyStateComponent } from '../../components/empty-state/empty-state.component';
-import { GuideProgressComponent } from '../../components/guide-progress/guide-progress.component';
 import { GuideStepComponent } from '../../components/guide-step/guide-step.component';
 import { EasterEggStep, ZombiesMap } from '../../models/zombies.models';
 import { ZombiesDataService } from '../../services/zombies-data.service';
@@ -35,7 +35,6 @@ const DIFFICULTY_LABELS: Record<string, string> = {
   imports: [
     RouterLink,
     GuideStepComponent,
-    GuideProgressComponent,
     EmptyStateComponent,
     BreadcrumbsComponent,
     FormsModule,
@@ -43,6 +42,9 @@ const DIFFICULTY_LABELS: Record<string, string> = {
   templateUrl: './map-guide.component.html',
   styleUrl: './map-guide.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:keydown.escape)': 'onEscapeKey()',
+  },
 })
 export class ZombiesMapGuideComponent {
   private readonly route = inject(ActivatedRoute);
@@ -57,7 +59,6 @@ export class ZombiesMapGuideComponent {
   readonly revealSpoilers = signal(false);
   readonly showResetConfirm = signal(false);
   readonly showStepsModal = signal(false);
-  readonly activeStepId = signal<string | null>(null);
 
   readonly isAdmin = signal(false);
   readonly isEditingImage = signal(false);
@@ -65,8 +66,11 @@ export class ZombiesMapGuideComponent {
   readonly savingImage = signal(false);
   readonly imageFailed = signal(false);
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor() {
     void this.resolveAdmin();
+    this.destroyRef.onDestroy(() => this.setBodyScrollLock(false));
   }
 
   private async resolveAdmin(): Promise<void> {
@@ -82,7 +86,7 @@ export class ZombiesMapGuideComponent {
     this.map();
     this.imageFailed.set(false);
     this.isEditingImage.set(false);
-    this.showStepsModal.set(false);
+    this.closeStepsModal();
   });
 
   readonly game = computed(() => {
@@ -183,10 +187,29 @@ export class ZombiesMapGuideComponent {
 
   protected openStepsModal(): void {
     this.showStepsModal.set(true);
+    this.setBodyScrollLock(true);
   }
 
   protected closeStepsModal(): void {
     this.showStepsModal.set(false);
+    this.setBodyScrollLock(false);
+  }
+
+  protected onEscapeKey(): void {
+    if (this.showStepsModal()) {
+      this.closeStepsModal();
+    }
+  }
+
+  private setBodyScrollLock(locked: boolean): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+    document.body.style.overflow = locked ? 'hidden' : '';
+    const main = document.querySelector<HTMLElement>('.main');
+    if (main) {
+      main.style.overflow = locked ? 'hidden' : '';
+    }
   }
 
   protected requestReset(): void {
@@ -203,24 +226,6 @@ export class ZombiesMapGuideComponent {
       this.progress.resetMap(map.id);
     }
     this.showResetConfirm.set(false);
-  }
-
-  protected scrollToStep(stepId: string): void {
-    this.activeStepId.set(stepId);
-    if (typeof document === 'undefined') {
-      return;
-    }
-    const element = document.getElementById('step-' + stepId);
-    if (!element) {
-      return;
-    }
-    const prefersReducedMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    element.scrollIntoView({
-      behavior: prefersReducedMotion ? 'auto' : 'smooth',
-      block: 'start',
-    });
   }
 
   protected startEditingImage(): void {

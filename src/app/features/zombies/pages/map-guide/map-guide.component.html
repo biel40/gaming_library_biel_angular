@@ -245,7 +245,7 @@
   }
 
   @if (showResetConfirm()) {
-  <div class="z-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="z-reset-title">
+  <div class="z-modal-overlay z-modal-overlay--confirm" role="dialog" aria-modal="true" aria-labelledby="z-reset-title">
     <div class="z-modal">
       <h2 id="z-reset-title">Reiniciar progreso</h2>
       <p>¿Seguro que quieres reiniciar el progreso de esta guía? Esta acción no se puede deshacer.</p>
@@ -260,40 +260,27 @@
   }
 
   @if (showStepsModal()) {
-  <div class="z-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="z-steps-title"
-    (click)="closeStepsModal()">
+  <div class="z-modal-overlay z-modal-overlay--steps" role="dialog" aria-modal="true"
+    aria-labelledby="z-steps-title" (click)="closeStepsModal()">
     <div class="z-modal z-modal--steps" (click)="$event.stopPropagation()">
-      <div class="z-modal__header">
-        <h2 id="z-steps-title">Guía paso a paso</h2>
+      <header class="z-modal__header">
+        <div class="z-modal__heading">
+          <h2 id="z-steps-title">{{ map()?.mainQuestName || 'Guía paso a paso' }}</h2>
+          <p class="z-modal__subtitle">
+            {{ completedCount() }} de {{ steps().length }} pasos · {{ percent() }}%
+          </p>
+        </div>
         <button type="button" class="z-modal__close" (click)="closeStepsModal()" aria-label="Cerrar guía">
           <span class="material-icons" aria-hidden="true">close</span>
         </button>
-      </div>
+        <div class="z-modal__progress" role="progressbar" [attr.aria-valuenow]="percent()"
+          aria-valuemin="0" aria-valuemax="100" [attr.aria-label]="'Progreso general: ' + percent() + '%'">
+          <div class="z-modal__progress-bar" [style.width.%]="percent()"></div>
+        </div>
+      </header>
 
       <div class="z-modal__body">
-        <app-zombies-guide-progress
-          [percent]="percent()"
-          [completedCount]="completedCount()"
-          [totalCount]="steps().length"
-          [readOnly]="!isAdmin()"
-          (reset)="requestReset()" />
-
-        <nav class="z-guide__index z-guide__index--modal" aria-label="Índice de pasos">
-          <ol>
-            @for (step of steps(); track step.id) {
-            <li>
-              <button type="button" class="z-guide__index-link"
-                [class.z-guide__index-link--active]="activeStepId() === step.id"
-                [class.z-guide__index-link--done]="isStepCompleted(step.id)"
-                [attr.aria-current]="activeStepId() === step.id ? 'true' : null"
-                (click)="scrollToStep(step.id)">
-                <span class="z-guide__index-num">{{ step.order }}</span>
-                <span class="z-guide__index-text">{{ step.title }}</span>
-              </button>
-            </li>
-            }
-          </ol>
-        </nav>
+        <p class="z-modal__hint">Toca un paso para ver sus instrucciones detalladas.</p>
 
         <div class="z-guide__steps">
           @for (step of steps(); track step.id) {
@@ -306,6 +293,14 @@
             (completedChange)="onStepCompletedChange(step.id, $event)" />
           }
         </div>
+
+        @if (isAdmin()) {
+        <button type="button" class="z-modal__reset" [disabled]="completedCount() === 0"
+          (click)="requestReset()">
+          <span class="material-icons" aria-hidden="true">restart_alt</span>
+          Reiniciar progreso
+        </button>
+        }
       </div>
     </div>
   </div>

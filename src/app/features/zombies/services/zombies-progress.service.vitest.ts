@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 
 import { SupabaseService } from '../../../services/supabase/supabase.service';
-import { ZOMBIES_CONTENT_VERSION } from '../data/zombies-maps.data';
+import { ZOMBIES_CONTENT_VERSION } from '../data/zombies-content-version.data';
 import { ZombiesProgressService } from './zombies-progress.service';
 
 const MAP_ID = 'bo1-ascension';

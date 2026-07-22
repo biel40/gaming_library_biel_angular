@@ -26,7 +26,7 @@ export class GuideStepComponent {
 
   readonly completedChange = output<boolean>();
 
-  protected readonly expanded = signal(true);
+  protected readonly expanded = signal(false);
 
   protected toggleExpanded(): void {
     this.expanded.update((value) => !value);

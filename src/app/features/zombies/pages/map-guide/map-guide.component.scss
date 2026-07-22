@@ -282,78 +282,6 @@
     }
   }
 
-  &__index {
-    padding: 1rem;
-    border-radius: z.$z-radius-md;
-    border: 1px solid z.$z-border;
-    background: z.$z-surface;
-    overflow-y: auto;
-
-    &--modal {
-      max-height: 14rem;
-    }
-
-    &-title {
-      margin: 0 0 0.75rem;
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: z.$z-text-dim;
-    }
-
-    ol {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-
-    &-link {
-      @include z.z-button-reset;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-      width: 100%;
-      padding: 0.45rem 0.5rem;
-      border-radius: z.$z-radius-sm;
-      color: z.$z-text-muted;
-      text-align: left;
-      font-size: 0.88rem;
-      line-height: 1.3;
-      transition: background 0.15s ease, color 0.15s ease;
-
-      &:hover {
-        background: z.$z-surface-hover;
-        color: z.$z-text;
-      }
-
-      &--active {
-        background: rgba(255, 143, 31, 0.15);
-        color: z.$z-amber-soft;
-      }
-
-      &--done .z-guide__index-num {
-        background: z.$z-success;
-        color: #fff;
-        border-color: transparent;
-      }
-    }
-  }
-
-  &__index-num {
-    flex: 0 0 auto;
-    display: grid;
-    place-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    border: 1px solid z.$z-border-strong;
-    font-size: 0.75rem;
-    font-weight: 700;
-  }
-
   &__block {
     display: flex;
     flex-direction: column;
@@ -550,7 +478,13 @@
   display: grid;
   place-items: center;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  &--confirm {
+    z-index: 1100;
+  }
 }
 
 .z-modal {
@@ -603,8 +537,8 @@
   }
 
   &--steps {
-    width: min(760px, 100%);
-    max-height: min(85vh, 900px);
+    width: min(1120px, 98vw);
+    max-height: min(98dvh, 1400px);
     display: flex;
     flex-direction: column;
     padding: 0;
@@ -612,24 +546,57 @@
   }
 
   &__header {
+    position: relative;
+    flex: 0 0 auto;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1.25rem 1.5rem;
+    padding: 1.1rem 1.25rem 1.15rem;
     border-bottom: 1px solid z.$z-border;
+    background: z.$z-bg-2;
 
     h2 {
       margin: 0;
+      font-size: 1.15rem;
+      line-height: 1.25;
     }
+  }
+
+  &__heading {
+    min-width: 0;
+  }
+
+  &__subtitle {
+    margin: 0.3rem 0 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: z.$z-amber-soft;
+  }
+
+  &__progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  &__progress-bar {
+    height: 100%;
+    background: z.$z-gradient-accent;
+    transition: width 0.3s ease;
   }
 
   &__close {
     @include z.z-button-reset;
+    flex: 0 0 auto;
     display: grid;
     place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: -0.35rem -0.5rem 0 0;
     border-radius: 50%;
     color: z.$z-text-muted;
     transition: background 0.15s ease, color 0.15s ease;
@@ -643,21 +610,89 @@
   &__body {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-    padding: 1.25rem 1.5rem 1.5rem;
+    gap: 0.9rem;
+    padding: 1rem 1.25rem 1.5rem;
     overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: z.$z-radius-pill;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  }
+
+  &__hint {
+    margin: 0;
+    font-size: 0.82rem;
+    color: z.$z-text-dim;
+  }
+
+  &__reset {
+    @include z.z-button-reset;
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.35rem;
+    padding: 0.55rem 1.15rem;
+    border-radius: z.$z-radius-pill;
+    border: 1px solid z.$z-border-strong;
+    background: z.$z-surface;
+    color: z.$z-text-muted;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+    .material-icons {
+      font-size: 1.05rem;
+    }
+
+    &:hover:not(:disabled) {
+      background: rgba(226, 59, 46, 0.15);
+      border-color: rgba(226, 59, 46, 0.5);
+      color: z.$z-amber-soft;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 }
 
-// Índice desplegable en móvil dentro del modal de pasos.
-@media (max-width: 900px) {
-  .z-guide__index--modal {
-    max-height: none;
+// En móvil, el modal de pasos ocupa toda la pantalla (tipo hoja fullscreen):
+// más área útil de lectura y sin dobles scrolls raros.
+@media (max-width: 640px) {
+  .z-modal-overlay--steps {
+    padding: 0;
+    place-items: stretch;
+  }
 
-    ol {
-      max-height: 30vh;
-      overflow-y: auto;
-    }
+  .z-modal--steps {
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border: none;
+    border-radius: 0;
+  }
+
+  .z-modal__header {
+    padding: calc(0.9rem + env(safe-area-inset-top)) 1rem 1rem;
+  }
+
+  .z-modal__body {
+    padding: 0.9rem 0.85rem calc(1.25rem + env(safe-area-inset-bottom));
   }
 }
 
@@ -672,8 +707,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .z-guide__index-link,
-  .z-guide__pager-link {
+  .z-guide__pager-link,
+  .z-modal__progress-bar {
     transition-duration: 0.01ms;
   }
 }

@@ -21,6 +21,7 @@
         type="checkbox"
         [checked]="completed()"
         [disabled]="readOnly()"
+        [attr.aria-label]="'Marcar como completado: ' + step().title"
         (change)="onToggleComplete($event)" />
       <span class="z-step__check-text">
         {{ completed() ? 'Completado' : 'Marcar' }}

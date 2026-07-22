@@ -19,18 +19,20 @@
 
   &__head {
     display: flex;
-    align-items: stretch;
-    gap: 0.5rem;
-    padding: 0.35rem 0.35rem 0.35rem 0;
+    align-items: center;
+    gap: 0.25rem;
+    padding-right: 0.6rem;
   }
 
   &__toggle {
     @include z.z-button-reset;
     flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.85rem 1rem;
+    gap: 0.7rem;
+    padding: 0.9rem 0.5rem 0.9rem 0.85rem;
+    min-height: 3.25rem;
     color: z.$z-text;
     text-align: left;
 
@@ -54,9 +56,10 @@
 
   &__title {
     flex: 1;
+    min-width: 0;
     font-weight: 600;
-    font-size: 1.05rem;
-    line-height: 1.3;
+    font-size: 0.98rem;
+    line-height: 1.35;
     transition: color 0.15s ease;
   }
 
@@ -78,30 +81,63 @@
   }
 
   &__check {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0 0.75rem;
+    gap: 0.45rem;
+    padding: 0.45rem 0.75rem;
+    border-radius: z.$z-radius-pill;
+    border: 1px solid z.$z-border;
+    background: z.$z-surface;
     cursor: pointer;
     color: z.$z-text-muted;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    font-weight: 600;
     white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      background: z.$z-surface-hover;
+      border-color: z.$z-border-strong;
+    }
 
     input {
-      width: 1.15rem;
-      height: 1.15rem;
+      width: 1.2rem;
+      height: 1.2rem;
+      margin: 0;
       accent-color: z.$z-success;
       cursor: pointer;
+
+      &:disabled {
+        cursor: default;
+      }
     }
+
+    &--readonly {
+      cursor: default;
+      opacity: 0.65;
+
+      &:hover {
+        background: z.$z-surface;
+        border-color: z.$z-border;
+      }
+    }
+  }
+
+  &--done &__check {
+    border-color: rgba(76, 175, 80, 0.5);
+    background: rgba(76, 175, 80, 0.12);
   }
 
   &--done &__check-text {
     color: z.$z-success;
-    font-weight: 600;
   }
 
   &__body {
-    padding: 0 1rem 1.1rem 1rem;
+    padding: 0.9rem 1rem 1.1rem;
+    border-top: 1px solid z.$z-border;
+    background: z.$z-bg-1;
   }
 
   &__desc {
@@ -176,6 +212,30 @@
     border-radius: z.$z-radius-sm;
     border: 1px solid z.$z-border;
     margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .z-step__check-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .z-step__check {
+    padding: 0.55rem;
+  }
+
+  .z-step__toggle {
+    gap: 0.55rem;
+    padding-left: 0.7rem;
+  }
+
+  .z-step__title {
+    font-size: 0.92rem;
   }
 }
 

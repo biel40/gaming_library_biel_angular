@@ -3,7 +3,6 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { SupabaseService } from '../../../services/supabase/supabase.service';
 import { ZOMBIES_GAMES } from '../data/zombies-games.data';
 import { withMapVisual } from '../data/zombies-map-visuals.data';
-import { ZOMBIES_MAPS } from '../data/zombies-maps.data';
 import {
   ContentStatus,
   GuideDifficulty,
@@ -17,18 +16,14 @@ import {
  *
  * El catálogo de mapas vive en la tabla global `zombies_maps` de Supabase
  * (mismo patrón que `videogames`). Se carga al iniciar y se cachea en un signal.
- * Mientras llega la respuesta —o si falla la conexión— se sirve el catálogo
- * estático local como fallback, para que la UI siga funcionando y degrade con
- * elegancia.
+ * No existe fallback local: la fuente de verdad en runtime es Supabase.
  */
 @Injectable({ providedIn: 'root' })
 export class ZombiesDataService {
   private readonly supabase = inject(SupabaseService);
 
   private readonly _games = signal<readonly ZombiesGame[]>(ZOMBIES_GAMES);
-  private readonly _maps = signal<readonly ZombiesMap[]>(
-    ZOMBIES_MAPS.map(withMapVisual)
-  );
+  private readonly _maps = signal<readonly ZombiesMap[]>([]);
 
   constructor() {
     void this.loadMaps();
@@ -69,15 +64,12 @@ export class ZombiesDataService {
   }
 
   /**
-   * Carga el catálogo de mapas desde Supabase. Si la respuesta está vacía o
-   * falla, se conserva el catálogo estático inicial como fallback.
+   * Carga el catálogo de mapas desde Supabase.
    */
   async loadMaps(): Promise<void> {
     try {
       const rows = await this.supabase.getZombiesMaps();
-      if (rows.length > 0) {
-        this._maps.set(rows.map((row) => this.mapRow(row)));
-      }
+      this._maps.set(rows.map((row) => this.mapRow(row)));
     } catch (error) {
       console.error('Error al cargar los mapas de Zombies:', error);
     }
@@ -101,7 +93,7 @@ export class ZombiesDataService {
   }
 
   private mapRow(row: any): ZombiesMap {
-    return {
+    return withMapVisual({
       id: row.id,
       slug: row.slug,
       gameId: row.game_id,
@@ -128,6 +120,6 @@ export class ZombiesDataService {
       recommendedLoadout: row.recommended_loadout ?? undefined,
       sources: row.sources ?? undefined,
       contentStatus: row.content_status as ContentStatus,
-    };
+    });
   }
 }
