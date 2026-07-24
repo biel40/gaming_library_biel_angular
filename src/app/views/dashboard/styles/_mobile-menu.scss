@@ -105,15 +105,14 @@
   position: fixed;
   top: 0;
   right: -320px;
-  width: 300px;
-  height: 100vh;
-  background: linear-gradient(180deg, #2c2c2c 0%, #1a1a1a 100%);
-  box-shadow: -4px 0 30px rgba(0, 0, 0, 0.5);
+  width: min(300px, 82vw);
+  background: linear-gradient(160deg, vars.$bg-primary 0%, vars.$bg-secondary 100%);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.45);
   z-index: 1000;
   transition: right 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  border-left: 2px solid vars.$accent-color;
+  border-left: 1px solid rgba(255, 87, 34, 0.35);
+  border-radius: 20px 0 0 20px;
+  overflow: hidden;
 
   &.show {
     right: 0;
@@ -132,17 +131,22 @@
   }
 
   @media (max-width: 767px) {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
   }
 
   @media (max-width: 480px) {
-    width: 280px;
+    width: min(280px, 84vw);
+    border-radius: 16px 0 0 16px;
   }
 }
 
 .mobile-menu-header {
   @include mix.flex(row, center, space-between);
-  padding: 1.5rem 1.25rem;
+  flex: none;
+  padding: 1.25rem 1.25rem;
   background: linear-gradient(135deg, vars.$accent-color 0%, #d84315 100%);
   box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
   position: relative;
@@ -158,13 +162,45 @@
     background: linear-gradient(90deg, transparent, vars.$accent-light, transparent);
   }
 
+  .mobile-menu-title {
+    @include mix.flex(row, center, flex-start, 0.75rem);
+    min-width: 0;
+  }
+
+  .menu-brand-icon {
+    font-size: 1.4rem !important;
+    color: vars.$white;
+    background: rgba(255, 255, 255, 0.18);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .mobile-menu-heading {
+    min-width: 0;
+  }
+
   h3 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: vars.$white;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     letter-spacing: 0.5px;
+    line-height: 1.2;
+  }
+
+  .mobile-menu-subtitle {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
   }
 
   .close-menu-btn {
@@ -207,39 +243,34 @@
 
 .mobile-menu-list {
   list-style: none;
-  padding: 1.5rem 0;
+  padding: 1rem 1rem;
   margin: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
 
   li {
     margin: 0;
     padding: 0;
-    position: relative;
-    
-    &:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 1.5rem;
-      right: 1.5rem;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    }
   }
 }
 
 .mobile-menu-item {
-  @include mix.flex(row, center, flex-start, 1rem);
+  @include mix.flex(row, center, flex-start, 0.9rem);
   width: 100%;
-  padding: 1.25rem 1.5rem;
-  background: none;
-  border: none;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: vars.$border-radius-lg;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   color: #e0e0e0;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 500;
   text-align: left;
-  border-left: 3px solid transparent;
   position: relative;
   overflow: hidden;
   
@@ -251,57 +282,108 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 87, 34, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 87, 34, 0.12), transparent);
     transition: left 0.5s ease;
   }
 
   .material-icons {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 87, 34, 0.14);
     color: vars.$accent-light;
-    transition: all 0.3s ease;
-    filter: drop-shadow(0 2px 4px rgba(255, 87, 34, 0.3));
+    transition: all 0.25s ease;
     z-index: 1;
   }
 
   span:not(.material-icons) {
     flex: 1;
     z-index: 1;
+    @include mix.truncate;
   }
 
   &:hover {
-    background: linear-gradient(90deg, rgba(255, 87, 34, 0.15), rgba(255, 87, 34, 0.05));
-    border-left-color: vars.$accent-color;
-    padding-left: 1.75rem;
+    background: rgba(255, 87, 34, 0.14);
+    border-color: rgba(255, 87, 34, 0.4);
     color: vars.$white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
     
     &::before {
       left: 100%;
     }
 
     .material-icons {
-      color: vars.$accent-color;
-      transform: scale(1.15) rotate(5deg);
-      filter: drop-shadow(0 2px 8px rgba(255, 87, 34, 0.5));
+      background: vars.$accent-color;
+      color: vars.$white;
+      transform: scale(1.08);
     }
   }
 
   &:active {
-    background: rgba(255, 87, 34, 0.2);
-    transform: scale(0.98);
+    transform: translateY(0) scale(0.98);
   }
 
   &.active {
-    background: linear-gradient(90deg, rgba(244, 67, 54, 0.2), rgba(244, 67, 54, 0.1));
-    border-left-color: vars.$error-color;
+    background: rgba(244, 67, 54, 0.16);
+    border-color: rgba(244, 67, 54, 0.4);
     color: vars.$white;
 
     .material-icons {
-      color: vars.$error-color;
-      filter: drop-shadow(0 2px 8px rgba(244, 67, 54, 0.5));
+      background: vars.$error-color;
+      color: vars.$white;
     }
 
     &:hover {
-      background: linear-gradient(90deg, rgba(244, 67, 54, 0.25), rgba(244, 67, 54, 0.15));
+      background: rgba(244, 67, 54, 0.22);
+    }
+  }
+}
+
+.mobile-menu-item--zombies {
+  background:
+    radial-gradient(circle at 20% 15%, rgba(226, 59, 46, 0.25), transparent 60%),
+    linear-gradient(135deg, #1a0605 0%, #2b0705 50%, #3d0d09 100%);
+  border: 1px solid rgba(226, 59, 46, 0.55);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: #f2ece2;
+
+  &::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 143, 31, 0.18), transparent);
+  }
+
+  .material-icons {
+    background: rgba(226, 59, 46, 0.22);
+    color: #ff8f1f;
+    text-shadow: 0 0 6px rgba(255, 143, 31, 0.8);
+  }
+
+  span:not(.material-icons) {
+    text-shadow: 0 0 6px rgba(226, 59, 46, 0.55);
+  }
+
+  &:hover {
+    background:
+      radial-gradient(circle at 20% 15%, rgba(255, 143, 31, 0.3), transparent 60%),
+      linear-gradient(135deg, #3d0d09, #7c1c14 60%, #b71c0f 100%);
+    border-color: rgba(255, 143, 31, 0.75);
+    color: #fff;
+    box-shadow:
+      0 0 16px rgba(226, 59, 46, 0.55),
+      0 6px 16px rgba(0, 0, 0, 0.4);
+
+    .material-icons {
+      background: #b71c0f;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(255, 143, 31, 0.9);
     }
   }
 }
@@ -317,15 +399,41 @@
 
 .read-only-notice {
   @include mix.flex(row, center, flex-start, 0.75rem);
-  padding: 1.25rem 1.5rem;
-  color: #ffa726;
-  font-size: 0.95rem;
+  padding: 0.8rem 1rem;
+  color: #ffb74d;
+  font-size: 0.85rem;
   font-weight: 500;
-  background: linear-gradient(90deg, rgba(255, 167, 38, 0.1), transparent);
-  border-left: 3px solid #ffa726;
+  background: rgba(255, 167, 38, 0.08);
+  border: 1px dashed rgba(255, 167, 38, 0.45);
+  border-radius: vars.$border-radius-lg;
 
   .material-icons {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 167, 38, 0.16);
     color: #ffa726;
+  }
+}
+
+.mobile-menu-footer {
+  flex: none;
+  padding: 0.9rem 1.25rem calc(0.9rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  @include mix.flex(row, center, center, 0.5rem);
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+
+  .material-icons {
+    font-size: 1rem;
+    color: rgba(255, 87, 34, 0.6);
   }
 }

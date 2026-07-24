@@ -41,11 +41,6 @@
                     Platinos
                 </button>
                 }
-                <button class="explore-users-btn" routerLink="/users"
-                    title="Ver la biblioteca de juegos de otros usuarios">
-                    <span class="material-icons">people</span>
-                    Explorar usuarios
-                </button>
                 <button class="zombies-btn" routerLink="/zombies" title="Guías de Easter Eggs del modo Zombies">
                     <span class="material-icons">local_fire_department</span>
                     Zombies
@@ -75,7 +70,12 @@
     <button class="mobile-menu-overlay" (click)="closeMobileMenu()" aria-label="Cerrar menú"></button>
     <nav class="mobile-menu" [class.show]="showMobileMenu()">
         <div class="mobile-menu-header">
-            <h3>Menú</h3>
+            <div class="mobile-menu-title">
+                <span class="material-icons menu-brand-icon">sports_esports</span>
+                <div class="mobile-menu-heading">
+                    <h3>Menú</h3>
+                </div>
+            </div>
             <button class="close-menu-btn" (click)="closeMobileMenu()" title="Cerrar menú">
                 <span class="material-icons">close</span>
             </button>
@@ -107,13 +107,7 @@
             </li>
             }
             <li>
-                <button class="mobile-menu-item" (click)="navigateAndCloseMenu('/users')">
-                    <span class="material-icons">people</span>
-                    <span>Explorar usuarios</span>
-                </button>
-            </li>
-            <li>
-                <button class="mobile-menu-item" (click)="navigateAndCloseMenu('/zombies')">
+                <button class="mobile-menu-item mobile-menu-item--zombies" (click)="navigateAndCloseMenu('/zombies')">
                     <span class="material-icons">local_fire_department</span>
                     <span>Zombies</span>
                 </button>
@@ -130,6 +124,10 @@
             </li>
             }
         </ul>
+        <div class="mobile-menu-footer">
+            <span class="material-icons">sports_esports</span>
+            <span>Gaming Library</span>
+        </div>
     </nav>
     }
 

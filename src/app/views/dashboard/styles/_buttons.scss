@@ -67,18 +67,46 @@
 
 .zombies-btn {
   @include mix.button-base;
-  background: linear-gradient(135deg, #e23b2e, #ff8f1f);
-  color: white;
+  position: relative;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(226, 59, 46, 0.25), transparent 55%),
+    linear-gradient(135deg, #1a0605 0%, #2b0705 45%, #3d0d09 100%);
+  color: #f2ece2;
   margin-left: 0.5rem;
+  border: 1px solid rgba(226, 59, 46, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  box-shadow:
+    0 0 10px rgba(226, 59, 46, 0.35),
+    inset 0 0 10px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 0 6px rgba(226, 59, 46, 0.75);
+  transition: all 0.25s ease;
 
   &:hover {
-    background: linear-gradient(135deg, #b71c0f, #e23b2e);
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255, 143, 31, 0.3), transparent 55%),
+      linear-gradient(135deg, #3d0d09, #7c1c14 60%, #b71c0f 100%);
+    border-color: rgba(255, 143, 31, 0.75);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(226, 59, 46, 0.4);
+    box-shadow:
+      0 0 18px rgba(226, 59, 46, 0.65),
+      0 4px 14px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 0 10px rgba(255, 143, 31, 0.9);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #ff8f1f;
+    outline-offset: 2px;
   }
 
   .material-icons {
-    color: white;
+    color: #ff8f1f;
+    text-shadow: 0 0 6px rgba(255, 143, 31, 0.7);
   }
 }
 
