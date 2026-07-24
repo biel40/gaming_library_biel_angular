@@ -4,8 +4,8 @@
   @include z.z-button-reset;
 
   position: fixed;
-  bottom: 1.25rem;
-  right: 1.25rem;
+  bottom: max(1.25rem, calc(env(safe-area-inset-bottom, 0px) + 0.85rem));
+  right: max(1.25rem, calc(env(safe-area-inset-right, 0px) + 0.85rem));
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -25,5 +25,16 @@
 
   &:hover {
     background: z.$z-surface-hover;
+  }
+}
+
+@media (max-width: 480px) {
+  .z-audio-toggle {
+    width: 2.6rem;
+    height: 2.6rem;
+
+    .material-icons {
+      font-size: 1.25rem;
+    }
   }
 }

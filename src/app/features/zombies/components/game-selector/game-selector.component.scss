@@ -128,8 +128,16 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
-    padding-bottom: 0.35rem;
     mask-image: linear-gradient(to right, black 85%, transparent 100%);
+
+    // Oculta la scrollbar nativa (se ve como una barra gris cortada por
+    // el mask-image) sin perder el scroll funcional.
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     &__all,
     &__btn {

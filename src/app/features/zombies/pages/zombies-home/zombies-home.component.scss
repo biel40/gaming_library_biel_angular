@@ -186,11 +186,42 @@
   gap: 1.25rem;
 }
 
-@media (max-width: 768px) {
+// En móvil el banner es demasiado ancho (panorámico, ~2.5:1) para forzarlo
+// dentro de una caja recortada tipo "cover" sin perder el logo. En lugar de
+// recortarlo, se apila: la imagen ocupa el ancho completo a su proporción
+// natural (sin recorte) y el texto pasa a un bloque debajo, no superpuesto.
+@media (max-width: 767px) {
   .z-hero {
-    min-height: clamp(20rem, 55vw, 28rem);
-    aspect-ratio: 16 / 10;
-    padding: 2rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 0;
+    aspect-ratio: auto;
+    padding: 0;
+
+    &::after {
+      content: none;
+    }
+
+    &__art {
+      position: static;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1983 / 793;
+      object-fit: contain;
+      object-position: left center;
+      background: z.$z-bg-0;
+    }
+
+    &__content {
+      position: static;
+      max-width: 100%;
+      padding: 1.25rem 1.1rem 1.5rem;
+    }
+
+    &__lead {
+      font-size: 0.95rem;
+    }
   }
 }
 
@@ -200,23 +231,8 @@
     gap: 1.35rem;
   }
 
-  .z-hero {
-    min-height: clamp(24rem, 90vw, 30rem);
-    aspect-ratio: 4 / 5;
-    padding: 1.5rem 1rem;
-
-    &__content {
-      max-width: 100%;
-    }
-
-    &::after {
-      background: linear-gradient(
-        0deg,
-        rgba(7, 8, 12, 0.95) 0%,
-        rgba(7, 8, 12, 0.68) 62%,
-        rgba(7, 8, 12, 0.18) 100%
-      );
-    }
+  .z-hero__content {
+    padding: 1.1rem 0.95rem 1.35rem;
   }
 
   .z-grid {
