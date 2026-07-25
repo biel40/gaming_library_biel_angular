@@ -148,6 +148,16 @@
     &__divider {
       scroll-snap-align: none;
     }
+
+    // El glow (box-shadow) de los estados activos, combinado con el
+    // overflow-x: auto + mask-image de este contenedor, se renderiza en
+    // WebKit/Chrome móvil como una sombra rectangular en vez de seguir el
+    // border-radius del botón. Se suprime en móvil; el fondo con gradiente
+    // ya comunica el estado activo por sí solo.
+    &__all--active,
+    &__btn--active {
+      box-shadow: none;
+    }
   }
 }
 
