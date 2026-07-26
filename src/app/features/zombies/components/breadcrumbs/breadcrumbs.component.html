@@ -1,11 +1,22 @@
 <nav class="z-breadcrumbs" aria-label="Migas de pan">
-  @for (item of items(); track item.label; let last = $last) {
-  @if (item.link && !last) {
-  <a [routerLink]="item.link">{{ item.label }}</a>
-  } @else {
-  <span [attr.aria-current]="last ? 'page' : null">{{ item.label }}</span>
-  } @if (!last) {
-  <span class="material-icons" aria-hidden="true">chevron_right</span>
+  <a class="z-breadcrumbs__home" routerLink="/dashboard" title="Ir al dashboard principal"
+    aria-label="Ir al dashboard principal">
+    <span class="material-icons" aria-hidden="true">home</span>
+  </a>
+  @if (items().length) {
+  <span class="material-icons z-breadcrumbs__sep" aria-hidden="true">chevron_right</span>
+  }
+  @for (item of items(); track item.label; let first = $first; let last = $last) {
+  <span class="z-breadcrumbs__crumb" [class.z-breadcrumbs__crumb--first]="first"
+    [class.z-breadcrumbs__crumb--last]="last">
+    @if (item.link && !last) {
+    <a [routerLink]="item.link">{{ item.label }}</a>
+    } @else {
+    <span [attr.aria-current]="last ? 'page' : null">{{ item.label }}</span>
+    }
+  </span>
+  @if (!last) {
+  <span class="material-icons z-breadcrumbs__sep" aria-hidden="true">chevron_right</span>
   }
   }
 </nav>

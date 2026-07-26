@@ -3,7 +3,7 @@
 .z-breadcrumbs {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.35rem;
   width: fit-content;
   max-width: 100%;
@@ -14,11 +14,23 @@
   border: 1px solid z.$z-border;
   font-size: 0.85rem;
   color: z.$z-text-dim;
+  // Si la cadena de migas no cabe (pantallas estrechas o nombres largos),
+  // se desplaza horizontalmente en vez de romper la forma de píldora con
+  // flex-wrap. En desktop nunca llega a activarse (width: fit-content).
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   a {
     color: z.$z-text-muted;
     text-decoration: none;
     border-radius: z.$z-radius-sm;
+    white-space: nowrap;
     transition: color 0.15s ease;
     @include z.z-focus-ring;
 
@@ -31,6 +43,41 @@
   .material-icons {
     font-size: 1.05rem;
     color: z.$z-text-dim;
+    flex-shrink: 0;
+  }
+
+  &__home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: z.$z-radius-sm;
+    color: z.$z-text-muted;
+    text-decoration: none;
+    transition: color 0.15s ease, background 0.15s ease;
+    @include z.z-focus-ring;
+
+    .material-icons {
+      font-size: 1.15rem;
+      color: inherit;
+    }
+
+    &:hover {
+      color: z.$z-amber;
+      background: z.$z-surface-hover;
+    }
+  }
+
+  &__sep {
+    flex-shrink: 0;
+  }
+
+  &__crumb {
+    display: inline-flex;
+    flex-shrink: 0;
+    min-width: 0;
   }
 
   [aria-current='page'] {
@@ -43,6 +90,15 @@
   }
 }
 
+@media (max-width: 767px) {
+  .z-breadcrumbs {
+    // Mismo patrón de scroll horizontal + desvanecido a la derecha que
+    // game-selector.component.scss, para mantener consistencia de
+    // navegación en toda la sección Zombies.
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  }
+}
+
 @media (max-width: 480px) {
   .z-breadcrumbs {
     gap: 0.25rem;
@@ -52,5 +108,20 @@
 
   .z-breadcrumbs [aria-current='page'] {
     max-width: 55vw;
+  }
+
+  // Colapsa las migas intermedias (todas menos la primera y la actual) en
+  // una elipsis para que la cadena quepa en pantallas muy estrechas sin
+  // depender solo del scroll horizontal.
+  .z-breadcrumbs__crumb:not(.z-breadcrumbs__crumb--first):not(.z-breadcrumbs__crumb--last) {
+    > a,
+    > span {
+      display: none;
+    }
+
+    &::before {
+      content: '…';
+      color: z.$z-text-dim;
+    }
   }
 }

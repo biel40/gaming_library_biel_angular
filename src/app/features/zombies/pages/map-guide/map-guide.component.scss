@@ -19,7 +19,14 @@
     position: relative;
     aspect-ratio: 16 / 9;
     width: 100%;
-    max-height: 22rem;
+    // Fluid cap instead of a fixed rem value: a flat max-height fights the
+    // aspect-ratio once the container gets wide (desktop), forcing the box
+    // into an ultra-wide, heavily-cropped ratio (e.g. 3.5:1) that shows
+    // mostly sky/empty background instead of the map's subject. Scaling the
+    // cap with viewport width keeps the crop close to true 16:9 on mobile/
+    // tablet and only mildly widescreen (~2.5:1) on very large screens,
+    // same principle already applied to the hero banner in zombies-home.
+    max-height: clamp(18rem, 42vw, 30rem);
     border-radius: z.$z-radius-lg;
     border: 1px solid z.$z-border;
     background: z.$z-gradient-bg;
