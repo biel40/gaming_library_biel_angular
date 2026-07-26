@@ -11,6 +11,14 @@ import { UserService } from '../../services/user/user.service';
 import { GenreNormalizerService } from '../../services/genre-normalizer/genre-normalizer.service';
 import { PlatformNormalizerService } from '../../services/platform-normalizer/platform-normalizer.service';
 
+export type ActiveFilterId = 'genre' | 'company' | 'platform' | 'year' | 'sort';
+
+export interface ActiveFilterPill {
+    id: ActiveFilterId;
+    label: string;
+    icon: string;
+}
+
 @Component({
     selector: 'app-dashboard',
     templateUrl: './dashboard.component.html',
@@ -62,6 +70,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public showCompanyPanel = signal(false);
     public showPlatformPanel = signal(false);
     public showYearPanel = signal(false);
+    public showFilterSheet = signal(false);
 
     // Multi-select functionality
     public selectMode = signal(false);
@@ -300,13 +309,45 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return [...new Set(years)].sort((a, b) => b - a);
     });
 
+    // Active filters summary (used by the mobile sheet and the removable pills)
+    public activeFilterPills = computed<ActiveFilterPill[]>(() => {
+        const pills: ActiveFilterPill[] = [];
+
+        if (this.activeGenre() !== 'Todos') {
+            pills.push({ id: 'genre', label: this.activeGenre(), icon: 'category' });
+        }
+        if (this.activeCompany() !== 'Todos') {
+            pills.push({ id: 'company', label: this.activeCompany(), icon: 'business' });
+        }
+        if (this.activePlatform() !== 'Todos') {
+            pills.push({ id: 'platform', label: this.activePlatform(), icon: 'devices' });
+        }
+        if (this.activeYear() !== null) {
+            pills.push({ id: 'year', label: String(this.activeYear()), icon: 'event' });
+        }
+        if (this.sortMode() === 'best-rated') {
+            pills.push({ id: 'sort', label: 'Mejor valorados', icon: 'star' });
+        }
+
+        return pills;
+    });
+
+    public activeFiltersCount = computed(() => this.activeFilterPills().length);
+
+    public visibleGamesCount = computed(() => this.filteredGames().length + this.favoriteGames().length);
+
     // Helper method to normalize genre names
     public getNormalizedGenre(genre: string | undefined): string {
         return this._genreNormalizer.normalizeGenre(genre);
     }
 
     constructor() {
-        this._resizeListener = () => this.calculateItemsPerPage();
+        this._resizeListener = () => {
+            this.calculateItemsPerPage();
+            if (this.showFilterSheet() && window.innerWidth >= 768) {
+                this.closeFilterSheet();
+            }
+        };
 
         effect(() => {
             const isDark = this.theme() === 'dark';
@@ -474,6 +515,37 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public toggleSortMode() {
         this.sortMode.set(this.sortMode() === 'best-rated' ? 'default' : 'best-rated');
+    }
+
+    public openFilterSheet() {
+        this._closeAllPanels();
+        this.showFilterSheet.set(true);
+        document.body.style.overflow = 'hidden';
+    }
+
+    public closeFilterSheet() {
+        this.showFilterSheet.set(false);
+        document.body.style.overflow = '';
+    }
+
+    public removeFilter(id: ActiveFilterId) {
+        switch (id) {
+            case 'genre':
+                this.filterByGenre('Todos');
+                break;
+            case 'company':
+                this.filterByCompany('Todos');
+                break;
+            case 'platform':
+                this.filterByPlatform('Todos');
+                break;
+            case 'year':
+                this.filterByYear(null);
+                break;
+            case 'sort':
+                this.sortMode.set('default');
+                break;
+        }
     }
 
     public resetFilters() {

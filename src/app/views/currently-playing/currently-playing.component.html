@@ -68,6 +68,19 @@
                 </div>
             </div>
             }
+
+            <!-- Sort -->
+            <div class="filter-group">
+                <span class="filter-label">Orden</span>
+                <div class="chips-scroll">
+                    @for (option of sortOptions; track option.mode) {
+                    <button type="button" class="filter-chip" [class.active]="sortMode() === option.mode"
+                        (click)="setSortMode(option.mode)">
+                        {{ option.label }}
+                    </button>
+                    }
+                </div>
+            </div>
         </div>
 
         @if (getActiveFiltersCount() > 0) {
@@ -129,167 +142,150 @@
     <!-- Games Content -->
     @if (!loading() && !error() && hasFilteredGames()) {
     <main class="games-content">
-        <!-- Single platform view -->
-        @if (!hasMultiplePlatforms()) {
-        <div class="games-grid">
-            @for (game of filteredGames(); track game.id) {
-            <article class="game-card">
-                <div class="card-image">
-                    <img [src]="game.image_url" [alt]="game.name"
-                        onerror="this.src='/assets/images/placeholder-game.png'">
-                    <a class="quick-view" [routerLink]="['/game', game.id]">
-                        <span class="material-icons">visibility</span>
-                    </a>
-                </div>
+        <!-- FOCUS: what deserves your time right now -->
+        <section class="focus-section">
+            <header class="section-header">
+                <h2 class="section-title">
+                    <span class="material-icons">local_fire_department</span>
+                    Foco
+                </h2>
+            </header>
 
-                <div class="card-body">
-                    <h3 class="game-name">{{ game.name }}</h3>
-
-                    <div class="game-tags">
-                        @if (game.genre) {
-                        <span class="tag genre">{{ game.genre }}</span>
-                        }
-                        @if (game.platform) {
-                        <span class="tag platform">{{ game.platform }}</span>
-                        }
-                    </div>
-
-                    <!-- Hours Section -->
-                    <div class="hours-tracker">
-                        @if (editingHours() !== game.id) {
-                        <div class="hours-display">
-                            <span class="hours-icon">⏱️</span>
-                            <span class="hours-text">
-                                <span class="hours-value">{{ formatHours(game.hours_played || 0) }}</span>
-                            </span>
-                            @if (!isReadOnlyUser()) {
-                            <button class="edit-btn" (click)="startEditingHours(game.id!, game.hours_played || 0)">
-                                <span class="material-icons">edit</span>
-                            </button>
-                            }
-                        </div>
-                        } @else {
-                        <div class="hours-edit">
-                            <input type="number" [id]="'hours-' + game.id" min="0" step="0.5" [ngModel]="tempHours()"
-                                (ngModelChange)="updateTempHours($event)" placeholder="Horas">
-                            <div class="edit-actions">
-                                <button class="save-btn" (click)="saveHours(game)">
-                                    <span class="material-icons">check</span>
-                                </button>
-                                <button class="cancel-btn" (click)="cancelEditingHours()">
-                                    <span class="material-icons">close</span>
-                                </button>
-                            </div>
-                        </div>
-                        }
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="card-actions">
-                        @if (!isReadOnlyUser()) {
-                        <button class="btn-pause" (click)="toggleCurrentlyPlaying(game)">
-                            <span class="material-icons">pause</span>
-                            Pausar
-                        </button>
-                        }
-                        <a class="btn-view" [routerLink]="['/game', game.id]">
-                            <span class="material-icons">info</span>
-                            Detalles
+            <div class="focus-grid">
+                @for (game of focusGames(); track game.id) {
+                <article class="focus-card">
+                    <div class="focus-media">
+                        <img [src]="game.image_url" [alt]="game.name"
+                            onerror="this.src='/assets/images/placeholder-game.png'">
+                        <span class="focus-rank">{{ $index + 1 }}</span>
+                        <img class="focus-platform" [src]="getPlatformIcon(platformOf(game))" [alt]="platformOf(game)"
+                            [title]="platformOf(game)">
+                        <a class="quick-view" [routerLink]="['/game', game.id]" title="Ver detalles">
+                            <span class="material-icons">visibility</span>
                         </a>
                     </div>
-                </div>
-            </article>
-            }
-        </div>
-        } @else {
-        <!-- Multiple platforms view -->
-        <div class="platforms-list">
-            @for (platformGroup of gamesByPlatform(); track platformGroup.platform) {
-            <section class="platform-group" [ngClass]="getPlatformClass(platformGroup.platform)">
-                <header class="platform-header">
-                    <img [src]="getPlatformIcon(platformGroup.platform)" [alt]="platformGroup.platform" class="platform-icon" [title]="platformGroup.platform">
-                    <h2 class="platform-name">{{ platformGroup.platform }}</h2>
-                    <div class="platform-meta">
-                        <span class="count">{{ platformGroup.games.length }} juego{{ platformGroup.games.length !== 1 ?
-                            's' : '' }}</span>
-                        <span class="divider">•</span>
-                        <span class="hours">{{ formatHours(getPlatformHours(platformGroup.platform)) }}</span>
-                    </div>
-                </header>
 
-                <div class="games-grid">
-                    @for (game of platformGroup.games; track game.id) {
-                    <article class="game-card">
-                        <div class="card-image">
-                            <img [src]="game.image_url" [alt]="game.name"
-                                onerror="this.src='/assets/images/placeholder-game.png'">
-                            <a class="quick-view" [routerLink]="['/game', game.id]">
-                                <span class="material-icons">visibility</span>
-                            </a>
+                    <div class="focus-body">
+                        <h3 class="game-name">{{ game.name }}</h3>
+
+                        <div class="game-tags">
+                            <span class="tag genre">{{ genreOf(game) }}</span>
+                            <span class="tag platform">{{ platformOf(game) }}</span>
                         </div>
 
-                        <div class="card-body">
-                            <h3 class="game-name">{{ game.name }}</h3>
-
-                            <div class="game-tags">
-                                @if (game.genre) {
-                                <span class="tag genre">{{ game.genre }}</span>
-                                }
-                            </div>
-
-                            <!-- Hours Section -->
-                            <div class="hours-tracker">
-                                @if (editingHours() !== game.id) {
-                                <div class="hours-display">
-                                    <span class="hours-icon">⏱️</span>
-                                    <span class="hours-text">
-                                        <span class="hours-value">{{ formatHours(game.hours_played || 0) }}</span>
-                                    </span>
-                                    @if (!isReadOnlyUser()) {
-                                    <button class="edit-btn"
-                                        (click)="startEditingHours(game.id!, game.hours_played || 0)">
-                                        <span class="material-icons">edit</span>
-                                    </button>
-                                    }
+                        <div class="hours-tracker">
+                            @if (editingHours() !== game.id) {
+                            <div class="hours-display">
+                                <span class="hours-value">{{ formatHours(game.hours_played || 0) }}</span>
+                                <div class="hours-bar" [attr.aria-label]="'Progreso relativo de horas'">
+                                    <span class="hours-bar-fill" [style.width.%]="hoursPercent(game)"></span>
                                 </div>
-                                } @else {
-                                <div class="hours-edit">
-                                    <input type="number" [id]="'hours-' + game.id" min="0" step="0.5"
-                                        [ngModel]="tempHours()" (ngModelChange)="updateTempHours($event)"
-                                        placeholder="Horas">
-                                    <div class="edit-actions">
-                                        <button class="save-btn" (click)="saveHours(game)">
-                                            <span class="material-icons">check</span>
-                                        </button>
-                                        <button class="cancel-btn" (click)="cancelEditingHours()">
-                                            <span class="material-icons">close</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                }
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="card-actions">
                                 @if (!isReadOnlyUser()) {
-                                <button class="btn-pause" (click)="toggleCurrentlyPlaying(game)">
-                                    <span class="material-icons">pause</span>
-                                    Pausar
+                                <button type="button" class="edit-btn" title="Editar horas"
+                                    (click)="startEditingHours(game.id!, game.hours_played || 0)">
+                                    <span class="material-icons">edit</span>
                                 </button>
                                 }
-                                <a class="btn-view" [routerLink]="['/game', game.id]">
-                                    <span class="material-icons">info</span>
-                                    Detalles
-                                </a>
                             </div>
+                            } @else {
+                            <ng-container
+                                *ngTemplateOutlet="hoursEditor; context: { $implicit: game }"></ng-container>
+                            }
                         </div>
-                    </article>
-                    }
-                </div>
-            </section>
-            }
-        </div>
+
+                        <div class="card-actions">
+                            @if (!isReadOnlyUser()) {
+                            <button type="button" class="btn-pause" (click)="toggleCurrentlyPlaying(game)">
+                                <span class="material-icons">pause</span>
+                                Pausar
+                            </button>
+                            }
+                            <a class="btn-view" [routerLink]="['/game', game.id]">
+                                <span class="material-icons">info</span>
+                                Detalles
+                            </a>
+                        </div>
+                    </div>
+                </article>
+                }
+            </div>
+        </section>
+
+        <!-- BACKLOG: compact scannable list -->
+        @if (hasBacklogGames()) {
+        <section class="backlog-section">
+            <header class="section-header">
+                <h2 class="section-title">
+                    <span class="material-icons">list</span>
+                    En curso
+                </h2>
+                <span class="section-hint">{{ backlogGames().length }} juego{{ backlogGames().length !== 1 ? 's' : '' }}
+                    más abiertos</span>
+            </header>
+
+            <div class="backlog-list">
+                @for (game of backlogGames(); track game.id) {
+                <article class="backlog-row">
+                    <a class="row-thumb" [routerLink]="['/game', game.id]">
+                        <img [src]="game.image_url" [alt]="game.name"
+                            onerror="this.src='/assets/images/placeholder-game.png'">
+                    </a>
+
+                    <div class="row-info">
+                        <h3 class="row-name">{{ game.name }}</h3>
+                        <div class="row-meta">
+                            <img class="row-platform-icon" [src]="getPlatformIcon(platformOf(game))"
+                                [alt]="platformOf(game)">
+                            <span class="row-platform">{{ platformOf(game) }}</span>
+                            <span class="row-divider">•</span>
+                            <span class="row-genre">{{ genreOf(game) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="row-hours">
+                        @if (editingHours() !== game.id) {
+                        <span class="hours-value">{{ formatHours(game.hours_played || 0) }}</span>
+                        @if (!isReadOnlyUser()) {
+                        <button type="button" class="edit-btn" title="Editar horas"
+                            (click)="startEditingHours(game.id!, game.hours_played || 0)">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        }
+                        } @else {
+                        <ng-container *ngTemplateOutlet="hoursEditor; context: { $implicit: game }"></ng-container>
+                        }
+                    </div>
+
+                    <div class="row-actions">
+                        @if (!isReadOnlyUser()) {
+                        <button type="button" class="icon-btn pause" title="Pausar" (click)="toggleCurrentlyPlaying(game)">
+                            <span class="material-icons">pause</span>
+                        </button>
+                        }
+                        <a class="icon-btn view" [routerLink]="['/game', game.id]" title="Detalles">
+                            <span class="material-icons">info</span>
+                        </a>
+                    </div>
+                </article>
+                }
+            </div>
+        </section>
         }
     </main>
     }
 </div>
+
+<ng-template #hoursEditor let-game>
+    <div class="hours-edit">
+        <input type="number" [id]="'hours-' + game.id" min="0" step="0.5" [ngModel]="tempHours()"
+            (ngModelChange)="updateTempHours($event)" placeholder="Horas">
+        <div class="edit-actions">
+            <button type="button" class="save-btn" title="Guardar" (click)="saveHours(game)">
+                <span class="material-icons">check</span>
+            </button>
+            <button type="button" class="cancel-btn" title="Cancelar" (click)="cancelEditingHours()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+    </div>
+</ng-template>

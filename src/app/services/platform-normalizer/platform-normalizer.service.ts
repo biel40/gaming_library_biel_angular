@@ -36,6 +36,10 @@ export class PlatformNormalizerService {
             variants: ['nintendo switch', 'switch', 'ns']
         },
         {
+            normalized: 'Nintendo Switch 2',
+            variants: ['nintendo switch 2', 'switch 2', 'ns2', 'nintendo switch2', 'switch2']
+        },
+        {
             normalized: 'Nintendo 64',
             variants: ['nintendo 64', 'n64', 'nintendo64']
         },
@@ -166,6 +170,7 @@ export class PlatformNormalizerService {
         'Nintendo DS': 'Nintendo',
         'Nintendo 3DS': 'Nintendo',
         'Nintendo Switch': 'Nintendo',
+        'Nintendo Switch 2': 'Nintendo',
         'Nintendo 64': 'Nintendo',
         'GameCube': 'Nintendo',
         'Wii': 'Nintendo',

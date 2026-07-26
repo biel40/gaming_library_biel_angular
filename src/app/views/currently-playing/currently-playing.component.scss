@@ -3,10 +3,15 @@
 @use "../dashboard/styles/mixins" as mixins;
 
 .currently-playing-container {
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1760px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 1.5rem 2rem;
   min-height: 100vh;
+
+  @media (max-width: 1024px) {
+    padding: 1.25rem;
+  }
 
   @media (max-width: 768px) {
     padding: 1rem;
@@ -314,6 +319,15 @@
   transition: all 0.2s ease;
   white-space: nowrap;
   flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible {
+    outline: 2px solid vars.$accent-gold;
+    outline-offset: 2px;
+  }
 
   &:hover {
     background: vars.$white-20;
@@ -325,6 +339,10 @@
     border-color: vars.$accent-gold;
     color: vars.$bg-primary;
     font-weight: 600;
+  }
+
+  @media (max-width: 767px) {
+    box-shadow: none;
   }
 }
 
@@ -448,13 +466,67 @@
 // GAMES CONTENT
 // ============================================
 .games-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
   margin-top: 0.5rem;
+
+  @media (max-width: 600px) {
+    gap: 1.5rem;
+  }
 }
 
-.games-grid {
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid vars.$border-color;
+
+  @media (max-width: 600px) {
+    margin-bottom: 0.75rem;
+    gap: 0.5rem;
+  }
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: vars.$text-dark;
+  margin: 0;
+
+  .material-icons {
+    font-size: 1.25rem;
+    color: vars.$accent-gold;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 1rem;
+  }
+}
+
+.section-hint {
+  font-size: 0.8rem;
+  color: vars.$text-muted;
+
+  @media (max-width: 600px) {
+    font-size: 0.75rem;
+    width: 100%;
+  }
+}
+
+// ============================================
+// FOCUS CARDS
+// ============================================
+.focus-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
 
   @media (max-width: 600px) {
     grid-template-columns: 1fr;
@@ -462,25 +534,22 @@
   }
 }
 
-// ============================================
-// GAME CARD
-// ============================================
-.game-card {
-  background: vars.$bg-card;
-  border: 1px solid vars.$border-color;
-  border-radius: 14px;
+.focus-card {
+  background: linear-gradient(160deg, vars.$gold-10 0%, vars.$white-5 45%);
+  border: 1px solid vars.$gold-30;
+  border-radius: 16px;
   overflow: hidden;
-  transition: all 0.25s ease;
   display: flex;
   flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 
   &:hover {
     transform: translateY(-4px);
+    border-color: vars.$accent-gold;
     box-shadow: vars.$box-shadow-lg;
-    border-color: rgba(255, 255, 255, 0.2);
 
-    .card-image img {
-      transform: scale(1.05);
+    .focus-media img {
+      transform: scale(1.04);
     }
 
     .quick-view {
@@ -488,20 +557,20 @@
     }
   }
 
-  // Mobile: Horizontal layout
   @media (max-width: 600px) {
     flex-direction: row;
-    min-height: 140px;
+    border-radius: 14px;
 
     &:hover {
       transform: none;
+      box-shadow: none;
     }
   }
 }
 
-.card-image {
+.focus-media {
   position: relative;
-  height: 160px;
+  height: 180px;
   overflow: hidden;
   flex-shrink: 0;
 
@@ -512,12 +581,41 @@
     transition: transform 0.3s ease;
   }
 
+  .focus-rank {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.6rem;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: vars.$gradient-gold;
+    color: vars.$bg-primary;
+    font-size: 0.85rem;
+    font-weight: 800;
+    border-radius: 50%;
+  }
+
+  .focus-platform {
+    position: absolute;
+    bottom: 0.6rem;
+    left: 0.6rem;
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    border-radius: 8px;
+    padding: 4px;
+  }
+
   .quick-view {
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 36px;
-    height: 36px;
+    top: 0.6rem;
+    right: 0.6rem;
+    width: 34px;
+    height: 34px;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(4px);
     border-radius: 50%;
@@ -528,9 +626,10 @@
     text-decoration: none;
     opacity: 0;
     transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 
     .material-icons {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
 
     &:hover {
@@ -540,42 +639,47 @@
   }
 
   @media (max-width: 600px) {
-    width: 110px;
+    width: 120px;
     height: auto;
-    min-height: 140px;
+    min-height: 150px;
 
     .quick-view {
-      opacity: 1;
-      top: auto;
-      bottom: 0.5rem;
-      right: 0.5rem;
-      width: 32px;
-      height: 32px;
+      display: none;
+    }
 
-      .material-icons {
-        font-size: 1rem;
-      }
+    .focus-rank {
+      top: 0.4rem;
+      left: 0.4rem;
+      width: 24px;
+      height: 24px;
+      font-size: 0.75rem;
+    }
+
+    .focus-platform {
+      width: 26px;
+      height: 26px;
+      bottom: 0.4rem;
+      left: 0.4rem;
     }
   }
 }
 
-.card-body {
+.focus-body {
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.65rem;
   flex: 1;
   min-width: 0;
 
   @media (max-width: 600px) {
     padding: 0.75rem;
-    gap: 0.5rem;
-    justify-content: space-between;
+    gap: 0.45rem;
   }
 }
 
 .game-name {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: vars.$text-dark;
   margin: 0;
@@ -588,7 +692,6 @@
 
   @media (max-width: 600px) {
     font-size: 0.95rem;
-    -webkit-line-clamp: 2;
   }
 }
 
@@ -624,67 +727,81 @@
 }
 
 // ============================================
-// HOURS TRACKER
+// HOURS
 // ============================================
 .hours-tracker {
   margin-top: auto;
-
-  @media (max-width: 600px) {
-    margin-top: 0;
-  }
 }
 
 .hours-display {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.6rem;
   padding: 0.5rem 0.75rem;
   background: vars.$white-5;
   border-radius: 8px;
 
-  .hours-icon {
-    font-size: 0.9rem;
-  }
-
   .hours-value {
-    font-weight: 600;
+    font-weight: 700;
     color: vars.$accent-gold;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
   }
 
-  .edit-btn {
-    margin-left: auto;
-    background: none;
-    border: none;
-    color: vars.$text-muted;
-    cursor: pointer;
-    padding: 0.2rem;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .hours-bar {
+    flex: 1;
+    height: 5px;
+    background: vars.$white-10;
+    border-radius: 3px;
+    overflow: hidden;
 
-    .material-icons {
-      font-size: 0.9rem;
-    }
-
-    &:hover {
-      background: vars.$white-10;
-      color: vars.$accent-gold;
+    .hours-bar-fill {
+      display: block;
+      height: 100%;
+      background: vars.$gradient-gold;
+      border-radius: 3px;
+      transition: width 0.3s ease;
     }
   }
 
   @media (max-width: 600px) {
     padding: 0.4rem 0.6rem;
 
-    .hours-icon {
-      font-size: 0.8rem;
-    }
-
     .hours-value {
-      font-size: 0.8rem;
+      font-size: 0.9rem;
     }
+  }
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  color: vars.$text-muted;
+  cursor: pointer;
+  padding: 0.2rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+
+  .material-icons {
+    font-size: 0.95rem;
+  }
+
+  &:focus-visible {
+    outline: 2px solid vars.$accent-gold;
+    outline-offset: 2px;
+  }
+
+  &:hover {
+    background: vars.$white-10;
+    color: vars.$accent-gold;
   }
 }
 
@@ -696,7 +813,7 @@
   input {
     flex: 1;
     min-width: 0;
-    padding: 0.5rem 0.75rem;
+    padding: 0.45rem 0.6rem;
     background: vars.$white-10;
     border: 1px solid vars.$accent-gold;
     border-radius: 8px;
@@ -716,8 +833,8 @@
 
   .save-btn,
   .cancel-btn {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -725,9 +842,19 @@
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
 
     .material-icons {
       font-size: 1rem;
+    }
+
+    &:focus-visible {
+      outline: 2px solid vars.$accent-gold;
+      outline-offset: 2px;
     }
   }
 
@@ -757,11 +884,6 @@
 .card-actions {
   display: flex;
   gap: 0.5rem;
-  margin-top: 0.5rem;
-
-  @media (max-width: 600px) {
-    margin-top: 0;
-  }
 }
 
 .btn-pause,
@@ -779,9 +901,18 @@
   cursor: pointer;
   text-decoration: none;
   transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 
   .material-icons {
     font-size: 1rem;
+  }
+
+  &:focus-visible {
+    outline: 2px solid vars.$accent-gold;
+    outline-offset: 2px;
   }
 
   @media (max-width: 600px) {
@@ -802,6 +933,13 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
   }
+
+  @media (max-width: 767px) {
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
 }
 
 .btn-view {
@@ -812,135 +950,209 @@
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
   }
+
+  @media (max-width: 767px) {
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
 }
 
 // ============================================
-// PLATFORMS LIST (Multiple platforms view)
+// BACKLOG LIST (compact rows)
 // ============================================
-.platforms-list {
+.backlog-list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-
-  @media (max-width: 600px) {
-    gap: 1rem;
-  }
+  gap: 0.5rem;
 }
 
-.platform-group {
-  background: linear-gradient(135deg, vars.$white-10 0%, vars.$white-5 100%);
+.backlog-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 190px auto;
+  grid-template-areas: "thumb info hours actions";
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  background: vars.$white-5;
   border: 1px solid vars.$border-color;
-  border-radius: 16px;
-  padding: 1.25rem;
-  transition: all 0.2s ease;
+  border-radius: 12px;
+  transition: background 0.2s ease, border-color 0.2s ease;
 
   &:hover {
-    border-color: rgba(255, 255, 255, 0.15);
+    background: vars.$white-10;
+    border-color: vars.$white-20;
   }
 
   @media (max-width: 600px) {
-    padding: 1rem;
-    border-radius: 12px;
-  }
-
-  .games-grid {
-    margin-top: 1rem;
-
-    @media (max-width: 600px) {
-      margin-top: 0.75rem;
-    }
-  }
-
-  // Nintendo Switch specific styling
-  &.platform-nintendoswitch {
-    background: linear-gradient(135deg, rgba(230, 126, 34, 0.15) 0%, rgba(52, 152, 219, 0.15) 100%);
-    border: 2px solid rgba(230, 126, 34, 0.3);
-
-    .platform-header .platform-name {
-      background: linear-gradient(135deg, #e67e22 0%, #3498db 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .platform-header .platform-icon {
-      background: vars.$white-10;
-      width: 40px;
-      height: 40px;
-      object-fit: contain;
-      padding: 4px;
-      border-radius: 10px;
-    }
-
-    .game-card {
-      border-color: rgba(230, 126, 34, 0.2);
-
-      &:hover {
-        border-color: rgba(230, 126, 34, 0.4);
-        box-shadow: 0 8px 24px rgba(230, 126, 34, 0.2);
-      }
-    }
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "thumb info actions"
+      "thumb hours actions";
+    row-gap: 0.35rem;
+    column-gap: 0.65rem;
+    padding: 0.5rem;
   }
 }
 
-.platform-header {
+.row-thumb {
+  grid-area: thumb;
+  display: block;
+  width: 64px;
+  height: 64px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 600px) {
+    width: 56px;
+    height: 56px;
+    align-self: center;
+  }
+}
+
+.row-info {
+  grid-area: info;
+  min-width: 0;
+}
+
+.row-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: vars.$text-dark;
+  margin: 0 0 0.2rem 0;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @media (max-width: 600px) {
+    font-size: 0.85rem;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+.row-meta {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid vars.$border-color;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: vars.$text-light;
+  min-width: 0;
 
-  .platform-icon {
-    width: 40px;
-    height: 40px;
+  .row-platform-icon {
+    width: 16px;
+    height: 16px;
     object-fit: contain;
-    background: vars.$white-10;
-    border-radius: 10px;
-    padding: 4px;
-
-    @media (max-width: 600px) {
-      width: 36px;
-      height: 36px;
-    }
+    flex-shrink: 0;
   }
 
-  .platform-name {
-    font-size: 1.15rem;
+  .row-platform,
+  .row-genre {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .row-divider {
+    opacity: 0.4;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 0.7rem;
+  }
+}
+
+.row-hours {
+  grid-area: hours;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  min-width: 0;
+
+  .hours-value {
     font-weight: 700;
-    margin: 0;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-
-    @media (max-width: 600px) {
-      font-size: 1rem;
-    }
+    color: vars.$accent-gold;
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
   }
 
-  .platform-meta {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8rem;
-    color: vars.$text-light;
+  .hours-edit input {
+    max-width: 90px;
+  }
 
-    .hours {
-      color: #667eea;
-      font-weight: 600;
-    }
+  @media (max-width: 600px) {
+    justify-content: flex-start;
 
-    .divider {
-      opacity: 0.5;
-    }
-
-    @media (max-width: 600px) {
-      margin-left: 0;
-      width: 100%;
-      margin-top: 0.5rem;
-      font-size: 0.75rem;
+    .hours-value {
+      font-size: 0.8rem;
     }
   }
 }
+
+.row-actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  transition: all 0.2s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+
+  .material-icons {
+    font-size: 1.05rem;
+  }
+
+  &:focus-visible {
+    outline: 2px solid vars.$accent-gold;
+    outline-offset: 2px;
+  }
+
+  &.pause {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+  }
+
+  &.view {
+    background: vars.$gradient-blue;
+  }
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+
+  @media (max-width: 600px) {
+    width: 32px;
+    height: 32px;
+  }
+}
+

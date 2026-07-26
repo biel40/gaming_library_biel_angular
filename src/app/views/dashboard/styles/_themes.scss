@@ -85,6 +85,122 @@
     }
   }
 
+  // ── Filters bar / active pills / bottom sheet ───────────────────────────────
+  .filters-trigger,
+  .filters-sort {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.12);
+    color: #1a1a2e;
+  }
+
+  .filters-trigger.has-filters {
+    color: #1a1a2e;
+  }
+
+  .filters-sort {
+    .material-icons {
+      color: #c8960a;
+    }
+
+    &.active {
+      background: rgba(200, 150, 10, 0.14);
+      border-color: #c8960a;
+      color: #a67c00;
+    }
+  }
+
+  .filters-result-count {
+    color: rgba(0, 0, 0, 0.55);
+  }
+
+  .active-filter-pill {
+    background: rgba(200, 150, 10, 0.14);
+    border-color: #c8960a;
+    color: #8a6800;
+
+    .pill-remove {
+      background: rgba(200, 150, 10, 0.22);
+    }
+
+    &:hover {
+      background: rgba(200, 150, 10, 0.24);
+    }
+  }
+
+  .clear-all-filters {
+    border-color: rgba(0, 0, 0, 0.25);
+    color: rgba(0, 0, 0, 0.6);
+
+    &:hover {
+      border-color: rgba(0, 0, 0, 0.5);
+      color: #1a1a2e;
+    }
+  }
+
+  .filters .expandable-panel {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .filter-sheet {
+    background: linear-gradient(135deg, #f7f9fc 0%, #eef2f8 100%);
+    border-top-color: rgba(0, 0, 0, 0.08);
+
+    .sheet-header,
+    .sheet-footer {
+      border-color: rgba(0, 0, 0, 0.08);
+    }
+
+    .sheet-footer {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .sheet-grabber {
+      background: rgba(0, 0, 0, 0.18);
+    }
+
+    .sheet-title-row h3 {
+      color: #1a1a2e;
+    }
+
+    .sheet-close {
+      background: rgba(0, 0, 0, 0.06);
+      color: rgba(0, 0, 0, 0.65);
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.12);
+      }
+    }
+
+    .sheet-group-header h4 {
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    .sheet-group-value {
+      color: #a67c00;
+    }
+
+    .sheet-option {
+      background: #ffffff;
+      border-color: rgba(0, 0, 0, 0.12);
+      color: #1a1a2e;
+
+      &.selected {
+        color: #1a1a2e;
+        border-color: #c8960a;
+      }
+    }
+
+    .sheet-reset {
+      border-color: rgba(0, 0, 0, 0.2);
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .sheet-apply {
+      color: #1a1a2e;
+    }
+  }
+
   // ── View-mode toggle buttons ────────────────────────────────────────────────
   .view-btn {
     color: rgba(0, 0, 0, 0.55);

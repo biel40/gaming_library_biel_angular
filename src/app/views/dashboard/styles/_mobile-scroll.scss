@@ -38,35 +38,6 @@
     .view-btn {
       transition-duration: 0.1s;
     }
-    
-    .filter-chips {
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-x: contain;
-    }
-  }
-}
-
-// Optimizaciones específicas para el scroll horizontal de filtros
-.filter-chips {
-  // Mejora el scroll horizontal en móviles
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-  scroll-behavior: smooth;
-  
-  @media (max-width: 767px) {
-    // Padding para mejor UX en móviles
-    padding: 0 1rem;
-    margin: 0 -1rem;
-    
-    // Mejora la fluidez del scroll horizontal
-    scroll-snap-type: x proximity;
-    
-    .filter-chip {
-      scroll-snap-align: center;
-      // Evita el parpadeo durante el scroll
-      -webkit-font-smoothing: antialiased;
-      backface-visibility: hidden;
-    }
   }
 }
 

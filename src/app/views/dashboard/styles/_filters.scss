@@ -2,14 +2,29 @@
 @use 'variables' as vars;
 @use 'mixins' as mix;
 
+// Reset compartido para cualquier control interactivo de la zona de filtros
+@mixin filter-button-reset {
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid vars.$accent-gold;
+    outline-offset: 2px;
+  }
+}
+
 // Filters section
 .filters {
   margin: 1.5rem 0;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  
+  gap: 0.5rem;
+
   // Animación para los filtros
   opacity: 0;
   transform: translateY(15px);
@@ -20,46 +35,166 @@
     width: 100%;
   }
 
-  .filter-controls {
-    @include mix.flex(row, center, flex-start, 0.75rem);
-    flex-wrap: wrap;
-    padding: 0.5rem 0 0.75rem;
+  // ── Barra compacta: punto de entrada único en móvil ────────────────────────
+  .filters-bar {
+    display: none;
 
     @media (max-width: 767px) {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      overflow-y: visible;
-      padding: 0.25rem 0.5rem 0.75rem 0.5rem;
-      gap: 0.5rem;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-x: contain;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      &::-webkit-scrollbar { display: none; }
-      will-change: scroll-position;
-      transform: translateZ(0);
+      @include mix.flex(row, center, flex-start, 0.5rem);
+      padding: 0 0.25rem;
     }
   }
 
+  .filters-trigger,
+  .filters-sort {
+    @include filter-button-reset;
+    @include mix.flex(row, center, center, 0.4rem);
+    flex-shrink: 0;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border-radius: vars.$border-radius-xl;
+    border: 1px solid vars.$white-20;
+    background: vars.$bg-light;
+    color: vars.$text-medium;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+    .material-icons {
+      font-size: 1.15rem;
+    }
+  }
+
+  .filters-trigger {
+    &.has-filters {
+      background: vars.$gradient-gold;
+      border-color: vars.$accent-gold;
+      color: vars.$bg-primary;
+    }
+
+    .filters-badge {
+      @include mix.flex(row, center, center, 0);
+      min-width: 1.25rem;
+      height: 1.25rem;
+      padding: 0 0.35rem;
+      border-radius: vars.$border-radius-xl;
+      background: vars.$bg-primary;
+      color: vars.$accent-gold;
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+  }
+
+  .filters-sort {
+    .material-icons {
+      color: vars.$accent-gold;
+    }
+
+    &.active {
+      background: vars.$gold-10;
+      border-color: vars.$accent-gold;
+      color: vars.$accent-gold;
+    }
+  }
+
+  .filters-result-count {
+    margin-left: auto;
+    padding-right: 0.25rem;
+    color: vars.$text-muted;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  // ── Filtros aplicados: feedback inmediato y borrado individual ─────────────
+  .active-filters {
+    @include mix.flex(row, center, flex-start, 0.5rem);
+    flex-wrap: wrap;
+    padding: 0 0.25rem;
+  }
+
+  .active-filter-pill {
+    @include filter-button-reset;
+    @include mix.flex(row, center, center, 0.35rem);
+    min-height: 2rem;
+    padding: 0 0.4rem 0 0.75rem;
+    border-radius: vars.$border-radius-xl;
+    border: 1px solid vars.$accent-gold;
+    background: vars.$gold-10;
+    color: vars.$accent-gold;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: background 0.15s ease;
+
+    .pill-icon {
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    .pill-label {
+      @include mix.truncate;
+      max-width: 10rem;
+    }
+
+    .pill-remove {
+      font-size: 0.95rem;
+      padding: 0.15rem;
+      border-radius: 50%;
+      background: rgba(vars.$accent-gold, 0.18);
+    }
+
+    &:hover {
+      background: vars.$gold-30;
+    }
+  }
+
+  .clear-all-filters {
+    @include filter-button-reset;
+    @include mix.flex(row, center, center, 0.3rem);
+    min-height: 2rem;
+    padding: 0 0.75rem;
+    border-radius: vars.$border-radius-xl;
+    border: 1px dashed vars.$white-30;
+    background: transparent;
+    color: vars.$text-light;
+    font-size: 0.8rem;
+    font-weight: 500;
+
+    .material-icons {
+      font-size: 0.95rem;
+    }
+
+    &:hover {
+      color: vars.$white;
+      border-color: vars.$white;
+    }
+  }
+
+  // ── Controles desplegables: solo escritorio ────────────────────────────────
+  .filter-controls {
+    @include mix.flex(row, center, flex-start, 0.75rem);
+    flex-wrap: wrap;
+    padding: 0.5rem 0 0.25rem;
+
+    @media (max-width: 767px) {
+      display: none;
+    }
+  }
+
+  .filter-chips {
+    @include mix.flex(row, center, flex-start, 0.5rem);
+    flex-wrap: wrap;
+  }
+
   .filter-chips--years {
-    scroll-snap-type: x mandatory;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(4.75rem, 1fr));
+    gap: 0.5rem;
 
     .filter-chip--year {
-      @include mix.flex(row, center, center, 0.3rem);
-      min-width: 3.5rem;
+      justify-content: center;
       font-variant-numeric: tabular-nums;
-      letter-spacing: 0.01em;
-
-      .material-icons {
-        font-size: 0.9rem;
-        opacity: 0.85;
-      }
-
-      @media (max-width: 767px) {
-        min-width: 3.25rem;
-        padding: 0.5rem 0.85rem;
-      }
     }
   }
 
@@ -77,99 +212,20 @@
     }
   }
 
-  .filter-chips {
-    @include mix.flex(row, center, flex-start, 0.75rem);
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-    
-    @media (max-width: 767px) {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      overflow-y: visible;
-      padding: 0.5rem 0.5rem 0.75rem 0.5rem;
-      margin-bottom: 0.75rem;
-      gap: 0.5rem;
-
-      // Scroll suave horizontal
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-x: contain;
-      scroll-behavior: smooth;
-      scroll-snap-type: x proximity;
-
-      // Fade solo en el borde derecho para indicar que hay más chips
-      mask-image: linear-gradient(
-        to right,
-        black 85%,
-        transparent 100%
-      );
-      -webkit-mask-image: linear-gradient(
-        to right,
-        black 85%,
-        transparent 100%
-      );
-
-      // Oculta la scrollbar
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      &::-webkit-scrollbar {
-        display: none;
-      }
-
-      will-change: scroll-position;
-      transform: translateZ(0);
-      backface-visibility: hidden;
-    }
-  }
-  
   .filter-chip {
+    @include filter-button-reset;
+    @include mix.flex(row, center, center, 0.35rem);
     padding: 0.5rem 1rem;
     border-radius: vars.$border-radius-xl;
     background: vars.$bg-light;
     color: vars.$text-medium;
     font-size: 0.9rem;
     font-weight: 500;
-    cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: vars.$box-shadow-sm;
     border: 1px solid transparent;
+    white-space: nowrap;
 
-    // Elimina todo estilo nativo de botón (especialmente iOS Safari)
-    appearance: none;
-    -webkit-appearance: none;
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-
-    // Mantiene accesibilidad para navegación por teclado (no táctil)
-    &:focus-visible {
-      outline: 2px solid vars.$accent-gold;
-      outline-offset: 2px;
-    }
-    
-    // Optimizaciones de rendimiento
-    will-change: background-color, box-shadow;
-    backface-visibility: hidden;
-    
-    // Animación individual para cada chip
-    opacity: 0;
-    animation: chipFadeIn 1.5s ease forwards;
-    
-    @for $i from 1 through 40 {
-      &:nth-child(#{$i}) {
-        animation-delay: #{0.6 + $i * 0.05}s;
-      }
-    }
-    
-    @media (max-width: 767px) {
-      flex-shrink: 0;
-      white-space: nowrap;
-      scroll-snap-align: start;
-      padding: 0.55rem 1rem;
-      font-size: 0.875rem;
-      min-height: 2.25rem;
-      transition-duration: 0.12s;
-    }
-    
     &:hover {
       background: vars.$white-20;
       border-color: vars.$accent-gold;
@@ -181,70 +237,246 @@
       box-shadow: vars.$box-shadow-glow-gold;
       border-color: vars.$accent-gold;
       font-weight: 600;
-
-      @media (max-width: 767px) {
-        box-shadow: none;
-      }
     }
   }
 
   // Botón toggle genérico (género, empresa, plataforma, año)
   .filter-toggle-chip {
-    @include mix.flex(row, center, center, 0.3rem);
     flex-shrink: 0;
+
+    .material-icons {
+      font-size: 1rem;
+    }
 
     .year-label {
       font-variant-numeric: tabular-nums;
     }
 
     .filter-arrow {
-      font-size: 1rem;
       opacity: 0.65;
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
-    .filter-clear-icon {
-      font-size: 0.85rem;
-      opacity: 0.7;
-      border-radius: 50%;
-      transition: opacity 0.15s ease, background 0.15s ease;
-      line-height: 1;
+    // "Panel abierto" se comunica con contorno; el relleno dorado queda
+    // reservado en exclusiva para "filtro aplicado".
+    &.is-open {
+      border-color: vars.$accent-gold;
+      background: vars.$gold-10;
 
-      &:hover {
+      .filter-arrow {
         opacity: 1;
-        background: rgba(vars.$bg-primary, 0.2);
+        transform: rotate(180deg);
       }
     }
 
     &.active .filter-arrow {
-      opacity: 1;
+      opacity: 0.9;
     }
   }
 
   // Panel expandible genérico (género, empresa, plataforma, año)
   .expandable-panel {
-    animation: yearPanelIn 0.2s ease forwards;
+    padding: 0.75rem;
+    border-radius: vars.$border-radius-lg;
+    border: 1px solid vars.$white-10;
+    background: vars.$white-5;
+    animation: filterPanelIn 0.18s ease forwards;
 
-    .filter-chips {
-      padding: 0.25rem 0 0.25rem;
-      margin-bottom: 0.25rem;
-    }
-
-    // Cancelar la animación individual de chips para que aparezcan de golpe
-    .filter-chip {
-      animation: none;
-      opacity: 1;
+    @media (max-width: 767px) {
+      display: none;
     }
   }
 }
 
-// Animación para los chips de filtro (solo opacity para evitar problemas con z-index)
-@keyframes chipFadeIn {
-  from {
-    opacity: 0;
+// ── Hoja inferior de filtros (móvil) ─────────────────────────────────────────
+.filter-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  padding: 0;
+  background: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  animation: sheetBackdropIn 0.2s ease forwards;
+
+  @media (min-width: 768px) {
+    display: none;
   }
-  to {
-    opacity: 1;
+}
+
+.filter-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1201;
+  display: flex;
+  flex-direction: column;
+  max-height: 88vh;
+  border-radius: 1.25rem 1.25rem 0 0;
+  border-top: 1px solid vars.$white-10;
+  background: vars.$gradient-bg;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.5);
+  animation: sheetIn 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+
+  .sheet-header {
+    flex-shrink: 0;
+    padding: 0.5rem 1rem 0.75rem;
+    border-bottom: 1px solid vars.$white-10;
+  }
+
+  .sheet-grabber {
+    display: block;
+    width: 2.5rem;
+    height: 0.25rem;
+    margin: 0 auto 0.75rem;
+    border-radius: vars.$border-radius-xl;
+    background: vars.$white-20;
+  }
+
+  .sheet-title-row {
+    @include mix.flex(row, center, space-between, 0.5rem);
+
+    h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: vars.$text-dark;
+    }
+  }
+
+  .sheet-close {
+    @include filter-button-reset;
+    @include mix.flex(row, center, center, 0);
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: none;
+    background: vars.$white-10;
+    color: vars.$text-medium;
+
+    .material-icons {
+      font-size: 1.25rem;
+    }
+
+    &:hover {
+      background: vars.$white-20;
+    }
+  }
+
+  .sheet-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .sheet-group-header {
+    @include mix.flex(row, baseline, space-between, 0.5rem);
+    margin-bottom: 0.6rem;
+
+    h4 {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: vars.$text-muted;
+    }
+  }
+
+  .sheet-group-value {
+    @include mix.truncate;
+    max-width: 55%;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: vars.$accent-gold;
+  }
+
+  .sheet-options {
+    @include mix.flex(row, center, flex-start, 0.5rem);
+    flex-wrap: wrap;
+  }
+
+  .sheet-options--years {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+  }
+
+  .sheet-option {
+    @include filter-button-reset;
+    @include mix.flex(row, center, center, 0.35rem);
+    min-height: 2.75rem;
+    padding: 0 0.95rem;
+    border-radius: vars.$border-radius-xl;
+    border: 1px solid vars.$white-10;
+    background: vars.$white-5;
+    color: vars.$text-medium;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+    .material-icons {
+      font-size: 1rem;
+    }
+
+    &.selected {
+      background: vars.$gradient-gold;
+      border-color: vars.$accent-gold;
+      color: vars.$bg-primary;
+      font-weight: 700;
+    }
+  }
+
+  .sheet-footer {
+    flex-shrink: 0;
+    @include mix.flex(row, center, space-between, 0.75rem);
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+    border-top: 1px solid vars.$white-10;
+    background: rgba(vars.$bg-primary, 0.85);
+  }
+
+  .sheet-reset,
+  .sheet-apply {
+    @include filter-button-reset;
+    @include mix.flex(row, center, center, 0.35rem);
+    min-height: 2.9rem;
+    border-radius: vars.$border-radius-xl;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .sheet-reset {
+    flex: 0 0 auto;
+    padding: 0 1.25rem;
+    border: 1px solid vars.$white-20;
+    background: transparent;
+    color: vars.$text-medium;
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+  }
+
+  .sheet-apply {
+    flex: 1;
+    padding: 0 1.25rem;
+    border: none;
+    background: vars.$gradient-gold;
+    color: vars.$bg-primary;
   }
 }
 
@@ -260,8 +492,8 @@
   }
 }
 
-// Animación de entrada para el panel de años expandible
-@keyframes yearPanelIn {
+// Animación de entrada de los paneles expandibles de escritorio
+@keyframes filterPanelIn {
   from {
     opacity: 0;
     transform: translateY(-6px);
@@ -269,5 +501,34 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes sheetIn {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheetBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filters,
+  .filters .expandable-panel,
+  .filter-sheet,
+  .filter-sheet-backdrop {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }

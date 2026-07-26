@@ -148,66 +148,80 @@
 
     @if (!isLoading() && !error()) {
     <div class="filters">
-        <!-- Fila de controles: todos los toggles de filtro en una sola línea -->
-        <div class="filter-controls">
-            <button type="button" class="filter-chip filter-toggle-chip"
-                [class.active]="activeGenre() !== 'Todos' || showGenrePanel()" (click)="toggleGenrePanel()"
-                title="Filtrar por género">
-                <span>{{ activeGenre() !== 'Todos' ? activeGenre() : 'Género' }}</span>
-                @if (activeGenre() !== 'Todos') {
-                <span class="material-icons filter-clear-icon"
-                    (click)="filterByGenre('Todos'); $event.stopPropagation()"
-                    title="Quitar filtro de género">close</span>
+        <!-- Barra compacta: punto de entrada único a los filtros (principal en móvil) -->
+        <div class="filters-bar">
+            <button type="button" class="filters-trigger" [class.has-filters]="activeFiltersCount() > 0"
+                (click)="openFilterSheet()" [attr.aria-expanded]="showFilterSheet()" title="Abrir filtros">
+                <span class="material-icons">tune</span>
+                <span class="trigger-label">Filtros</span>
+                @if (activeFiltersCount() > 0) {
+                <span class="filters-badge">{{ activeFiltersCount() }}</span>
                 }
-                <span class="material-icons filter-arrow">{{ showGenrePanel() ? 'expand_less' : 'expand_more' }}</span>
+            </button>
+
+            <button type="button" class="filters-sort" [class.active]="sortMode() === 'best-rated'"
+                (click)="toggleSortMode()" title="Ordenar por mis mejores valorados">
+                <span class="material-icons">star</span>
+                <span>Mejor valorados</span>
+            </button>
+
+            <span class="filters-result-count">{{ visibleGamesCount() }} juegos</span>
+        </div>
+
+        <!-- Filtros aplicados: siempre visibles y eliminables de uno en uno -->
+        @if (activeFilterPills().length > 0) {
+        <div class="active-filters">
+            @for (pill of activeFilterPills(); track pill.id) {
+            <button type="button" class="active-filter-pill" (click)="removeFilter(pill.id)"
+                [title]="'Quitar filtro: ' + pill.label">
+                <span class="material-icons pill-icon">{{ pill.icon }}</span>
+                <span class="pill-label">{{ pill.label }}</span>
+                <span class="material-icons pill-remove">close</span>
+            </button>
+            }
+            <button type="button" class="clear-all-filters" (click)="resetFilters()" title="Quitar todos los filtros">
+                <span class="material-icons">filter_alt_off</span>
+                Limpiar todo
+            </button>
+        </div>
+        }
+
+        <!-- Controles desplegables (solo escritorio) -->
+        <div class="filter-controls">
+            <button type="button" class="filter-chip filter-toggle-chip" [class.active]="activeGenre() !== 'Todos'"
+                [class.is-open]="showGenrePanel()" (click)="toggleGenrePanel()" title="Filtrar por género">
+                <span>{{ activeGenre() !== 'Todos' ? activeGenre() : 'Género' }}</span>
+                <span class="material-icons filter-arrow">expand_more</span>
             </button>
 
             @if (uniqueCompanies().length > 2) {
-            <button type="button" class="filter-chip filter-toggle-chip"
-                [class.active]="activeCompany() !== 'Todos' || showCompanyPanel()" (click)="toggleCompanyPanel()"
-                title="Filtrar por plataforma">
+            <button type="button" class="filter-chip filter-toggle-chip" [class.active]="activeCompany() !== 'Todos'"
+                [class.is-open]="showCompanyPanel()" (click)="toggleCompanyPanel()" title="Filtrar por plataforma">
                 <span>{{ activeCompany() !== 'Todos' ? activeCompany() : 'Plataforma' }}</span>
-                @if (activeCompany() !== 'Todos') {
-                <span class="material-icons filter-clear-icon"
-                    (click)="filterByCompany('Todos'); $event.stopPropagation()"
-                    title="Quitar filtro de plataforma">close</span>
-                }
-                <span class="material-icons filter-arrow">{{ showCompanyPanel() ? 'expand_less' : 'expand_more'
-                    }}</span>
+                <span class="material-icons filter-arrow">expand_more</span>
             </button>
             }
 
             @if (activeCompany() !== 'Todos' && filteredPlatformsByCompany().length > 2) {
-            <button type="button" class="filter-chip filter-toggle-chip"
-                [class.active]="activePlatform() !== 'Todos' || showPlatformPanel()" (click)="togglePlatformPanel()"
-                title="Filtrar por plataforma">
+            <button type="button" class="filter-chip filter-toggle-chip" [class.active]="activePlatform() !== 'Todos'"
+                [class.is-open]="showPlatformPanel()" (click)="togglePlatformPanel()" title="Filtrar por modelo">
                 <span class="material-icons">devices</span>
-                <span>{{ activePlatform() !== 'Todos' ? activePlatform() : 'Plataforma' }}</span>
-                @if (activePlatform() !== 'Todos') {
-                <span class="material-icons filter-clear-icon"
-                    (click)="filterByPlatform('Todos'); $event.stopPropagation()"
-                    title="Quitar filtro de plataforma">close</span>
-                }
-                <span class="material-icons filter-arrow">{{ showPlatformPanel() ? 'expand_less' : 'expand_more'
-                    }}</span>
+                <span>{{ activePlatform() !== 'Todos' ? activePlatform() : 'Modelo' }}</span>
+                <span class="material-icons filter-arrow">expand_more</span>
             </button>
             }
 
             @if (uniqueYears().length > 0) {
-            <button type="button" class="filter-chip filter-toggle-chip"
-                [class.active]="activeYear() !== null || showYearPanel()" (click)="toggleYearPanel()"
-                title="Filtrar por año de lanzamiento">
+            <button type="button" class="filter-chip filter-toggle-chip" [class.active]="activeYear() !== null"
+                [class.is-open]="showYearPanel()" (click)="toggleYearPanel()" title="Filtrar por año de lanzamiento">
+                <span class="material-icons">event</span>
                 <span class="year-label">{{ activeYear() !== null ? activeYear() : 'Año' }}</span>
-                @if (activeYear() !== null) {
-                <span class="material-icons filter-clear-icon" (click)="filterByYear(null); $event.stopPropagation()"
-                    title="Quitar filtro de año">close</span>
-                }
-                <span class="material-icons filter-arrow">{{ showYearPanel() ? 'expand_less' : 'expand_more' }}</span>
+                <span class="material-icons filter-arrow">expand_more</span>
             </button>
             }
 
             <button type="button" class="filter-chip sort-chip" [class.active]="sortMode() === 'best-rated'"
-                (click)="toggleSortMode()">
+                (click)="toggleSortMode()" title="Ordenar por mis mejores valorados">
                 <span class="material-icons">star</span>
                 Mis mejores valorados
             </button>
@@ -218,12 +232,10 @@
         <div class="filter-row expandable-panel">
             <div class="filter-chips">
                 @for (genre of uniqueGenres(); track genre) {
-                @if (genre !== 'Todos') {
                 <button type="button" class="filter-chip" [class.active]="activeGenre() === genre"
-                    (click)="filterByGenre(genre)" tabindex="0">
+                    (click)="filterByGenre(genre)">
                     {{ genre }}
                 </button>
-                }
                 }
             </div>
         </div>
@@ -234,12 +246,10 @@
         <div class="filter-row expandable-panel">
             <div class="filter-chips">
                 @for (company of uniqueCompanies(); track company) {
-                @if (company !== 'Todos') {
                 <button type="button" class="filter-chip filter-chip--company"
-                    [class.active]="activeCompany() === company" (click)="filterByCompany(company)" tabindex="0">
+                    [class.active]="activeCompany() === company" (click)="filterByCompany(company)">
                     {{ company }}
                 </button>
-                }
                 }
             </div>
         </div>
@@ -250,12 +260,10 @@
         <div class="filter-row expandable-panel">
             <div class="filter-chips">
                 @for (platform of filteredPlatformsByCompany(); track platform) {
-                @if (platform !== 'Todos') {
                 <button type="button" class="filter-chip" [class.active]="activePlatform() === platform"
-                    (click)="filterByPlatform(platform)" tabindex="0">
+                    (click)="filterByPlatform(platform)">
                     {{ platform }}
                 </button>
-                }
                 }
             </div>
         </div>
@@ -265,9 +273,13 @@
         @if (showYearPanel() && uniqueYears().length > 0) {
         <div class="filter-row expandable-panel">
             <div class="filter-chips filter-chips--years">
+                <button type="button" class="filter-chip filter-chip--year" [class.active]="activeYear() === null"
+                    (click)="filterByYear(null)">
+                    Todos
+                </button>
                 @for (year of uniqueYears(); track year) {
                 <button type="button" class="filter-chip filter-chip--year" [class.active]="activeYear() === year"
-                    (click)="filterByYear(year)" tabindex="0">
+                    (click)="filterByYear(year)">
                     {{ year }}
                 </button>
                 }
@@ -275,6 +287,142 @@
         </div>
         }
     </div>
+
+    <!-- Hoja inferior de filtros (móvil) -->
+    @if (showFilterSheet()) {
+    <button type="button" class="filter-sheet-backdrop" (click)="closeFilterSheet()"
+        aria-label="Cerrar filtros"></button>
+    <section class="filter-sheet" role="dialog" aria-modal="true" aria-label="Filtros">
+        <header class="sheet-header">
+            <span class="sheet-grabber"></span>
+            <div class="sheet-title-row">
+                <h3>Filtros</h3>
+                <button type="button" class="sheet-close" (click)="closeFilterSheet()" title="Cerrar filtros">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="sheet-body">
+            <div class="sheet-group">
+                <div class="sheet-group-header">
+                    <h4>Género</h4>
+                    <span class="sheet-group-value">{{ activeGenre() }}</span>
+                </div>
+                <div class="sheet-options">
+                    @for (genre of uniqueGenres(); track genre) {
+                    <button type="button" class="sheet-option" [class.selected]="activeGenre() === genre"
+                        (click)="filterByGenre(genre)">
+                        <span>{{ genre }}</span>
+                        @if (activeGenre() === genre) {
+                        <span class="material-icons">check</span>
+                        }
+                    </button>
+                    }
+                </div>
+            </div>
+
+            @if (uniqueCompanies().length > 2) {
+            <div class="sheet-group">
+                <div class="sheet-group-header">
+                    <h4>Plataforma</h4>
+                    <span class="sheet-group-value">{{ activeCompany() }}</span>
+                </div>
+                <div class="sheet-options">
+                    @for (company of uniqueCompanies(); track company) {
+                    <button type="button" class="sheet-option" [class.selected]="activeCompany() === company"
+                        (click)="filterByCompany(company)">
+                        <span>{{ company }}</span>
+                        @if (activeCompany() === company) {
+                        <span class="material-icons">check</span>
+                        }
+                    </button>
+                    }
+                </div>
+            </div>
+            }
+
+            @if (activeCompany() !== 'Todos' && filteredPlatformsByCompany().length > 2) {
+            <div class="sheet-group">
+                <div class="sheet-group-header">
+                    <h4>Modelo</h4>
+                    <span class="sheet-group-value">{{ activePlatform() }}</span>
+                </div>
+                <div class="sheet-options">
+                    @for (platform of filteredPlatformsByCompany(); track platform) {
+                    <button type="button" class="sheet-option" [class.selected]="activePlatform() === platform"
+                        (click)="filterByPlatform(platform)">
+                        <span>{{ platform }}</span>
+                        @if (activePlatform() === platform) {
+                        <span class="material-icons">check</span>
+                        }
+                    </button>
+                    }
+                </div>
+            </div>
+            }
+
+            @if (uniqueYears().length > 0) {
+            <div class="sheet-group">
+                <div class="sheet-group-header">
+                    <h4>Año</h4>
+                    <span class="sheet-group-value">{{ activeYear() !== null ? activeYear() : 'Todos' }}</span>
+                </div>
+                <div class="sheet-options sheet-options--years">
+                    <button type="button" class="sheet-option" [class.selected]="activeYear() === null"
+                        (click)="filterByYear(null)">
+                        <span>Todos</span>
+                        @if (activeYear() === null) {
+                        <span class="material-icons">check</span>
+                        }
+                    </button>
+                    @for (year of uniqueYears(); track year) {
+                    <button type="button" class="sheet-option" [class.selected]="activeYear() === year"
+                        (click)="filterByYear(year)">
+                        <span>{{ year }}</span>
+                        @if (activeYear() === year) {
+                        <span class="material-icons">check</span>
+                        }
+                    </button>
+                    }
+                </div>
+            </div>
+            }
+
+            <div class="sheet-group">
+                <div class="sheet-group-header">
+                    <h4>Orden</h4>
+                </div>
+                <div class="sheet-options">
+                    <button type="button" class="sheet-option" [class.selected]="sortMode() === 'default'"
+                        (click)="sortMode.set('default')">
+                        <span>Por defecto</span>
+                        @if (sortMode() === 'default') {
+                        <span class="material-icons">check</span>
+                        }
+                    </button>
+                    <button type="button" class="sheet-option" [class.selected]="sortMode() === 'best-rated'"
+                        (click)="sortMode.set('best-rated')">
+                        <span>Mis mejores valorados</span>
+                        @if (sortMode() === 'best-rated') {
+                        <span class="material-icons">check</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="sheet-footer">
+            <button type="button" class="sheet-reset" (click)="resetFilters()"
+                [disabled]="activeFiltersCount() === 0 && !searchTerm()">
+                Limpiar
+            </button>
+            <button type="button" class="sheet-apply" (click)="closeFilterSheet()">
+                Ver {{ visibleGamesCount() }} juegos
+            </button>
+        </footer>
+    </section>
+    }
 
     <!-- Favorites section -->
     @if (!selectMode()) {
