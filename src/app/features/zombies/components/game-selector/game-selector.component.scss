@@ -128,7 +128,18 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
-    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+
+    // El desvanecido solo se activa cuando la lista realmente desborda el
+    // ancho disponible (clase añadida vía ResizeObserver en el
+    // componente). Aplicarlo siempre recortaba visualmente el último
+    // botón cuando todos los juegos cabían en pantalla.
+    &.z-game-selector--scrollable {
+      // Safari/iOS ignora `mask-image` sin el prefijo -webkit-; sin él el
+      // desvanecido no se pinta y la última tarjeta se ve cortada en seco
+      // en vez de difuminarse (causa real del "corte" en móvil).
+      -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+      mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    }
 
     // Oculta la scrollbar nativa (se ve como una barra gris cortada por
     // el mask-image) sin perder el scroll funcional.

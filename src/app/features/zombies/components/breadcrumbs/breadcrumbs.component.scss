@@ -91,10 +91,16 @@
 }
 
 @media (max-width: 767px) {
-  .z-breadcrumbs {
-    // Mismo patrón de scroll horizontal + desvanecido a la derecha que
-    // game-selector.component.scss, para mantener consistencia de
-    // navegación en toda la sección Zombies.
+  // El desvanecido solo se activa cuando la cadena de migas realmente
+  // desborda el ancho disponible (clase añadida vía ResizeObserver en el
+  // componente). Aplicarlo siempre recortaba visualmente la última miga
+  // (aria-current) aunque cupiera entera en pantalla. Mismo patrón de
+  // scroll horizontal + desvanecido a la derecha que
+  // game-selector.component.scss para mantener consistencia de navegación
+  // en toda la sección Zombies.
+  .z-breadcrumbs.z-breadcrumbs--scrollable {
+    // Safari/iOS ignora `mask-image` sin el prefijo -webkit-.
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
     mask-image: linear-gradient(to right, black 85%, transparent 100%);
   }
 }

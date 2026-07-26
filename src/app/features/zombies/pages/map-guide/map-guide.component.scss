@@ -266,9 +266,14 @@
 
   &__ee-btn {
     @include z.z-button-reset;
-    align-self: flex-start;
+    // Centrado horizontal (flex column padre) y con el mismo espaciado
+    // vertical que el resto de bloques (gap de .z-guide), para que quede
+    // visualmente equilibrado entre "Requisitos previos" y la siguiente
+    // sección. Especialmente importante en mobile.
+    align-self: center;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     padding: 0.7rem 1.4rem;
     border-radius: z.$z-radius-pill;

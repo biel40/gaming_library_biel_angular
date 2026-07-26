@@ -91,13 +91,6 @@
   </section>
   }
 
-  @if (steps().length > 0) {
-  <button type="button" class="z-guide__ee-btn" (click)="openStepsModal()">
-    <span class="material-icons" aria-hidden="true">checklist</span>
-    Ver guía del Easter Egg
-  </button>
-  }
-
   @if (m.prerequisites?.length) {
   <section class="z-guide__block">
     <h2>Requisitos previos</h2>
@@ -107,6 +100,13 @@
       }
     </ul>
   </section>
+  }
+
+  @if (steps().length > 0) {
+  <button type="button" class="z-guide__ee-btn" (click)="openStepsModal()">
+    <span class="material-icons" aria-hidden="true">checklist</span>
+    Ver guía del Easter Egg
+  </button>
   }
 
   @if (m.recommendedLoadout) {
