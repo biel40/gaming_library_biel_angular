@@ -131,3 +131,39 @@
     }
   }
 }
+
+// ─── Modo claro ─────────────────────────────────────────────────────────────
+.z-breadcrumbs.light-theme {
+  background: z.$z-light-surface;
+  border-color: z.$z-light-border;
+  color: z.$z-light-text-dim;
+
+  a {
+    color: z.$z-light-text-muted;
+
+    &:hover {
+      color: z.$z-light-amber-text;
+    }
+  }
+
+  .material-icons {
+    color: z.$z-light-text-dim;
+  }
+
+  .z-breadcrumbs__home {
+    color: z.$z-light-text-muted;
+
+    &:hover {
+      color: z.$z-light-amber-text;
+      background: z.$z-light-surface-hover;
+    }
+  }
+
+  [aria-current='page'] {
+    color: z.$z-light-text;
+  }
+
+  .z-breadcrumbs__crumb:not(.z-breadcrumbs__crumb--first):not(.z-breadcrumbs__crumb--last)::before {
+    color: z.$z-light-text-dim;
+  }
+}

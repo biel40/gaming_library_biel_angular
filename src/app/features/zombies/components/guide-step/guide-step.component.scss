@@ -239,6 +239,104 @@
   }
 }
 
+// ─── Modo claro ─────────────────────────────────────────────────────────────
+.z-step.light-theme {
+  border-color: z.$z-light-border;
+  background: z.$z-light-bg-2;
+
+  &.z-step--done {
+    .z-step__number {
+      background: z.$z-success;
+    }
+  }
+
+  .z-step__toggle {
+    color: z.$z-light-text;
+
+    &:hover .z-step__title {
+      color: z.$z-light-amber-text;
+    }
+  }
+
+  .z-step__number {
+    background: z.$z-light-surface;
+    border-color: z.$z-light-border-strong;
+    color: z.$z-light-text;
+  }
+
+  .z-step__spoiler-tag {
+    color: z.$z-light-amber-text;
+    background: rgba(184, 86, 10, 0.1);
+    border-color: rgba(184, 86, 10, 0.35);
+  }
+
+  .z-step__chevron {
+    color: z.$z-light-text-dim;
+  }
+
+  .z-step__check {
+    border-color: z.$z-light-border;
+    background: z.$z-light-surface;
+    color: z.$z-light-text-muted;
+
+    &:hover {
+      background: z.$z-light-surface-hover;
+      border-color: z.$z-light-border-strong;
+    }
+
+    &--readonly:hover {
+      background: z.$z-light-surface;
+      border-color: z.$z-light-border;
+    }
+  }
+
+  &.z-step--done .z-step__check {
+    border-color: rgba(76, 175, 80, 0.5);
+    background: rgba(76, 175, 80, 0.12);
+  }
+
+  &.z-step--done .z-step__check-text {
+    color: z.$z-success;
+  }
+
+  .z-step__body {
+    border-top-color: z.$z-light-border;
+    background: z.$z-light-bg-0;
+  }
+
+  .z-step__desc {
+    color: z.$z-light-text-muted;
+  }
+
+  .z-step__instructions {
+    color: z.$z-light-text;
+  }
+
+  .z-step__note {
+    &--tip {
+      background: rgba(184, 86, 10, 0.08);
+      border-color: rgba(184, 86, 10, 0.3);
+      color: z.$z-light-text-muted;
+
+      .material-icons {
+        color: z.$z-light-amber-text;
+      }
+    }
+
+    &--warning {
+      color: z.$z-light-text;
+    }
+
+    &--check {
+      color: z.$z-light-text-muted;
+    }
+  }
+
+  .z-step__image {
+    border-color: z.$z-light-border;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .z-step,
   .z-step__title {

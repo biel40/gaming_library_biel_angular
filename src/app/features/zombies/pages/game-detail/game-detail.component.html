@@ -1,4 +1,4 @@
-<div class="z-detail">
+<div class="z-detail" [class.light-theme]="isLightTheme()">
   @if (game(); as g) {
   <app-zombies-breadcrumbs [items]="breadcrumbItems()" />
 

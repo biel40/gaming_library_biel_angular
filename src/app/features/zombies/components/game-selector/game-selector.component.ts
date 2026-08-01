@@ -5,6 +5,7 @@ import {
   ElementRef,
   OnDestroy,
   effect,
+  inject,
   input,
   output,
   signal,
@@ -12,6 +13,7 @@ import {
 } from '@angular/core';
 
 import { ZombiesGame } from '../../models/zombies.models';
+import { ZombiesThemeService } from '../../services/zombies-theme.service';
 
 @Component({
   selector: 'app-zombies-game-selector',
@@ -25,6 +27,8 @@ export class GameSelectorComponent implements AfterViewInit, OnDestroy {
   readonly selectedGameId = input<string | null>(null);
 
   readonly selectGame = output<string | null>();
+
+  protected readonly isLightTheme = inject(ZombiesThemeService).isLight;
 
   private readonly root = viewChild<ElementRef<HTMLElement>>('root');
   private resizeObserver?: ResizeObserver;

@@ -257,3 +257,65 @@
     transition-duration: 0.01ms;
   }
 }
+
+// ─── Modo claro ─────────────────────────────────────────────────────────────
+.z-card.light-theme {
+  border-color: z.$z-light-border;
+  background: z.$z-light-bg-2;
+  box-shadow: z.$z-light-shadow-sm;
+
+  &:hover {
+    box-shadow: z.$z-light-shadow-md;
+    border-color: z.$z-light-border-strong;
+  }
+
+  .z-card__media {
+    background: z.$z-light-gradient-bg;
+  }
+
+  .z-card__placeholder {
+    color: z.$z-light-text-dim;
+  }
+
+  .z-card__name {
+    color: z.$z-light-text;
+  }
+
+  .z-card__game {
+    color: z.$z-light-text-dim;
+  }
+
+  .z-card__quest {
+    color: z.$z-light-amber-text;
+  }
+
+  .z-card__meta {
+    color: z.$z-light-text-muted;
+  }
+
+  .z-card__meta-label {
+    color: z.$z-light-text-dim;
+  }
+
+  .z-card__pending-note {
+    color: z.$z-light-amber-text;
+  }
+
+  .z-card__progress-track {
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  .z-card__progress-label {
+    color: z.$z-light-text-muted;
+  }
+
+  .z-tag {
+    color: z.$z-light-text-muted;
+    background: z.$z-light-surface;
+    border-color: z.$z-light-border;
+
+    &--side {
+      color: z.$z-light-amber-text;
+    }
+  }
+}

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   output,
   signal,
@@ -12,6 +13,7 @@ import {
   ZombiesFilterCriteria,
   ZombiesSaga,
 } from '../../models/zombies.models';
+import { ZombiesThemeService } from '../../services/zombies-theme.service';
 
 @Component({
   selector: 'app-zombies-guide-filters',
@@ -23,6 +25,7 @@ import {
 export class GuideFiltersComponent {
   readonly criteria = input.required<ZombiesFilterCriteria>();
   readonly criteriaChange = output<ZombiesFilterCriteria>();
+  protected readonly isLightTheme = inject(ZombiesThemeService).isLight;
 
   protected readonly statusOptions: { value: GuideStatus; label: string }[] = [
     { value: 'not-started', label: 'No empezado' },

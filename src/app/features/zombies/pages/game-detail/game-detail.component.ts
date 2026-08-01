@@ -16,6 +16,7 @@ import { MapCardComponent } from '../../components/map-card/map-card.component';
 import { ZombiesMap } from '../../models/zombies.models';
 import { ZombiesDataService } from '../../services/zombies-data.service';
 import { ZombiesProgressService } from '../../services/zombies-progress.service';
+import { ZombiesThemeService } from '../../services/zombies-theme.service';
 
 @Component({
   selector: 'app-zombies-game-detail',
@@ -29,6 +30,7 @@ export class ZombiesGameDetailComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly dataService = inject(ZombiesDataService);
   private readonly progress = inject(ZombiesProgressService);
+  protected readonly isLightTheme = inject(ZombiesThemeService).isLight;
 
   private readonly paramMap = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,

@@ -40,6 +40,31 @@ $z-gradient-bg: linear-gradient(160deg, $z-bg-0 0%, $z-bg-1 55%, $z-bg-2 100%);
 $z-gradient-accent: linear-gradient(135deg, $z-accent, $z-amber);
 $z-gradient-danger: linear-gradient(135deg, $z-accent-strong, $z-accent);
 
+// ─── Paleta modo claro ──────────────────────────────────────────────────────
+// Solo se usa dentro de bloques `.light-theme`, análoga a la paleta clara
+// del dashboard principal (src/app/views/dashboard/styles/_themes.scss).
+// Los acentos rojo/ámbar ($z-accent, $z-amber) se mantienen: siguen
+// aportando suficiente contraste sobre fondos claros como fondo de chip/
+// badge con texto blanco encima.
+$z-light-bg-0: #eef1f6;
+$z-light-bg-1: #e4e8f0;
+$z-light-bg-2: #ffffff;
+$z-light-surface: rgba(0, 0, 0, 0.04);
+$z-light-surface-hover: rgba(0, 0, 0, 0.07);
+$z-light-border: rgba(0, 0, 0, 0.12);
+$z-light-border-strong: rgba(0, 0, 0, 0.22);
+$z-light-text: #1a1a2e;
+$z-light-text-muted: rgba(26, 26, 46, 0.72);
+$z-light-text-dim: rgba(26, 26, 46, 0.55);
+// Variante oscurecida de ámbar para texto/iconos sobre fondo claro: el
+// $z-amber original (#ff8f1f) no cumple contraste AA como texto sobre
+// blanco, aunque sí funciona bien como fondo de badge con texto blanco.
+$z-light-amber-text: #b8560a;
+$z-light-gradient-bg: linear-gradient(160deg, $z-light-bg-0 0%, $z-light-bg-1 55%, #d8dce6 100%);
+$z-light-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+$z-light-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.1);
+$z-light-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.14);
+
 // Textura sutil de puntos (sin reducir legibilidad).
 @mixin z-noise {
   background-image: radial-gradient(

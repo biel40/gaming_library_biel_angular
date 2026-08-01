@@ -5,11 +5,14 @@ import {
   ElementRef,
   OnDestroy,
   effect,
+  inject,
   input,
   signal,
   viewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+
+import { ZombiesThemeService } from '../../services/zombies-theme.service';
 
 export interface ZombiesBreadcrumbItem {
   label: string;
@@ -26,6 +29,7 @@ export interface ZombiesBreadcrumbItem {
 })
 export class BreadcrumbsComponent implements AfterViewInit, OnDestroy {
   readonly items = input.required<ZombiesBreadcrumbItem[]>();
+  protected readonly isLightTheme = inject(ZombiesThemeService).isLight;
 
   private readonly nav = viewChild<ElementRef<HTMLElement>>('nav');
   private resizeObserver?: ResizeObserver;

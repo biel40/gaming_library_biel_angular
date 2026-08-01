@@ -1,4 +1,4 @@
-<div class="z-guide">
+<div class="z-guide" [class.light-theme]="isLightTheme()">
   @if (map(); as m) {
   <app-zombies-breadcrumbs [items]="breadcrumbItems()" />
 

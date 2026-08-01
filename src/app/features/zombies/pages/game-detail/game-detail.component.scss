@@ -85,3 +85,30 @@
     grid-template-columns: 1fr;
   }
 }
+
+// ─── Modo claro ─────────────────────────────────────────────────────────────
+.z-detail.light-theme {
+  color: z.$z-light-text;
+
+  &__year {
+    color: z.$z-light-amber-text;
+  }
+
+  &__desc {
+    color: z.$z-light-text-muted;
+  }
+
+  &__section--chronicles {
+    border-top-color: z.$z-light-border;
+  }
+
+  &__badge {
+    color: z.$z-light-amber-text;
+    background: rgba(184, 86, 10, 0.12);
+    border-color: rgba(184, 86, 10, 0.35);
+  }
+
+  &__back a {
+    color: z.$z-light-amber-text;
+  }
+}

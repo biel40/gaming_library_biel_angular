@@ -245,3 +245,83 @@
     transition-duration: 0.01ms;
   }
 }
+
+// ─── Modo claro ─────────────────────────────────────────────────────────────
+.z-home.light-theme {
+  color: z.$z-light-text;
+
+  .z-back-btn {
+    background: z.$z-light-surface;
+    border-color: z.$z-light-border;
+    color: z.$z-light-text;
+
+    &:hover {
+      background: z.$z-light-surface-hover;
+      border-color: z.$z-light-amber-text;
+    }
+  }
+
+  .z-hero {
+    border-color: z.$z-light-border;
+    background: z.$z-light-gradient-bg;
+
+    &__eyebrow {
+      color: z.$z-light-amber-text;
+    }
+
+    &__lead {
+      color: z.$z-light-text-muted;
+    }
+  }
+
+  // >767px: el hero superpone el texto sobre la foto con un degradado
+  // oscuro (rgba(7,8,12,...)) detrás; título y texto de apoyo deben
+  // quedarse en tono claro pase lo que pase o quedan ilegibles sobre la
+  // imagen. En móvil el layout pasa a apilado (imagen arriba, texto
+  // debajo sobre el fondo de la página) así que ahí SÍ debe seguir el
+  // texto oscuro del tema claro definido arriba.
+  @media (min-width: 768px) {
+    .z-hero__title {
+      color: z.$z-text;
+    }
+
+    .z-hero__lead {
+      color: z.$z-text-muted;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .z-hero__art {
+      background: z.$z-light-bg-0;
+    }
+  }
+
+  .z-search {
+    .material-icons {
+      color: z.$z-light-text-dim;
+    }
+
+    &__input {
+      border-color: z.$z-light-border;
+      background: z.$z-light-bg-2;
+      color: z.$z-light-text;
+
+      &::placeholder {
+        color: z.$z-light-text-dim;
+      }
+
+      &:hover {
+        border-color: z.$z-light-border-strong;
+      }
+
+      &:focus-visible {
+        border-color: z.$z-light-amber-text;
+        background: z.$z-light-surface-hover;
+      }
+    }
+  }
+
+  .z-results__count {
+    color: z.$z-light-text-dim;
+  }
+}

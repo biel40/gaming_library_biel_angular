@@ -1,9 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   input,
   output,
 } from '@angular/core';
+
+import { ZombiesThemeService } from '../../services/zombies-theme.service';
 
 export type EmptyStateVariant = 'loading' | 'empty' | 'error' | 'unavailable';
 
@@ -21,6 +24,8 @@ export class EmptyStateComponent {
   readonly actionLabel = input<string>('');
 
   readonly action = output<void>();
+
+  protected readonly isLightTheme = inject(ZombiesThemeService).isLight;
 
   protected readonly icons: Record<EmptyStateVariant, string> = {
     loading: 'hourglass_empty',

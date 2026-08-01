@@ -20,6 +20,7 @@ import {
 } from '../../models/zombies.models';
 import { ZombiesDataService } from '../../services/zombies-data.service';
 import { ZombiesProgressService } from '../../services/zombies-progress.service';
+import { ZombiesThemeService } from '../../services/zombies-theme.service';
 import { filterZombiesMaps } from '../../utils/zombies-filter.util';
 
 @Component({
@@ -39,6 +40,7 @@ import { filterZombiesMaps } from '../../utils/zombies-filter.util';
 export class ZombiesHomeComponent {
   private readonly dataService = inject(ZombiesDataService);
   private readonly progress = inject(ZombiesProgressService);
+  protected readonly isLightTheme = inject(ZombiesThemeService).isLight;
 
   private readonly _criteria = signal<ZombiesFilterCriteria>({
     ...EMPTY_FILTER_CRITERIA,

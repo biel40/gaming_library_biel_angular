@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -12,6 +13,7 @@ import {
   ZombiesGame,
   ZombiesMap,
 } from '../../models/zombies.models';
+import { ZombiesThemeService } from '../../services/zombies-theme.service';
 
 @Component({
   selector: 'app-zombies-map-card',
@@ -26,6 +28,7 @@ export class MapCardComponent {
   public readonly game = input.required<ZombiesGame>();
   public readonly progressPercent = input<number>(0);
   public readonly status = input<GuideStatus>('not-started');
+  protected readonly isLightTheme = inject(ZombiesThemeService).isLight;
 
   private readonly difficultyLabels: Record<GuideDifficulty, string> = {
     easy: 'Fácil',
@@ -50,7 +53,7 @@ export class MapCardComponent {
       return 'Ver';
     }
 
-    return this.status() === 'in-progress' ? 'Continuar guía' : 'Ver guía';
+    return this.status() === 'in-progress' ? 'Continuar' : 'Ver';
   });
 
   public readonly routerLinkTo = computed(() => [

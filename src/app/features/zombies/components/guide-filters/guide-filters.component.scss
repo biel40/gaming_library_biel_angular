@@ -217,3 +217,77 @@
   }
 }
 
+// ─── Modo claro ─────────────────────────────────────────────────────────────
+.z-filters-panel.light-theme {
+  border-color: z.$z-light-border;
+  background: z.$z-light-surface;
+
+  .z-filters-panel__toggle {
+    color: z.$z-light-text;
+
+    > .material-icons:first-child {
+      color: z.$z-light-amber-text;
+    }
+  }
+
+  .z-filters-panel__chevron {
+    color: z.$z-light-text-dim;
+  }
+
+  .z-filters-panel__clear {
+    color: z.$z-light-amber-text;
+    border-color: rgba(184, 86, 10, 0.4);
+    background: rgba(184, 86, 10, 0.1);
+
+    &:hover {
+      background: rgba(184, 86, 10, 0.18);
+    }
+  }
+
+  .z-filters {
+    border-top-color: z.$z-light-border;
+  }
+
+  .z-filters__label {
+    color: z.$z-light-text-dim;
+
+    .material-icons {
+      color: z.$z-light-amber-text;
+    }
+  }
+
+  .z-chip {
+    border-color: z.$z-light-border;
+    background: z.$z-light-bg-2;
+    color: z.$z-light-text-muted;
+
+    &:hover {
+      background: z.$z-light-surface-hover;
+      color: z.$z-light-text;
+    }
+
+    &--active {
+      color: #fff;
+    }
+  }
+
+  .z-segmented {
+    border-color: z.$z-light-border;
+    background: z.$z-light-bg-2;
+
+    &__btn {
+      color: z.$z-light-text-muted;
+      border-right-color: z.$z-light-border;
+
+      &:hover {
+        background: z.$z-light-surface-hover;
+        color: z.$z-light-text;
+      }
+
+      &--active {
+        color: #fff;
+      }
+    }
+  }
+}
+

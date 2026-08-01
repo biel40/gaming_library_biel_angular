@@ -77,3 +77,32 @@
     animation-duration: 0.01ms;
   }
 }
+
+// ─── Modo claro ─────────────────────────────────────────────────────────────
+.z-empty.light-theme {
+  border-color: z.$z-light-border-strong;
+  background: z.$z-light-surface;
+  color: z.$z-light-text-muted;
+
+  &.z-empty--error {
+    border-color: rgba(226, 59, 46, 0.4);
+    color: z.$z-light-amber-text;
+  }
+
+  .z-empty__icon {
+    color: z.$z-light-text-dim;
+  }
+
+  &.z-empty--error .z-empty__icon {
+    color: z.$z-accent;
+  }
+
+  .z-empty__title {
+    color: z.$z-light-text;
+  }
+
+  .z-empty__spinner {
+    border-color: z.$z-light-border-strong;
+    border-top-color: z.$z-light-amber-text;
+  }
+}

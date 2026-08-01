@@ -20,6 +20,7 @@ import { GuideStepComponent } from '../../components/guide-step/guide-step.compo
 import { EasterEggStep, ZombiesMap } from '../../models/zombies.models';
 import { ZombiesDataService } from '../../services/zombies-data.service';
 import { ZombiesProgressService } from '../../services/zombies-progress.service';
+import { ZombiesThemeService } from '../../services/zombies-theme.service';
 import { SupabaseService } from '../../../../services/supabase/supabase.service';
 
 const DIFFICULTY_LABELS: Record<string, string> = {
@@ -51,6 +52,7 @@ export class ZombiesMapGuideComponent {
   private readonly dataService = inject(ZombiesDataService);
   private readonly progress = inject(ZombiesProgressService);
   private readonly supabase = inject(SupabaseService);
+  protected readonly isLightTheme = inject(ZombiesThemeService).isLight;
 
   private readonly paramMap = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,

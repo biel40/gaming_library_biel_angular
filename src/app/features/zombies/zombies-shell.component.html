@@ -1,14 +1,30 @@
-<button
-  type="button"
-  class="z-audio-toggle"
-  [attr.aria-pressed]="audioMuted()"
-  [attr.aria-label]="audioMuted() ? 'Activar música de fondo' : 'Silenciar música de fondo'"
-  (click)="onToggleMute()"
->
-  <span class="material-icons" aria-hidden="true">{{
-    audioMuted() ? 'volume_off' : 'volume_up'
-  }}</span>
-</button>
+<div class="z-fixed-actions">
+  <button
+    type="button"
+    class="z-theme-toggle"
+    [class.light-theme]="isLightTheme()"
+    [attr.aria-label]="isLightTheme() ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro'"
+    [title]="isLightTheme() ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro'"
+    (click)="onToggleTheme()"
+  >
+    <span class="material-icons" aria-hidden="true">{{
+      isLightTheme() ? 'dark_mode' : 'light_mode'
+    }}</span>
+  </button>
+
+  <button
+    type="button"
+    class="z-audio-toggle"
+    [class.light-theme]="isLightTheme()"
+    [attr.aria-pressed]="audioMuted()"
+    [attr.aria-label]="audioMuted() ? 'Activar música de fondo' : 'Silenciar música de fondo'"
+    (click)="onToggleMute()"
+  >
+    <span class="material-icons" aria-hidden="true">{{
+      audioMuted() ? 'volume_off' : 'volume_up'
+    }}</span>
+  </button>
+</div>
 
 <app-zombies-intro-transition />
 

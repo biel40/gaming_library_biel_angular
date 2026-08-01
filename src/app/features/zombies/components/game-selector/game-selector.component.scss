@@ -178,3 +178,35 @@
     transition-duration: 0.01ms;
   }
 }
+
+// ─── Modo claro ─────────────────────────────────────────────────────────────
+.z-game-selector.light-theme {
+  &__all,
+  &__btn {
+    border-color: z.$z-light-border;
+    background: z.$z-light-surface;
+    color: z.$z-light-text-muted;
+
+    &:hover {
+      background: z.$z-light-surface-hover;
+      border-color: z.$z-light-border-strong;
+      color: z.$z-light-text;
+    }
+
+    &--active {
+      color: #fff;
+    }
+  }
+
+  &__divider {
+    background: z.$z-light-border;
+  }
+
+  &__year {
+    color: z.$z-light-text-dim;
+  }
+
+  .z-game-selector__btn--active .z-game-selector__year {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}

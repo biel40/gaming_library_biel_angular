@@ -35,3 +35,18 @@
     }
   }
 }
+
+// ─── Modo claro ─────────────────────────────────────────────────────────────
+.z-spoiler.light-theme {
+  border-color: rgba(184, 86, 10, 0.4);
+  background: rgba(184, 86, 10, 0.08);
+  color: z.$z-light-text-muted;
+
+  .material-icons {
+    color: z.$z-light-amber-text;
+  }
+
+  &__label {
+    color: z.$z-light-text;
+  }
+}

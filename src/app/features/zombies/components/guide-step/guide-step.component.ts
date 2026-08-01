@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   input,
   output,
   signal,
@@ -8,6 +9,7 @@ import {
 
 import { EasterEggStep } from '../../models/zombies.models';
 import { SpoilerContentComponent } from '../spoiler-content/spoiler-content.component';
+import { ZombiesThemeService } from '../../services/zombies-theme.service';
 
 @Component({
   selector: 'app-zombies-guide-step',
@@ -26,6 +28,7 @@ export class GuideStepComponent {
 
   readonly completedChange = output<boolean>();
 
+  protected readonly isLightTheme = inject(ZombiesThemeService).isLight;
   protected readonly expanded = signal(false);
 
   protected toggleExpanded(): void {

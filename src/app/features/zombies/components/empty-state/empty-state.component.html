@@ -1,4 +1,4 @@
-<div class="z-empty" [class.z-empty--error]="variant() === 'error'" role="status">
+<div class="z-empty" [class.z-empty--error]="variant() === 'error'" [class.light-theme]="isLightTheme()" role="status">
   @if (variant() === 'loading') {
   <span class="z-empty__spinner" aria-hidden="true"></span>
   } @else {
