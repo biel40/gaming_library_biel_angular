@@ -435,7 +435,7 @@
         <div class="game-grid favorites-grid">
             @for (game of favoriteGames(); track game.id) {
             <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()"
-                [theme]="theme()"></app-game-card>
+                [theme]="theme()" (click)="saveScrollPosition()"></app-game-card>
             }
         </div>
         } @else {
@@ -507,7 +507,7 @@
                 </label>
                 }
                 <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()"
-                    [theme]="theme()"></app-game-card>
+                    [theme]="theme()" (click)="saveScrollPosition()"></app-game-card>
             </div>
             }
         </div>
@@ -540,7 +540,8 @@
                         }
                     </div>
                 </div>
-                <button class="list-btn" [routerLink]="['/game', game.id]" title="Ver detalles del juego">Ver
+                <button class="list-btn" [routerLink]="['/game', game.id]" (click)="saveScrollPosition()"
+                    title="Ver detalles del juego">Ver
                     Detalles</button>
             </div>
             }

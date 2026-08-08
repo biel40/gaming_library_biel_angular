@@ -49,9 +49,15 @@
           </div>
         </div>
         <div class="game-metadata">
+          @if (game()?.genre) {
           <span class="game-genre">{{ game()?.genre }}</span>
+          }
+          @if (game()?.platform) {
           <span class="game-platform">{{ game()?.platform }}</span>
+          }
+          @if (game()?.releaseDate) {
           <span class="game-release">{{ game()?.releaseDate | spanishDate:'short' }}</span>
+          }
         </div>
       </div>
     </div>
@@ -61,9 +67,10 @@
         @if (!isEditingImage()) {
         <img [src]="game()?.image_url" [alt]="game()?.name" class="game-image">
         @if (isAdminUser()) {
-        <button type="button" class="image-edit-trigger" (click)="startEditingImage()" title="Cambiar portada">
+        <button type="button" class="image-edit-trigger" (click)="startEditingImage()" title="Cambiar portada"
+          aria-label="Cambiar portada">
           <span class="material-icons">photo_camera</span>
-          <span>Cambiar portada</span>
+          <span class="image-edit-label">Cambiar portada</span>
         </button>
         }
         } @else {

@@ -10,6 +10,7 @@ import { SupabaseService, Videogame } from '../../services/supabase/supabase.ser
 import { UserService } from '../../services/user/user.service';
 import { GenreNormalizerService } from '../../services/genre-normalizer/genre-normalizer.service';
 import { PlatformNormalizerService } from '../../services/platform-normalizer/platform-normalizer.service';
+import { DashboardScrollService } from './dashboard-scroll.service';
 
 export type ActiveFilterId = 'genre' | 'company' | 'platform' | 'year' | 'sort';
 
@@ -43,6 +44,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private _router: Router = inject(Router);
     private _genreNormalizer: GenreNormalizerService = inject(GenreNormalizerService);
     private _platformNormalizer: PlatformNormalizerService = inject(PlatformNormalizerService);
+    private _dashboardScrollService: DashboardScrollService = inject(DashboardScrollService);
     private _resizeListener: () => void;
     private _favoriteSubscription: Subscription | null = null;
 
@@ -122,6 +124,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public navigateAndCloseMenu(path: string) {
         this.closeMobileMenu();
         this._router.navigate([path]);
+    }
+
+    public saveScrollPosition(): void {
+        this._dashboardScrollService.capture();
     }
 
     public toggleSelectMode() {
@@ -402,7 +408,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             this.error.set('Error loading games. Please try again later.');
         } finally {
             this.isLoading.set(false);
+            if (!this.error()) {
+                this.restoreScrollPosition();
+            }
         }
+    }
+
+    private restoreScrollPosition(): void {
+        const position = this._dashboardScrollService.consume();
+        if (position === null) {
+            return;
+        }
+
+        requestAnimationFrame(() => {
+            this._dashboardScrollService.restore(position);
+        });
     }
 
     ngAfterViewInit() {
@@ -410,7 +430,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         window.addEventListener('resize', this._resizeListener);
     }
 
-    ngOnDestroy() {
+    public ngOnDestroy(): void {
+        this._dashboardScrollService.capture();
         window.removeEventListener('resize', this._resizeListener);
         document.body.style.overflow = '';
         document.body.classList.remove('light-theme');
