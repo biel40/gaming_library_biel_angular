@@ -36,6 +36,11 @@ export interface Videogame {
   hours_played?: number
 }
 
+export interface EdgeFunctionResponse<T> {
+  data: T | null
+  error: Error | null
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -96,6 +101,10 @@ export class SupabaseService {
     }
 
     return this._session() ?? null;
+  }
+
+  public async invokeFunction<T>(functionName: string, body: Record<string, unknown>): Promise<EdgeFunctionResponse<T>> {
+    return await this._supabaseClient.functions.invoke<T>(functionName, { body });
   }
 
   /**

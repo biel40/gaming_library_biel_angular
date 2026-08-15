@@ -16,12 +16,12 @@ import { NotificationService } from '../../services/notification/notification.se
   ]
 })
 export class GameSearchComponent implements OnInit {
-  private _gameSearchService = inject(GameSearchService);
-  private _supabaseService = inject(SupabaseService);
-  private _notificationService = inject(NotificationService);
-  private _cdr = inject(ChangeDetectorRef);
+  private readonly _gameSearchService = inject(GameSearchService);
+  private readonly _supabaseService = inject(SupabaseService);
+  private readonly _notificationService = inject(NotificationService);
+  private readonly _cdr = inject(ChangeDetectorRef);
 
-  @Output() gameSelected = new EventEmitter<Partial<Videogame>>();
+  @Output() public gameSelected = new EventEmitter<Partial<Videogame>>();
 
   private _isReadOnlyUser = signal<boolean>(false);
   public readonly isReadOnlyUser = computed(() => this._isReadOnlyUser());
@@ -29,16 +29,17 @@ export class GameSearchComponent implements OnInit {
   public searchQuery = '';
   public searchResults: GameSearchResult[] = [];
   public isLoading = false;
+  public hasSearched = false;
   public error: string | null = null;
   public selectedGame: GameSearchResult | null = null;
   public savingGames: Set<number> = new Set();
   public readonly gamesInLibrary = signal<Set<string>>(new Set());
 
-  ngOnInit() {
+  public ngOnInit(): void {
     this.checkReadOnlyStatus();
   }
 
-  private async checkReadOnlyStatus() {
+  private async checkReadOnlyStatus(): Promise<void> {
     try {
       const isReadOnly = await this._supabaseService.isReadOnlyUser();
       this._isReadOnlyUser.set(isReadOnly);
@@ -47,49 +48,36 @@ export class GameSearchComponent implements OnInit {
     }
   }
 
-  public searchGames() {
+  public searchGames(): void {
     if (!this.searchQuery.trim()) return;
 
     this.isLoading = true;
+    this.hasSearched = true;
     this.error = null;
     this.searchResults = [];
     this.gamesInLibrary.set(new Set());
 
     this._gameSearchService.searchGames(this.searchQuery).subscribe({
-      next: (response) => {
-        this.searchResults = response.results;
+      next: (results) => {
+        this.searchResults = results;
         this.isLoading = false;
         this._cdr.detectChanges();
-        this.checkGamesInLibrary(response.results);
+        this.checkGamesInLibrary(results);
       },
-      error: (err) => {
-        console.error('Error searching games:', err);
+      error: () => {
         this.error = 'Error al buscar juegos. Por favor, inténtalo de nuevo.';
         this.isLoading = false;
-
-        // Force change detection even on error
         this._cdr.detectChanges();
       }
     });
   }
 
-  public selectGame(game: GameSearchResult) {
+  public selectGame(game: GameSearchResult): void {
     this.selectedGame = game;
-
-    // Map the game data to our Videogame format
-    const videogame: Partial<Videogame> = {
-      name: game.name,
-      description: game.description || '',
-      image_url: game.background_image ?? '',
-      genre: game.genres?.length > 0 ? game.genres[0].name : '',
-      platform: game.platforms?.length > 0 ? game.platforms[0].platform.name : '',
-      releaseDate: game.released ? new Date(game.released) : new Date()
-    };
-
-    this.gameSelected.emit(videogame);
+    this.gameSelected.emit(this.toVideogame(game));
   }
 
-  public clearSelection() {
+  public clearSelection(): void {
     this.selectedGame = null;
   }
 
@@ -114,7 +102,7 @@ export class GameSearchComponent implements OnInit {
     return this.gamesInLibrary().has(gameName);
   }
 
-  public async saveGameToLibrary(game: GameSearchResult, event?: Event) {
+  public async saveGameToLibrary(game: GameSearchResult, event?: Event): Promise<void> {
     if (this._isReadOnlyUser()) {
       this._notificationService.error('No tienes permisos para añadir juegos');
       return;
@@ -126,7 +114,6 @@ export class GameSearchComponent implements OnInit {
 
     // Check if game is already being saved
     if (this.savingGames.has(game.id)) {
-      console.log('Game is already being saved, returning early');
       return;
     }
 
@@ -137,39 +124,26 @@ export class GameSearchComponent implements OnInit {
 
       try {
         gameExists = await this._supabaseService.gameExistsInLibrary(game.name);
-      } catch (checkError: any) {
-        console.warn('Error checking if game exists (406 error), assuming it does not exist:', checkError);
+      } catch {
         gameExists = false;
       }
 
       if (gameExists) {
-        console.log('Game already exists, showing notification and cleaning state');
         this._notificationService.info(`${game.name} ya está en tu biblioteca`);
         this.cleanupSavingState(game.id);
         return;
       }
 
-      const videogame: Partial<Videogame> = {
-        name: game.name,
-        description: game.description || '',
-        image_url: game.background_image ?? '',
-        genre: game.genres?.length > 0 ? game.genres[0].name : '',
-        platform: game.platforms?.length > 0 ? game.platforms[0].platform.name : '',
-        releaseDate: game.released ? new Date(game.released) : new Date()
-      };
+      const videogame = this.toVideogame(game);
 
       // Save to database
       try {
         await this._supabaseService.addVideogame(videogame as Omit<Videogame, 'id'>);
-        console.log('Game saved successfully');
         this._notificationService.success(`${game.name} se ha añadido a tu biblioteca exitosamente`);
         this.gamesInLibrary.update(set => new Set([...set, game.name]));
-      } catch (saveError: any) {
-        console.error('Error saving game:', saveError);
-
+      } catch (saveError: unknown) {
         // Check if it's a 406 error - assume the game was saved successfully
-        if (saveError.status === 406) {
-          console.log('Received 406 error, assuming game was saved successfully');
+        if (this.getErrorStatus(saveError) === 406) {
           this._notificationService.success(`${game.name} se ha añadido a tu biblioteca exitosamente`);
           this.gamesInLibrary.update(set => new Set([...set, game.name]));
 
@@ -183,9 +157,8 @@ export class GameSearchComponent implements OnInit {
         }
       }
 
-    } catch (error: any) {
-      console.error('Unexpected error in saveGameToLibrary:', error);
-      this._notificationService.error(`Error al guardar ${game.name}: ${error.message || 'Error desconocido'}`);
+    } catch (error: unknown) {
+      this._notificationService.error(`Error al guardar ${game.name}: ${this.getErrorMessage(error)}`);
     } finally {
       this.cleanupSavingState(game.id);
     }
@@ -195,7 +168,7 @@ export class GameSearchComponent implements OnInit {
    * Clean up the saving state for a specific game
    * @param gameId The ID of the game to clean up
   */
-  private cleanupSavingState(gameId: number) {
+  private cleanupSavingState(gameId: number): void {
     this.savingGames.delete(gameId);
     this._cdr.detectChanges();
   }
@@ -209,5 +182,28 @@ export class GameSearchComponent implements OnInit {
     const isSaving = this.savingGames.has(gameId);
 
     return isSaving;
+  }
+
+  private toVideogame(game: GameSearchResult): Partial<Videogame> {
+    return {
+      name: game.name,
+      description: game.description,
+      image_url: game.imageUrl,
+      genre: game.genres[0] ?? '',
+      platform: game.platforms[0] ?? '',
+      releaseDate: game.releaseDate ?? undefined,
+    };
+  }
+
+  private getErrorStatus(error: unknown): number | undefined {
+    if (typeof error !== 'object' || error === null || !('status' in error)) {
+      return undefined;
+    }
+
+    return typeof error.status === 'number' ? error.status : undefined;
+  }
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : 'Error desconocido';
   }
 } 

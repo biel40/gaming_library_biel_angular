@@ -64,7 +64,7 @@ A modern, visually stunning video game library application built with Angular. T
 - **State Management**: Angular Signals (Zoneless)
 - **Database & Auth**: Supabase (PostgreSQL)
 - **Styling**: Modular SCSS with custom variables and mixins
-- **API Integration**: RAWG API for game search
+- **API Integration**: IGDB game search through a Supabase Edge Function
 - **Bundler**: Vite
 - 
 ## Key Patterns

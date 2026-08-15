@@ -28,6 +28,13 @@
   </div>
   }
 
+  @if (hasSearched && !isLoading && !error && searchResults.length === 0) {
+  <div class="empty-state">
+    <span class="material-icons">search_off</span>
+    <p>No se encontraron juegos.</p>
+  </div>
+  }
+
   @if (searchResults.length > 0) {
   <div class="search-results">
     <h4>Resultados de búsqueda</h4>
@@ -36,16 +43,16 @@
       <button type="button" class="game-card" [class.selected]="selectedGame?.id === game.id" (click)="selectGame(game)"
         (keydown.enter)="selectGame(game)">
         <div class="game-image">
-          <img [src]="game.background_image" [alt]="game.name">
+          <img [src]="game.imageUrl" [alt]="game.name">
         </div>
         <div class="game-info">
           <h5>{{ game.name }}</h5>
           <div class="game-meta">
-            @if (game.released) {
-            <span>{{ game.released | date:'yyyy' }}</span>
+            @if (game.releaseDate) {
+            <span>{{ game.releaseDate | date:'yyyy' }}</span>
             }
             @if (game.genres.length > 0) {
-            <span>{{ game.genres[0].name }}</span>
+            <span>{{ game.genres[0] }}</span>
             }
           </div>
           <div class="game-actions">
@@ -84,28 +91,34 @@
     </div>
     <div class="selected-content">
       <div class="selected-image">
-        <img [src]="selectedGame.background_image" [alt]="selectedGame.name">
+        <img [src]="selectedGame.imageUrl" [alt]="selectedGame.name">
       </div>
       <div class="selected-details">
         <h5>{{ selectedGame.name }}</h5>
         <p class="selected-description">{{ selectedGame.description }}</p>
         <div class="selected-meta">
-          @if (selectedGame.released) {
+          @if (selectedGame.releaseDate) {
           <div class="meta-item">
             <span class="meta-label">Lanzamiento:</span>
-            <span>{{ selectedGame.released | date:'dd/MM/yyyy' }}</span>
+            <span>{{ selectedGame.releaseDate | date:'dd/MM/yyyy' }}</span>
           </div>
           }
           @if (selectedGame.genres.length > 0) {
           <div class="meta-item">
             <span class="meta-label">Género:</span>
-            <span>{{ selectedGame.genres[0].name }}</span>
+            <span>{{ selectedGame.genres[0] }}</span>
           </div>
           }
           @if (selectedGame.platforms.length > 0) {
           <div class="meta-item">
             <span class="meta-label">Plataforma:</span>
-            <span>{{ selectedGame.platforms[0].platform.name }}</span>
+            <span>{{ selectedGame.platforms[0] }}</span>
+          </div>
+          }
+          @if (selectedGame.rating !== null) {
+          <div class="meta-item">
+            <span class="meta-label">Rating:</span>
+            <span>{{ selectedGame.rating | number:'1.0-1' }}/100</span>
           </div>
           }
         </div>

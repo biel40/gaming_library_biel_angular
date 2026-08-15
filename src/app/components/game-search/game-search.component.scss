@@ -107,7 +107,8 @@
     }
   }
 
-  .loading-state {
+  .loading-state,
+  .empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -126,6 +127,10 @@
       color: #e0e0e0;
       margin: 0;
     }
+  }
+
+  .empty-state .material-icons {
+    animation: none;
   }
 
   .search-results {

@@ -1,47 +1,105 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { inject, Injectable } from '@angular/core';
+import { from, map, Observable } from 'rxjs';
 
-export interface GameSearchResult {
-  id: number;
-  name: string;
-  background_image: string;
-  released: string;
-  platforms: { platform: { name: string } }[];
-  genres: { name: string }[];
-  description: string;
+import { EdgeFunctionResponse, SupabaseService } from '../supabase/supabase.service';
+
+const IGDB_COVER_BASE_URL = 'https://images.igdb.com/igdb/image/upload/t_cover_big';
+const FALLBACK_COVER_URL = '/assets/images/game-cover-placeholder.svg';
+
+interface IgdbNamedEntity {
+  readonly id: number;
+  readonly name: string;
 }
 
-export interface GameSearchResponse {
-  count: number;
-  results: GameSearchResult[];
+interface IgdbGame {
+  readonly id: number;
+  readonly name: string;
+  readonly summary?: string;
+  readonly cover?: {
+    readonly id: number;
+    readonly image_id?: string;
+  };
+  readonly first_release_date?: number;
+  readonly rating?: number;
+  readonly genres?: IgdbNamedEntity[];
+  readonly platforms?: IgdbNamedEntity[];
+}
+
+export interface GameSearchResult {
+  readonly id: number;
+  readonly name: string;
+  readonly description: string;
+  readonly imageUrl: string;
+  readonly releaseDate: Date | null;
+  readonly rating: number | null;
+  readonly genres: string[];
+  readonly platforms: string[];
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GameSearchService {
-  private apiUrl = 'https://api.rawg.io/api';
-  private apiKey = environment.rawgApiKey;
+  private readonly _supabaseService = inject(SupabaseService);
 
-  constructor(private http: HttpClient) { }
-
-  searchGames(query: string): Observable<GameSearchResponse> {
-    return this.http.get<GameSearchResponse>(`${this.apiUrl}/games`, {
-      params: {
-        key: this.apiKey,
-        search: query,
-        page_size: '10'
-      }
-    });
+  public searchGames(query: string): Observable<GameSearchResult[]> {
+    return from(this._supabaseService.invokeFunction<IgdbGame[]>('igdb-games', { search: query })).pipe(
+      map((response: EdgeFunctionResponse<IgdbGame[] | null>) => this.mapSearchResponse(response)),
+    );
   }
 
-  getGameDetails(id: number): Observable<GameSearchResult> {
-    return this.http.get<GameSearchResult>(`${this.apiUrl}/games/${id}`, {
-      params: {
-        key: this.apiKey
-      }
-    });
+  private mapSearchResponse(response: EdgeFunctionResponse<IgdbGame[] | null>): GameSearchResult[] {
+    const { data, error } = response;
+
+    if (error) {
+      throw error;
+    }
+
+    if (!Array.isArray(data)) {
+      return [];
+    }
+
+    return data.map((game: IgdbGame) => this.mapGame(game));
+  }
+
+  private mapGame(game: IgdbGame): GameSearchResult {
+    return {
+      id: game.id,
+      name: game.name,
+      description: this.getDescription(game),
+      imageUrl: this.getImageUrl(game),
+      releaseDate: this.getReleaseDate(game),
+      rating: this.getRating(game),
+      genres: this.getNames(game.genres),
+      platforms: this.getNames(game.platforms),
+    };
+  }
+
+  private getDescription(game: IgdbGame): string {
+    return game.summary ?? '';
+  }
+
+  private getImageUrl(game: IgdbGame): string {
+    if (!game.cover?.image_id) {
+      return FALLBACK_COVER_URL;
+    }
+
+    return `${IGDB_COVER_BASE_URL}/${game.cover.image_id}.jpg`;
+  }
+
+  private getReleaseDate(game: IgdbGame): Date | null {
+    if (typeof game.first_release_date !== 'number') {
+      return null;
+    }
+
+    return new Date(game.first_release_date * 1000);
+  }
+
+  private getRating(game: IgdbGame): number | null {
+    return typeof game.rating === 'number' ? game.rating : null;
+  }
+
+  private getNames(items: IgdbNamedEntity[] | undefined): string[] {
+    return items?.map((item: IgdbNamedEntity) => item.name) ?? [];
   }
 } 
