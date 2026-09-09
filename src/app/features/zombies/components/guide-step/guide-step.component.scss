@@ -10,6 +10,7 @@
 
   &--done {
     border-color: rgba(76, 175, 80, 0.5);
+    box-shadow: inset 3px 0 0 z.$z-success;
 
     .z-step__number {
       background: z.$z-success;
@@ -84,8 +85,8 @@
     flex: 0 0 auto;
     display: flex;
     align-items: center;
-    gap: 0.45rem;
-    padding: 0.45rem 0.75rem;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem 0.35rem 0.35rem;
     border-radius: z.$z-radius-pill;
     border: 1px solid z.$z-border;
     background: z.$z-surface;
@@ -95,23 +96,46 @@
     font-weight: 600;
     white-space: nowrap;
     -webkit-tap-highlight-color: transparent;
-    transition: background 0.15s ease, border-color 0.15s ease;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
 
     &:hover {
       background: z.$z-surface-hover;
       border-color: z.$z-border-strong;
     }
 
+    &:active {
+      transform: scale(0.96);
+    }
+
     input {
-      width: 1.2rem;
-      height: 1.2rem;
-      margin: 0;
-      accent-color: z.$z-success;
-      cursor: pointer;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+
+      &:focus-visible + .z-step__check-icon {
+        outline: 2px solid z.$z-amber;
+        outline-offset: 2px;
+      }
 
       &:disabled {
         cursor: default;
       }
+    }
+
+    &-icon {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      font-size: 1.35rem;
+      color: z.$z-text-dim;
+      background: rgba(255, 255, 255, 0.05);
+      transition: background 0.15s ease, color 0.15s ease;
     }
 
     &--readonly {
@@ -125,9 +149,9 @@
     }
   }
 
-  &--done &__check {
-    border-color: rgba(76, 175, 80, 0.5);
-    background: rgba(76, 175, 80, 0.12);
+  &--done &__check-icon {
+    color: z.$z-success;
+    background: rgba(76, 175, 80, 0.18);
   }
 
   &--done &__check-text {
@@ -226,7 +250,13 @@
   }
 
   .z-step__check {
-    padding: 0.55rem;
+    padding: 0.4rem;
+  }
+
+  .z-step__check-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 1.5rem;
   }
 
   .z-step__toggle {
@@ -290,9 +320,14 @@
     }
   }
 
-  &.z-step--done .z-step__check {
-    border-color: rgba(76, 175, 80, 0.5);
-    background: rgba(76, 175, 80, 0.12);
+  .z-step__check-icon {
+    color: z.$z-light-text-dim;
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  &.z-step--done .z-step__check-icon {
+    color: z.$z-success;
+    background: rgba(76, 175, 80, 0.18);
   }
 
   &.z-step--done .z-step__check-text {

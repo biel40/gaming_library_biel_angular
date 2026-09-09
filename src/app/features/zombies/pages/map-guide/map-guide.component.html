@@ -265,9 +265,15 @@
     <div class="z-modal z-modal--steps" (click)="$event.stopPropagation()">
       <header class="z-modal__header">
         <div class="z-modal__heading">
-          <h2 id="z-steps-title">{{ map()?.mainQuestName || 'Guía paso a paso' }}</h2>
+          <h2 id="z-steps-title">
+            <span class="material-icons z-modal__title-icon" aria-hidden="true">flag</span>
+            {{ map()?.mainQuestName || 'Guía paso a paso' }}
+          </h2>
           <p class="z-modal__subtitle">
-            {{ completedCount() }} de {{ steps().length }} pasos · {{ percent() }}%
+            <span class="z-modal__subtitle-count">{{ completedCount() }} de {{ steps().length }} pasos</span>
+            <span class="z-modal__subtitle-percent" [class.z-modal__subtitle-percent--done]="percent() === 100">
+              {{ percent() }}%
+            </span>
           </p>
         </div>
         <button type="button" class="z-modal__close" (click)="closeStepsModal()" aria-label="Cerrar guía">
@@ -275,7 +281,7 @@
         </button>
         <div class="z-modal__progress" role="progressbar" [attr.aria-valuenow]="percent()"
           aria-valuemin="0" aria-valuemax="100" [attr.aria-label]="'Progreso general: ' + percent() + '%'">
-          <div class="z-modal__progress-bar" [style.width.%]="percent()"></div>
+          <div class="z-modal__progress-bar" [class.z-modal__progress-bar--done]="percent() === 100" [style.width.%]="percent()"></div>
         </div>
       </header>
 
