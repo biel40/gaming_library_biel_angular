@@ -1,289 +1,218 @@
 <div class="currently-playing-container">
-    <!-- Back Navigation Arrow -->
-    <a routerLink="/dashboard" class="back-arrow-btn" title="Volver al Dashboard">
-        <span class="material-icons">arrow_back</span>
-    </a>
+    <header class="page-header">
+        <a routerLink="/dashboard" class="icon-button back-button" title="Volver al dashboard"
+            aria-label="Volver al dashboard">
+            <span class="material-icons">arrow_back</span>
+        </a>
 
-    <!-- Header Section -->
-    <header class="header">
-        <div class="title-section">
-            <h1 class="page-title">
-                Jugando actualmente
-            </h1>
-            @if (hasGames()) {
-            <div class="stats-pills">
-                <span class="stat-pill">
-                    <span class="stat-value">{{ filteredGames().length }}</span>
-                    <span class="stat-label">juegos</span>
-                </span>
-                <span class="stat-pill highlight">
-                    <span class="stat-icon">⏱️</span>
-                    <span class="stat-value">{{ totalHours() }}h</span>
-                    <span class="stat-label">jugadas</span>
-                </span>
-            </div>
-            }
+        <div class="heading">
+            <span class="eyebrow">En marcha</span>
+            <h1>Jugando ahora</h1>
         </div>
+
+        <button type="button" class="icon-button refresh-button" title="Actualizar juegos"
+            aria-label="Actualizar juegos" [disabled]="loading()" (click)="refreshGames()">
+            <span class="material-icons" [class.spinning]="loading()">refresh</span>
+        </button>
     </header>
 
-    <!-- Filters Section -->
     @if (!loading() && !error() && hasGames()) {
-    <section class="filters-section">
-        <div class="search-bar">
-            <span class="material-icons search-icon">search</span>
-            <input type="text" placeholder="Buscar juegos..." [ngModel]="searchTerm()"
+    <section class="overview" aria-label="Resumen de juegos en marcha">
+        <div class="overview-item">
+            <span class="overview-value">{{ currentlyPlayingGames().length }}</span>
+            <span class="overview-label">en marcha</span>
+        </div>
+        <div class="overview-divider"></div>
+        <div class="overview-item">
+            <span class="overview-value accent">{{ formatHours(totalHours()) }}</span>
+            <span class="overview-label">registradas</span>
+        </div>
+    </section>
+
+    <section class="controls" aria-label="Buscar, filtrar y ordenar">
+        <div class="search-field">
+            <span class="material-icons">search</span>
+            <input type="search" aria-label="Buscar juegos" placeholder="Buscar en tu lista" [ngModel]="searchTerm()"
                 (ngModelChange)="updateSearchTerm($event)">
             @if (searchTerm()) {
-            <button class="clear-search" (click)="updateSearchTerm('')">
+            <button type="button" class="clear-button" title="Borrar búsqueda" aria-label="Borrar búsqueda"
+                (click)="updateSearchTerm('')">
                 <span class="material-icons">close</span>
             </button>
             }
         </div>
 
-        <div class="filter-groups">
-            <!-- Genre Filter -->
-            <div class="filter-group">
-                <span class="filter-label">Género</span>
-                <div class="chips-scroll">
-                    @for (genre of uniqueGenres(); track genre) {
-                    <button type="button" class="filter-chip" [class.active]="activeGenre() === genre"
-                        (click)="filterByGenre(genre || 'Todos')">
-                        {{ genre }}
-                    </button>
+        <div class="select-row">
+            <label class="select-control">
+                <span class="material-icons">sort</span>
+                <select aria-label="Ordenar juegos" [ngModel]="sortMode()" (ngModelChange)="setSortMode($event)">
+                    @for (option of sortOptions; track option.mode) {
+                    <option [value]="option.mode">{{ option.label }}</option>
                     }
-                </div>
-            </div>
+                </select>
+            </label>
 
-            <!-- Platform Filter -->
-            @if (uniquePlatforms().length > 2) {
-            <div class="filter-group">
-                <span class="filter-label">Plataforma</span>
-                <div class="chips-scroll">
-                    @for (platform of uniquePlatforms(); track platform) {
-                    <button type="button" class="filter-chip" [class.active]="activePlatform() === platform"
-                        (click)="filterByPlatform(platform || 'Todos')">
-                        {{ platform }}
-                    </button>
+            @if (uniqueGenres().length > 2) {
+            <label class="select-control">
+                <span class="material-icons">category</span>
+                <select aria-label="Filtrar por género" [ngModel]="activeGenre()"
+                    (ngModelChange)="filterByGenre($event)">
+                    @for (genre of uniqueGenres(); track genre) {
+                    <option [value]="genre">{{ genre }}</option>
                     }
-                </div>
-            </div>
+                </select>
+            </label>
             }
 
-            <!-- Sort -->
-            <div class="filter-group">
-                <span class="filter-label">Orden</span>
-                <div class="chips-scroll">
-                    @for (option of sortOptions; track option.mode) {
-                    <button type="button" class="filter-chip" [class.active]="sortMode() === option.mode"
-                        (click)="setSortMode(option.mode)">
-                        {{ option.label }}
-                    </button>
+            @if (uniquePlatforms().length > 2) {
+            <label class="select-control">
+                <span class="material-icons">sports_esports</span>
+                <select aria-label="Filtrar por plataforma" [ngModel]="activePlatform()"
+                    (ngModelChange)="filterByPlatform($event)">
+                    @for (platform of uniquePlatforms(); track platform) {
+                    <option [value]="platform">{{ platform }}</option>
                     }
-                </div>
-            </div>
-        </div>
+                </select>
+            </label>
+            }
 
-        @if (getActiveFiltersCount() > 0) {
-        <button class="reset-filters-btn" (click)="resetFilters()">
-            <span class="material-icons">filter_alt_off</span>
-            Limpiar filtros ({{ getActiveFiltersCount() }})
-        </button>
-        }
+            @if (getActiveFiltersCount() > 0) {
+            <button type="button" class="reset-button" title="Limpiar filtros" aria-label="Limpiar filtros"
+                (click)="resetFilters()">
+                <span class="material-icons">filter_alt_off</span>
+                <span>{{ getActiveFiltersCount() }}</span>
+            </button>
+            }
+        </div>
     </section>
     }
 
-    <!-- Loading State -->
     @if (loading()) {
-    <div class="state-container loading">
+    <div class="state-container">
         <div class="loading-spinner"></div>
-        <p>Cargando juegos en progreso...</p>
+        <p>Cargando tus partidas...</p>
     </div>
     }
 
-    <!-- Error State -->
     @if (error() && !loading()) {
     <div class="state-container error">
-        <span class="state-icon">⚠️</span>
-        <h3>Error al cargar los datos</h3>
+        <span class="material-icons state-icon">error_outline</span>
+        <h2>No se pudo cargar la lista</h2>
         <p>{{ error() }}</p>
-        <button class="action-btn" (click)="refreshGames()">
+        <button type="button" class="state-action" (click)="refreshGames()">
             <span class="material-icons">refresh</span>
             Reintentar
         </button>
     </div>
     }
 
-    <!-- Empty State - No games -->
     @if (!loading() && !error() && !hasGames()) {
-    <div class="state-container empty">
-        <span class="state-icon">🎯</span>
-        <h3>No hay juegos en progreso</h3>
-        <p>Cuando marques un juego como "jugando actualmente" desde el detalle del juego, aparecerá aquí.</p>
-        <a routerLink="/dashboard" class="action-btn primary">
-            <span class="material-icons">sports_esports</span>
-            Ir a mi biblioteca
+    <div class="state-container">
+        <span class="material-icons state-icon">sports_esports</span>
+        <h2>No tienes juegos en marcha</h2>
+        <p>Marca un juego como “jugando actualmente” desde su ficha para empezar tu lista.</p>
+        <a routerLink="/dashboard" class="state-action">
+            <span class="material-icons">library_books</span>
+            Abrir biblioteca
         </a>
     </div>
     }
 
-    <!-- Empty State - No filtered results -->
     @if (!loading() && !error() && hasGames() && !hasFilteredGames()) {
-    <div class="state-container empty">
-        <span class="state-icon">🔍</span>
-        <h3>Sin resultados</h3>
-        <p>No hay juegos que coincidan con los filtros aplicados.</p>
-        <button class="action-btn" (click)="resetFilters()">
+    <div class="state-container compact">
+        <span class="material-icons state-icon">search_off</span>
+        <h2>No hay coincidencias</h2>
+        <button type="button" class="state-action" (click)="resetFilters()">
             <span class="material-icons">filter_alt_off</span>
             Limpiar filtros
         </button>
     </div>
     }
 
-    <!-- Games Content -->
     @if (!loading() && !error() && hasFilteredGames()) {
-    <main class="games-content">
-        <!-- FOCUS: what deserves your time right now -->
-        <section class="focus-section">
-            <header class="section-header">
-                <h2 class="section-title">
-                    <span class="material-icons">local_fire_department</span>
-                    Foco
-                </h2>
-            </header>
+    <main class="queue">
+        <header class="queue-header">
+            <h2>Tu lista</h2>
+            <span>{{ visibleGames().length }} de {{ currentlyPlayingGames().length }}</span>
+        </header>
 
-            <div class="focus-grid">
-                @for (game of focusGames(); track game.id) {
-                <article class="focus-card">
-                    <div class="focus-media">
-                        <img [src]="game.image_url" [alt]="game.name"
-                            onerror="this.src='/assets/images/placeholder-game.png'">
-                        <span class="focus-rank">{{ $index + 1 }}</span>
-                        <img class="focus-platform" [src]="getPlatformIcon(platformOf(game))" [alt]="platformOf(game)"
-                            [title]="platformOf(game)">
-                        <a class="quick-view" [routerLink]="['/game', game.id]" title="Ver detalles">
-                            <span class="material-icons">visibility</span>
-                        </a>
+        <div class="game-list">
+            @for (game of visibleGames(); track game.id) {
+            <article class="game-row">
+                <a class="game-cover" [routerLink]="['/game', game.id]" [attr.aria-label]="'Abrir ' + game.name">
+                    <img [src]="game.image_url" [alt]="game.name"
+                        onerror="this.src='/assets/images/placeholder-game.png'">
+                </a>
+
+                <div class="game-main">
+                    <div class="game-platform">
+                        <img [src]="getPlatformIcon(platformOf(game))" [class.ps5-logo]="platformOf(game) === 'PlayStation 5'"
+                            alt="">
+                        <span>{{ platformOf(game) }}</span>
                     </div>
+                    <a class="game-title" [routerLink]="['/game', game.id]">{{ game.name }}</a>
+                    <span class="game-genre">{{ genreOf(game) }}</span>
 
-                    <div class="focus-body">
-                        <h3 class="game-name">{{ game.name }}</h3>
-
-                        <div class="game-tags">
-                            <span class="tag genre">{{ genreOf(game) }}</span>
-                            <span class="tag platform">{{ platformOf(game) }}</span>
-                        </div>
-
-                        <div class="hours-tracker">
-                            @if (editingHours() !== game.id) {
-                            <div class="hours-display">
-                                <span class="hours-value">{{ formatHours(game.hours_played || 0) }}</span>
-                                <div class="hours-bar" [attr.aria-label]="'Progreso relativo de horas'">
-                                    <span class="hours-bar-fill" [style.width.%]="hoursPercent(game)"></span>
-                                </div>
-                                @if (!isReadOnlyUser()) {
-                                <button type="button" class="edit-btn" title="Editar horas"
-                                    (click)="startEditingHours(game.id!, game.hours_played || 0)">
-                                    <span class="material-icons">edit</span>
-                                </button>
-                                }
-                            </div>
-                            } @else {
-                            <ng-container
-                                *ngTemplateOutlet="hoursEditor; context: { $implicit: game }"></ng-container>
-                            }
-                        </div>
-
-                        <div class="card-actions">
-                            @if (!isReadOnlyUser()) {
-                            <button type="button" class="btn-pause" (click)="toggleCurrentlyPlaying(game)">
-                                <span class="material-icons">pause</span>
-                                Pausar
-                            </button>
-                            }
-                            <a class="btn-view" [routerLink]="['/game', game.id]">
-                                <span class="material-icons">info</span>
-                                Detalles
-                            </a>
-                        </div>
-                    </div>
-                </article>
-                }
-            </div>
-        </section>
-
-        <!-- BACKLOG: compact scannable list -->
-        @if (hasBacklogGames()) {
-        <section class="backlog-section">
-            <header class="section-header">
-                <h2 class="section-title">
-                    <span class="material-icons">list</span>
-                    En curso
-                </h2>
-                <span class="section-hint">{{ backlogGames().length }} juego{{ backlogGames().length !== 1 ? 's' : '' }}
-                    más abiertos</span>
-            </header>
-
-            <div class="backlog-list">
-                @for (game of backlogGames(); track game.id) {
-                <article class="backlog-row">
-                    <a class="row-thumb" [routerLink]="['/game', game.id]">
-                        <img [src]="game.image_url" [alt]="game.name"
-                            onerror="this.src='/assets/images/placeholder-game.png'">
-                    </a>
-
-                    <div class="row-info">
-                        <h3 class="row-name">{{ game.name }}</h3>
-                        <div class="row-meta">
-                            <img class="row-platform-icon" [src]="getPlatformIcon(platformOf(game))"
-                                [alt]="platformOf(game)">
-                            <span class="row-platform">{{ platformOf(game) }}</span>
-                            <span class="row-divider">•</span>
-                            <span class="row-genre">{{ genreOf(game) }}</span>
-                        </div>
-                    </div>
-
-                    <div class="row-hours">
+                    <div class="time-control">
                         @if (editingHours() !== game.id) {
-                        <span class="hours-value">{{ formatHours(game.hours_played || 0) }}</span>
+                        <div class="time-total">
+                            <span class="time-label">Tiempo</span>
+                            <strong>{{ formatHours(game.hours_played || 0) }}</strong>
+                        </div>
+
                         @if (!isReadOnlyUser()) {
-                        <button type="button" class="edit-btn" title="Editar horas"
-                            (click)="startEditingHours(game.id!, game.hours_played || 0)">
-                            <span class="material-icons">edit</span>
-                        </button>
+                        <div class="quick-time" aria-label="Añadir tiempo de juego">
+                            <button type="button" [disabled]="isSaving(game.id)" (click)="addHours(game, 0.5)">
+                                +30 min
+                            </button>
+                            <button type="button" [disabled]="isSaving(game.id)" (click)="addHours(game, 1)">
+                                +1 h
+                            </button>
+                            <button type="button" class="edit-button" title="Editar horas exactas"
+                                aria-label="Editar horas exactas" [disabled]="isSaving(game.id)"
+                                (click)="startEditingHours(game.id!, game.hours_played || 0)">
+                                <span class="material-icons">edit</span>
+                            </button>
+                        </div>
                         }
                         } @else {
                         <ng-container *ngTemplateOutlet="hoursEditor; context: { $implicit: game }"></ng-container>
                         }
                     </div>
+                </div>
 
-                    <div class="row-actions">
-                        @if (!isReadOnlyUser()) {
-                        <button type="button" class="icon-btn pause" title="Pausar" (click)="toggleCurrentlyPlaying(game)">
-                            <span class="material-icons">pause</span>
-                        </button>
-                        }
-                        <a class="icon-btn view" [routerLink]="['/game', game.id]" title="Detalles">
-                            <span class="material-icons">info</span>
-                        </a>
-                    </div>
-                </article>
-                }
-            </div>
-        </section>
-        }
+                <div class="game-actions">
+                    <a class="details-action" [routerLink]="['/game', game.id]">
+                        <span class="material-icons">open_in_new</span>
+                        <span>Detalles</span>
+                    </a>
+                    @if (!isReadOnlyUser()) {
+                    <button type="button" class="pause-action" title="Quitar de jugando ahora"
+                        (click)="toggleCurrentlyPlaying(game)">
+                        <span class="material-icons">pause_circle_outline</span>
+                        <span>Pausar</span>
+                    </button>
+                    }
+                </div>
+            </article>
+            }
+        </div>
     </main>
     }
 </div>
 
 <ng-template #hoursEditor let-game>
-    <div class="hours-edit">
-        <input type="number" [id]="'hours-' + game.id" min="0" step="0.5" [ngModel]="tempHours()"
-            (ngModelChange)="updateTempHours($event)" placeholder="Horas">
-        <div class="edit-actions">
-            <button type="button" class="save-btn" title="Guardar" (click)="saveHours(game)">
+    <div class="hours-editor">
+        <label [for]="'hours-' + game.id">Horas totales</label>
+        <div class="editor-row">
+            <input type="number" inputmode="decimal" [id]="'hours-' + game.id" min="0" step="0.5"
+                [ngModel]="tempHours()" (ngModelChange)="updateTempHours($event)">
+            <button type="button" class="confirm-button" title="Guardar" aria-label="Guardar horas"
+                [disabled]="isSaving(game.id)" (click)="saveHours(game)">
                 <span class="material-icons">check</span>
             </button>
-            <button type="button" class="cancel-btn" title="Cancelar" (click)="cancelEditingHours()">
+            <button type="button" class="cancel-button" title="Cancelar" aria-label="Cancelar edición"
+                [disabled]="isSaving(game.id)" (click)="cancelEditingHours()">
                 <span class="material-icons">close</span>
             </button>
         </div>

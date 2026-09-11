@@ -6,8 +6,7 @@ import { SupabaseService, Videogame } from '../../services/supabase/supabase.ser
 import { NotificationService } from '../../services/notification/notification.service';
 import { GenreNormalizerService } from '../../services/genre-normalizer/genre-normalizer.service';
 import { PlatformNormalizerService } from '../../services/platform-normalizer/platform-normalizer.service';
-
-export type SortMode = 'hours-desc' | 'hours-asc' | 'name' | 'platform';
+import { adjustHours, sortCurrentlyPlayingGames, SortMode } from './currently-playing.utils';
 
 export interface SortOption {
   readonly mode: SortMode;
@@ -31,8 +30,6 @@ export class CurrentlyPlayingComponent implements OnInit {
   private _genreNormalizer = inject(GenreNormalizerService);
   private _platformNormalizer = inject(PlatformNormalizerService);
 
-  private static readonly FOCUS_SIZE = 3;
-
   private _currentlyPlayingGames = signal<Videogame[]>([]);
   private _loading = signal<boolean>(true);
   private _error = signal<string | null>(null);
@@ -43,6 +40,7 @@ export class CurrentlyPlayingComponent implements OnInit {
   private _activeGenre = signal<string>('Todos');
   private _activePlatform = signal<string>('Todos');
   private _sortMode = signal<SortMode>('hours-desc');
+  private _savingGameIds = signal<ReadonlySet<string>>(new Set());
 
   public readonly sortOptions: readonly SortOption[] = [
     { mode: 'hours-desc', label: 'Más horas' },
@@ -63,7 +61,6 @@ export class CurrentlyPlayingComponent implements OnInit {
   public readonly activePlatform = computed(() => this._activePlatform());
   public readonly sortMode = computed(() => this._sortMode());
 
-  // Filtered games
   public readonly filteredGames = computed(() => {
     let games = this._currentlyPlayingGames();
 
@@ -85,38 +82,24 @@ export class CurrentlyPlayingComponent implements OnInit {
 
     // Filter by platform
     if (this._activePlatform() !== 'Todos') {
-      games = games.filter(game => this.platformOf(game) === this._activePlatform());
+      games = games.filter(game =>
+        this.platformOf(game).split(' / ').includes(this._activePlatform())
+      );
     }
 
     return games;
   });
 
-  // Focus: the most advanced games, the ones worth finishing first
-  public readonly focusGames = computed(() =>
-    [...this.filteredGames()]
-      .sort((a, b) => (b.hours_played || 0) - (a.hours_played || 0))
-      .slice(0, CurrentlyPlayingComponent.FOCUS_SIZE)
-  );
-
-  public readonly backlogGames = computed(() => {
-    const focusIds = new Set(this.focusGames().map(game => game.id));
-    const rest = this.filteredGames().filter(game => !focusIds.has(game.id));
-    return this.applySort(rest);
-  });
-
-  public readonly hasBacklogGames = computed(() => this.backlogGames().length > 0);
-
-  public readonly maxHours = computed(() =>
-    this.filteredGames().reduce((max, game) => Math.max(max, game.hours_played || 0), 0)
+  public readonly visibleGames = computed(() =>
+    sortCurrentlyPlayingGames(this.filteredGames(), this._sortMode(), game => this.platformOf(game))
   );
 
   public readonly totalHours = computed(() =>
-    this.filteredGames().reduce((sum, game) => sum + (game.hours_played || 0), 0)
+    this._currentlyPlayingGames().reduce((sum, game) => sum + (game.hours_played || 0), 0)
   );
   public readonly hasGames = computed(() => this._currentlyPlayingGames().length > 0);
   public readonly hasFilteredGames = computed(() => this.filteredGames().length > 0);
 
-  // Unique values for filters
   public readonly uniqueGenres = computed(() => {
     const genres = this._currentlyPlayingGames().map(game => game.genre);
     return this._genreNormalizer.getUniqueNormalizedGenres(genres);
@@ -124,7 +107,7 @@ export class CurrentlyPlayingComponent implements OnInit {
 
   public readonly uniquePlatforms = computed(() => {
     const platforms = this._currentlyPlayingGames().map(game => game.platform);
-    return ['Todos', ...this._platformNormalizer.getUniquePlatforms(platforms)];
+    return this._platformNormalizer.getUniquePlatforms(platforms);
   });
 
   public ngOnInit(): void {
@@ -140,28 +123,8 @@ export class CurrentlyPlayingComponent implements OnInit {
     return this._genreNormalizer.normalizeGenre(game.genre);
   }
 
-  public hoursPercent(game: Videogame): number {
-    const max = this.maxHours();
-    if (max <= 0) return 0;
-    return Math.round(((game.hours_played || 0) / max) * 100);
-  }
-
-  private applySort(games: Videogame[]): Videogame[] {
-    const sorted = [...games];
-
-    switch (this._sortMode()) {
-      case 'hours-asc':
-        return sorted.sort((a, b) => (a.hours_played || 0) - (b.hours_played || 0));
-      case 'name':
-        return sorted.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'es'));
-      case 'platform':
-        return sorted.sort((a, b) =>
-          this.platformOf(a).localeCompare(this.platformOf(b), 'es') ||
-          (b.hours_played || 0) - (a.hours_played || 0)
-        );
-      default:
-        return sorted.sort((a, b) => (b.hours_played || 0) - (a.hours_played || 0));
-    }
+  public isSaving(gameId: string | undefined): boolean {
+    return !!gameId && this._savingGameIds().has(gameId);
   }
 
   private checkReadOnlyUser(): void {
@@ -239,20 +202,41 @@ export class CurrentlyPlayingComponent implements OnInit {
       return;
     }
 
-    try {
-      await this._supabaseService.updateGameHoursPlayed(game.id, newHours);
-
-      // Update local state
-      const updatedGames = this._currentlyPlayingGames().map(g =>
-        g.id === game.id ? { ...g, hours_played: newHours } : g
-      );
-      this._currentlyPlayingGames.set(updatedGames);
-
+    const saved = await this.persistHours(game, newHours);
+    if (saved) {
       this._notificationService.success(`Horas actualizadas para ${game.name}`);
       this.cancelEditingHours();
-    } catch (error: any) {
+    }
+  }
+
+  public async addHours(game: Videogame, increment: number): Promise<void> {
+    if (this._isReadOnlyUser() || !game.id || this.isSaving(game.id)) return;
+
+    await this.persistHours(game, adjustHours(game.hours_played || 0, increment));
+  }
+
+  private async persistHours(game: Videogame, newHours: number): Promise<boolean> {
+    if (!game.id) return false;
+
+    const gameId = game.id;
+    this._savingGameIds.update(ids => new Set(ids).add(gameId));
+
+    try {
+      await this._supabaseService.updateGameHoursPlayed(gameId, newHours);
+      this._currentlyPlayingGames.update(games => games.map(currentGame =>
+        currentGame.id === gameId ? { ...currentGame, hours_played: newHours } : currentGame
+      ));
+      return true;
+    } catch (error: unknown) {
       console.error('Error updating hours played:', error);
       this._notificationService.error('Error al actualizar las horas jugadas');
+      return false;
+    } finally {
+      this._savingGameIds.update(ids => {
+        const nextIds = new Set(ids);
+        nextIds.delete(gameId);
+        return nextIds;
+      });
     }
   }
 
@@ -299,7 +283,7 @@ export class CurrentlyPlayingComponent implements OnInit {
 
   public getPlatformIcon(platform: string): string {
     const iconMap: { [key: string]: string } = {
-      'PlayStation 5': 'assets/images/platforms/ps5.svg',
+      'PlayStation 5': 'assets/images/platforms/ps5-official.png',
       'PlayStation 4': 'assets/images/platforms/ps4.svg',
       'PlayStation 3': 'assets/images/platforms/ps3.svg',
       'PlayStation 2': 'assets/images/platforms/ps2.svg',

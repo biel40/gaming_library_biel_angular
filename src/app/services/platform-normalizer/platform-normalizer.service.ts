@@ -142,9 +142,9 @@ export class PlatformNormalizerService {
             return 'Desconocida';
         }
 
-        // Handle compound platforms like "PlayStation 3 / Xbox 360 / PC"
-        if (platform.includes('/')) {
-            const parts = platform.split('/').map(p => this.normalizeSinglePlatform(p.trim()));
+        const compoundSeparator = /\s*,\s*|\s+\/\s+/;
+        if (compoundSeparator.test(platform)) {
+            const parts = platform.split(compoundSeparator).map(p => this.normalizeSinglePlatform(p.trim()));
             return [...new Set(parts)].join(' / ');
         }
 
@@ -238,9 +238,10 @@ export class PlatformNormalizerService {
         for (const platform of platforms) {
             if (!platform) continue;
             const normalized = this.normalizePlatform(platform);
-            if (normalized && normalized !== 'Desconocida') {
-                normalizedSet.add(normalized);
-            }
+            normalized
+                .split(' / ')
+                .filter(part => part && part !== 'Desconocida')
+                .forEach(part => normalizedSet.add(part));
         }
 
         return ['Todos', ...Array.from(normalizedSet).sort((a, b) => a.localeCompare(b, 'es'))];
