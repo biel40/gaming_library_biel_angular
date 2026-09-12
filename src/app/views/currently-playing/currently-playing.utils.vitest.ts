@@ -25,7 +25,7 @@ describe('currently playing utilities', () => {
     expect(games.map(game => game.id)).toEqual(['1', '2', '3']);
   });
 
-  it('keeps filter and quick-time pills touch friendly on mobile', () => {
+  it('keeps filters and hours editing touch friendly on mobile', () => {
     const stylesheet = readFileSync(
       resolve('src/app/views/currently-playing/currently-playing.component.scss'),
       'utf8'
@@ -33,7 +33,7 @@ describe('currently playing utilities', () => {
     const mobileStyles = stylesheet.match(/@media \(max-width: 767px\) \{([\s\S]*?)\n\}/)?.[1] ?? '';
 
     expect(mobileStyles).toMatch(/\.select-control[\s\S]*?select[\s\S]*?height: 44px/);
-    expect(mobileStyles).toMatch(/\.quick-time[\s\S]*?button[\s\S]*?min-height: 44px/);
+    expect(mobileStyles).toMatch(/\.hours-actions[\s\S]*?button[\s\S]*?min-height: 44px/);
     expect(mobileStyles).toMatch(/\.game-actions[\s\S]*?grid-column: 1 \/ -1/);
     expect(mobileStyles).toMatch(/\.game-actions[\s\S]*?(?:a,|a,[\s\S]*?button)[\s\S]*?min-height: 44px/);
   });
@@ -48,7 +48,7 @@ describe('currently playing utilities', () => {
     )?.[1] ?? '';
 
     expect(largeScreenStyles).toMatch(/\.game-row[\s\S]*?padding: 1rem/);
-    expect(largeScreenStyles).toMatch(/\.game-cover[\s\S]*?width: 108px[\s\S]*?height: 146px/);
+    expect(largeScreenStyles).toMatch(/\.game-cover[\s\S]*?width: 132px[\s\S]*?height: 178px/);
   });
 
   it('uses the full viewport width and scales the queue on wide monitors', () => {

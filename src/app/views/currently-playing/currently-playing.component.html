@@ -221,13 +221,7 @@
                         </div>
 
                         @if (!isReadOnlyUser()) {
-                        <div class="quick-time" aria-label="Añadir tiempo de juego">
-                            <button type="button" [disabled]="isSaving(game.id)" (click)="addHours(game, 0.5)">
-                                +30 min
-                            </button>
-                            <button type="button" [disabled]="isSaving(game.id)" (click)="addHours(game, 1)">
-                                +1 h
-                            </button>
+                        <div class="hours-actions">
                             <button type="button" class="edit-button" title="Editar horas exactas"
                                 aria-label="Editar horas exactas" [disabled]="isSaving(game.id)"
                                 (click)="startEditingHours(game.id!, game.hours_played || 0)">
