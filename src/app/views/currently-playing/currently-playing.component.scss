@@ -5,10 +5,11 @@
   position: relative;
   isolation: isolate;
   width: 100%;
-  max-width: 1680px;
+  max-width: none;
   min-height: 100vh;
-  margin: 0 auto;
+  margin: 0;
   padding: 0.875rem 0.75rem 2rem;
+  box-sizing: border-box;
   animation: page-enter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 
   &::before {
@@ -38,7 +39,7 @@
   }
 
   @media (min-width: 768px) {
-    padding: 1.5rem 2rem 3rem;
+    padding: 1.5rem clamp(1rem, 1.5vw, 2rem) 3rem;
   }
 }
 
@@ -197,6 +198,229 @@
   border-radius: 8px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
   animation: content-rise 0.55s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.add-game-section {
+  margin-bottom: 1rem;
+  animation: content-rise 0.55s 0.16s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.add-game-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 50px;
+  padding: 0 1rem;
+  background: linear-gradient(120deg, rgba(255, 215, 0, 0.1), vars.$white-5);
+  border: 1px dashed vars.$gold-30;
+  border-radius: 8px;
+  color: vars.$accent-gold-light;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+
+  .material-icons {
+    font-size: 1.2rem;
+  }
+
+  &:hover {
+    background: linear-gradient(120deg, rgba(255, 215, 0, 0.16), vars.$white-10);
+    border-color: vars.$accent-gold;
+    transform: translateY(-1px);
+  }
+}
+
+.add-game-panel {
+  background: rgba(10, 14, 24, 0.5);
+  border: 1px solid vars.$border-color;
+  border-radius: 8px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.add-game-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.7rem;
+  border-bottom: 1px solid vars.$border-color;
+
+  > .material-icons:first-child {
+    color: vars.$text-muted;
+    font-size: 1.1rem;
+  }
+}
+
+.add-game-input {
+  flex: 1;
+  height: 40px;
+  padding: 0 0.5rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid vars.$border-color;
+  border-radius: 8px;
+  color: vars.$text-dark;
+  font-size: 0.9rem;
+
+  &::placeholder {
+    color: vars.$text-muted;
+  }
+
+  &:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.11);
+    border-color: vars.$accent-gold;
+    box-shadow: 0 0 0 3px vars.$gold-10;
+  }
+}
+
+.close-add-panel {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: vars.$text-light;
+  cursor: pointer;
+
+  .material-icons {
+    font-size: 1.1rem;
+  }
+}
+
+.add-game-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  color: vars.$text-muted;
+  font-size: 0.85rem;
+  text-align: center;
+
+  .material-icons {
+    font-size: 1.3rem;
+  }
+}
+
+.add-game-results {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem;
+  max-height: 520px;
+  overflow-y: auto;
+  scrollbar-color: vars.$accent-gold vars.$white-5;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    margin: 0.35rem 0;
+    background: vars.$white-5;
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, vars.$accent-gold-light, vars.$accent-gold);
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: vars.$accent-gold-light;
+    background-clip: padding-box;
+  }
+}
+
+.add-game-result + .add-game-result {
+  margin-top: 0.3rem;
+}
+
+.add-game-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: vars.$gold-30;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: wait;
+  }
+}
+
+.add-game-thumb {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.add-game-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.add-game-name {
+  color: vars.$text-dark;
+  font-size: 0.86rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.add-game-platform {
+  color: vars.$text-muted;
+  font-size: 0.72rem;
+}
+
+.add-game-icon {
+  flex: 0 0 auto;
+  color: vars.$accent-gold-light;
+  font-size: 1.2rem;
+}
+
+.add-game-hint {
+  margin: 0;
+  padding: 0.5rem 0.75rem 0.65rem;
+  color: vars.$text-muted;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.loading-spinner.small {
+  width: 20px;
+  height: 20px;
+}
+
+.loading-spinner.tiny {
+  width: 16px;
+  height: 16px;
 }
 
 .search-field {
@@ -797,6 +1021,15 @@
 }
 
 @media (max-width: 767px) {
+  .add-game-results {
+    max-height: 420px;
+    scrollbar-width: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+  }
+
   .controls {
     margin-inline: -0.25rem;
     padding: 0.5rem;
@@ -986,6 +1219,36 @@
 }
 
 @media (min-width: 1200px) {
+  .page-header {
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid vars.$border-color;
+  }
+
+  .icon-button {
+    width: 48px;
+    height: 48px;
+  }
+
+  .heading h1 {
+    font-size: 2rem;
+  }
+
+  .add-game-trigger {
+    min-height: 54px;
+    font-size: 0.92rem;
+  }
+
+  .controls {
+    padding: 0.75rem;
+  }
+
+  .search-field input,
+  .select-control select,
+  .reset-button {
+    height: 46px;
+  }
+
   .game-row {
     grid-template-columns: 108px minmax(0, 1fr) auto;
     gap: 1.25rem;
@@ -1008,6 +1271,12 @@
   .game-row {
     grid-template-columns: 108px minmax(0, 1fr) auto;
     min-height: 178px;
+  }
+}
+
+@media (min-width: 2200px) {
+  .game-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

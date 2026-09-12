@@ -8,6 +8,8 @@ import { GenreNormalizerService } from '../../services/genre-normalizer/genre-no
 import { PlatformNormalizerService } from '../../services/platform-normalizer/platform-normalizer.service';
 import { adjustHours, sortCurrentlyPlayingGames, SortMode } from './currently-playing.utils';
 
+const MAX_ADDABLE_GAMES = 25;
+
 export interface SortOption {
   readonly mode: SortMode;
   readonly label: string;
@@ -41,6 +43,12 @@ export class CurrentlyPlayingComponent implements OnInit {
   private _activePlatform = signal<string>('Todos');
   private _sortMode = signal<SortMode>('hours-desc');
   private _savingGameIds = signal<ReadonlySet<string>>(new Set());
+
+  private _libraryGames = signal<Videogame[]>([]);
+  private _libraryLoading = signal<boolean>(false);
+  private _showAddPanel = signal<boolean>(false);
+  private _addSearchTerm = signal<string>('');
+  private _addingGameId = signal<string | null>(null);
 
   public readonly sortOptions: readonly SortOption[] = [
     { mode: 'hours-desc', label: 'Más horas' },
@@ -110,6 +118,31 @@ export class CurrentlyPlayingComponent implements OnInit {
     return this._platformNormalizer.getUniquePlatforms(platforms);
   });
 
+  public readonly libraryLoading = computed(() => this._libraryLoading());
+  public readonly showAddPanel = computed(() => this._showAddPanel());
+  public readonly addSearchTerm = computed(() => this._addSearchTerm());
+
+  public readonly addableGames = computed(() => {
+    const playingIds = new Set(this._currentlyPlayingGames().map(game => game.id));
+    const search = this._addSearchTerm().toLowerCase().trim();
+    let games = this._libraryGames().filter(game => !playingIds.has(game.id));
+
+    if (search) {
+      games = games.filter(game => game.name?.toLowerCase().includes(search));
+    }
+
+    return games.slice(0, MAX_ADDABLE_GAMES);
+  });
+
+  public readonly hasMoreAddableGames = computed(() => {
+    const playingIds = new Set(this._currentlyPlayingGames().map(game => game.id));
+    const search = this._addSearchTerm().toLowerCase().trim();
+    const games = this._libraryGames().filter(game =>
+      !playingIds.has(game.id) && (!search || game.name?.toLowerCase().includes(search))
+    );
+    return games.length > MAX_ADDABLE_GAMES;
+  });
+
   public ngOnInit(): void {
     this.checkReadOnlyUser();
     this.loadCurrentlyPlayingGames();
@@ -147,6 +180,65 @@ export class CurrentlyPlayingComponent implements OnInit {
       this._error.set('Error al cargar los juegos en progreso');
     } finally {
       this._loading.set(false);
+    }
+  }
+
+  public async openAddGamePanel(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this._notificationService.error('No tienes permisos para modificar juegos');
+      return;
+    }
+
+    this._showAddPanel.set(true);
+    this._addSearchTerm.set('');
+
+    if (this._libraryGames().length === 0) {
+      await this.loadLibraryGames();
+    }
+  }
+
+  public closeAddGamePanel(): void {
+    this._showAddPanel.set(false);
+    this._addSearchTerm.set('');
+  }
+
+  public updateAddSearchTerm(term: string): void {
+    this._addSearchTerm.set(term);
+  }
+
+  public isAddingGame(gameId: string | undefined): boolean {
+    return !!gameId && this._addingGameId() === gameId;
+  }
+
+  public async addGameToCurrentlyPlaying(game: Videogame): Promise<void> {
+    if (this._isReadOnlyUser() || !game.id || this._addingGameId()) return;
+
+    const gameId = game.id;
+    this._addingGameId.set(gameId);
+
+    try {
+      await this._supabaseService.updateGameCurrentlyPlaying(gameId, true);
+      this._currentlyPlayingGames.update(games => [{ ...game, currently_playing: true }, ...games]);
+      this._notificationService.success(`${game.name} añadido a jugando ahora`);
+      this.closeAddGamePanel();
+    } catch (error: any) {
+      console.error('Error adding game to currently playing:', error);
+      this._notificationService.error('Error al añadir el juego');
+    } finally {
+      this._addingGameId.set(null);
+    }
+  }
+
+  private async loadLibraryGames(): Promise<void> {
+    try {
+      this._libraryLoading.set(true);
+      const games = await this._supabaseService.getVideogames();
+      this._libraryGames.set(games);
+    } catch (error: any) {
+      console.error('Error loading library games:', error);
+      this._notificationService.error('Error al cargar tu biblioteca');
+    } finally {
+      this._libraryLoading.set(false);
     }
   }
 

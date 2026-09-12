@@ -16,6 +16,66 @@
         </button>
     </header>
 
+    @if (!loading() && !error() && !isReadOnlyUser()) {
+    <section class="add-game-section" aria-label="Añadir juego a jugando ahora">
+        @if (!showAddPanel()) {
+        <button type="button" class="add-game-trigger" (click)="openAddGamePanel()">
+            <span class="material-icons">add_circle_outline</span>
+            <span>Añadir juego de tu biblioteca</span>
+        </button>
+        } @else {
+        <div class="add-game-panel">
+            <div class="add-game-header">
+                <span class="material-icons">search</span>
+                <input type="text" class="add-game-input" placeholder="Buscar en tu biblioteca..."
+                    aria-label="Buscar juego para añadir" [ngModel]="addSearchTerm()"
+                    (ngModelChange)="updateAddSearchTerm($event)" autofocus>
+                <button type="button" class="close-add-panel" title="Cerrar" aria-label="Cerrar selector"
+                    (click)="closeAddGamePanel()">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+
+            @if (libraryLoading()) {
+            <div class="add-game-state">
+                <div class="loading-spinner small"></div>
+                <span>Cargando biblioteca...</span>
+            </div>
+            } @else if (addableGames().length === 0) {
+            <div class="add-game-state">
+                <span class="material-icons">search_off</span>
+                <span>No hay juegos disponibles para añadir</span>
+            </div>
+            } @else {
+            <ul class="add-game-results">
+                @for (game of addableGames(); track game.id) {
+                <li class="add-game-result">
+                    <button type="button" class="add-game-option" [disabled]="isAddingGame(game.id)"
+                        (click)="addGameToCurrentlyPlaying(game)">
+                        <img class="add-game-thumb" [src]="game.image_url" [alt]="game.name"
+                            onerror="this.src='/assets/images/placeholder-game.png'">
+                        <span class="add-game-info">
+                            <span class="add-game-name">{{ game.name }}</span>
+                            <span class="add-game-platform">{{ platformOf(game) }}</span>
+                        </span>
+                        @if (isAddingGame(game.id)) {
+                        <div class="loading-spinner tiny"></div>
+                        } @else {
+                        <span class="material-icons add-game-icon">add</span>
+                        }
+                    </button>
+                </li>
+                }
+            </ul>
+            @if (hasMoreAddableGames()) {
+            <p class="add-game-hint">Sigue escribiendo para acotar los resultados</p>
+            }
+            }
+        </div>
+        }
+    </section>
+    }
+
     @if (!loading() && !error() && hasGames()) {
     <section class="overview" aria-label="Resumen de juegos en marcha">
         <div class="overview-item">

@@ -51,15 +51,20 @@ describe('currently playing utilities', () => {
     expect(largeScreenStyles).toMatch(/\.game-cover[\s\S]*?width: 108px[\s\S]*?height: 146px/);
   });
 
-  it('uses a two-column queue on wide monitors', () => {
+  it('uses the full viewport width and scales the queue on wide monitors', () => {
     const stylesheet = readFileSync(
       resolve('src/app/views/currently-playing/currently-playing.component.scss'),
       'utf8'
     );
 
-    expect(stylesheet).toMatch(/max-width: 1680px/);
+    expect(stylesheet).toMatch(
+      /\.currently-playing-container\s*\{[\s\S]*?width: 100%[\s\S]*?max-width: none[\s\S]*?box-sizing: border-box/
+    );
     expect(stylesheet).toMatch(
       /@media \(min-width: 1440px\)[\s\S]*?\.game-list[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/
+    );
+    expect(stylesheet).toMatch(
+      /@media \(min-width: 2200px\)[\s\S]*?\.game-list[\s\S]*?grid-template-columns: repeat\(3, minmax\(0, 1fr\)\)/
     );
   });
 
