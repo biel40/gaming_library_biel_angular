@@ -295,15 +295,56 @@
   }
 
   // ── Hamburger lines ─────────────────────────────────────────────────────────
-  .hamburger-btn .hamburger-line {
-    background: #d84315;
+  .hamburger-btn {
+    background: #ffffff;
+    border-color: rgba(216, 67, 21, 0.28);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+
+    .hamburger-line {
+      background: #d84315;
+      box-shadow: none;
+    }
+
+    &:hover {
+      background: rgba(216, 67, 21, 0.09);
+
+      .hamburger-line {
+        background: #bf360c;
+      }
+    }
   }
 
   // ── Mobile menu ─────────────────────────────────────────────────────────────
   .mobile-menu {
-    background: linear-gradient(160deg, #f8fafc 0%, #eef2f7 100%);
+    background:
+      radial-gradient(circle at 100% 0, rgba(216, 67, 21, 0.1), transparent 30%),
+      linear-gradient(160deg, #f8fafc 0%, #eef2f7 100%);
     box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
     border-left-color: rgba(216, 67, 21, 0.3);
+  }
+
+  .mobile-menu-header {
+    h3 {
+      color: #1a1a2e;
+    }
+
+    .mobile-menu-kicker {
+      color: rgba(0, 0, 0, 0.46);
+    }
+
+    .close-menu-btn {
+      background: rgba(0, 0, 0, 0.045);
+      border-color: rgba(0, 0, 0, 0.1);
+      color: rgba(0, 0, 0, 0.58);
+    }
+  }
+
+  .mobile-menu-intro {
+    color: rgba(0, 0, 0, 0.5);
+
+    .mobile-menu-status {
+      color: rgba(0, 0, 0, 0.4);
+    }
   }
 
   .mobile-menu-item {
@@ -315,6 +356,74 @@
       background: rgba(255, 87, 34, 0.1);
       border-color: rgba(255, 87, 34, 0.3);
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-item-copy small {
+      color: rgba(0, 0, 0, 0.48);
+    }
+
+    .menu-item-arrow {
+      color: rgba(0, 0, 0, 0.28);
+    }
+  }
+
+  .mobile-menu-item--playing {
+    > .material-icons:first-child {
+      background: rgba(2, 132, 199, 0.12);
+      color: #0284c7;
+    }
+
+    &:hover {
+      background: rgba(2, 132, 199, 0.1);
+      border-color: rgba(2, 132, 199, 0.35);
+    }
+  }
+
+  .mobile-menu-item--add {
+    > .material-icons:first-child {
+      background: rgba(22, 163, 74, 0.12);
+      color: #16a34a;
+    }
+
+    &:hover {
+      background: rgba(22, 163, 74, 0.1);
+      border-color: rgba(22, 163, 74, 0.35);
+    }
+  }
+
+  .mobile-menu-item--platinum {
+    > .material-icons:first-child {
+      background: rgba(217, 119, 6, 0.13);
+      color: #d97706;
+    }
+
+    &:hover {
+      background: rgba(217, 119, 6, 0.1);
+      border-color: rgba(217, 119, 6, 0.35);
+    }
+  }
+
+  .mobile-menu-item--zombies {
+    background:
+      radial-gradient(circle at 14% 18%, rgba(255, 143, 31, 0.22), transparent 32%),
+      linear-gradient(135deg, #180504 0%, #310906 52%, #4b100a 100%);
+    border-color: rgba(226, 59, 46, 0.58);
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.65), 0 0 13px rgba(226, 59, 46, 0.18);
+
+    .menu-item-copy strong {
+      color: #f7eee7;
+    }
+
+    .menu-item-copy small {
+      color: rgba(255, 189, 126, 0.66);
+    }
+
+    &:hover {
+      background:
+        radial-gradient(circle at 15% 20%, rgba(255, 143, 31, 0.32), transparent 38%),
+        linear-gradient(135deg, #350a06, #7c1c14 60%, #a82718 100%);
+      border-color: rgba(255, 143, 31, 0.82);
+      box-shadow: 0 0 20px rgba(226, 59, 46, 0.48), 0 9px 22px rgba(0, 0, 0, 0.28);
     }
   }
 

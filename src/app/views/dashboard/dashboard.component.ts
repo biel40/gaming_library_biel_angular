@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit, signal, computed, effect, OnDestroy } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit, signal, computed, effect, OnDestroy, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
@@ -124,6 +124,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public navigateAndCloseMenu(path: string) {
         this.closeMobileMenu();
         this._router.navigate([path]);
+    }
+
+    @HostListener('document:keydown.escape')
+    public closeNavigationOnEscape(): void {
+        if (this.showMobileMenu()) {
+            this.closeMobileMenu();
+        }
     }
 
     public saveScrollPosition(): void {
@@ -361,13 +368,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             document.querySelector('.main')?.classList.toggle('light-theme', !isDark);
         });
 
-        document.addEventListener('click', (event) => {
-            const target = event.target as HTMLElement;
-            // Removed user menu close logic as it is now in a separate component
-            if (!target.closest('.mobile-menu') && !target.closest('.hamburger-btn')) {
-                this.showMobileMenu.set(false);
-            }
-        });
     }
 
     ngOnInit() {
@@ -660,4 +660,4 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             }, 3000);
         }
     }
-}  
+}
