@@ -23,6 +23,9 @@
         [disabled]="readOnly()"
         [attr.aria-label]="'Marcar como completado: ' + step().title"
         (change)="onToggleComplete($event)" />
+      <span class="z-step__check-icon material-icons" aria-hidden="true">
+        {{ completed() ? 'check_circle' : 'radio_button_unchecked' }}
+      </span>
       <span class="z-step__check-text">
         {{ completed() ? 'Completado' : 'Marcar' }}
       </span>

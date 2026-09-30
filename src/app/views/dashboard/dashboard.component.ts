@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit, signal, computed, effect, OnDestroy } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject, AfterViewInit, signal, computed, effect, OnDestroy, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
@@ -125,6 +125,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public navigateAndCloseMenu(path: string) {
         this.closeMobileMenu();
         this._router.navigate([path]);
+    }
+
+    @HostListener('document:keydown.escape')
+    public closeNavigationOnEscape(): void {
+        if (this.showMobileMenu()) {
+            this.closeMobileMenu();
+        }
     }
 
     public saveScrollPosition(): void {
@@ -694,4 +701,4 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             }, 3000);
         }
     }
-}  
+}

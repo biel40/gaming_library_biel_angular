@@ -570,9 +570,18 @@
 
     h2 {
       margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       font-size: 1.15rem;
       line-height: 1.25;
     }
+  }
+
+  &__title-icon {
+    flex: 0 0 auto;
+    font-size: 1.1rem;
+    color: z.$z-amber-soft;
   }
 
   &__heading {
@@ -580,10 +589,33 @@
   }
 
   &__subtitle {
-    margin: 0.3rem 0 0;
+    margin: 0.35rem 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     font-size: 0.82rem;
     font-weight: 600;
+  }
+
+  &__subtitle-count {
+    color: z.$z-text-muted;
+  }
+
+  &__subtitle-percent {
+    flex: 0 0 auto;
+    padding: 0.1rem 0.55rem;
+    border-radius: z.$z-radius-pill;
+    background: rgba(255, 143, 31, 0.15);
+    border: 1px solid rgba(255, 143, 31, 0.4);
     color: z.$z-amber-soft;
+    font-size: 0.78rem;
+    font-weight: 700;
+
+    &--done {
+      background: rgba(76, 175, 80, 0.18);
+      border-color: rgba(76, 175, 80, 0.5);
+      color: z.$z-success;
+    }
   }
 
   &__progress {
@@ -591,14 +623,20 @@
     left: 0;
     right: 0;
     bottom: -1px;
-    height: 3px;
+    height: 6px;
     background: rgba(255, 255, 255, 0.08);
   }
 
   &__progress-bar {
     height: 100%;
     background: z.$z-gradient-accent;
-    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 143, 31, 0.5);
+    transition: width 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+
+    &--done {
+      background: linear-gradient(135deg, z.$z-success, #7fd858);
+      box-shadow: 0 0 12px rgba(76, 175, 80, 0.6);
+    }
   }
 
   &__close {
@@ -864,8 +902,24 @@
       border-bottom-color: z.$z-light-border;
     }
 
-    &__subtitle {
+    &__title-icon {
       color: z.$z-light-amber-text;
+    }
+
+    &__subtitle-count {
+      color: z.$z-light-text-muted;
+    }
+
+    &__subtitle-percent {
+      background: rgba(184, 86, 10, 0.12);
+      border-color: rgba(184, 86, 10, 0.35);
+      color: z.$z-light-amber-text;
+
+      &--done {
+        background: rgba(76, 175, 80, 0.18);
+        border-color: rgba(76, 175, 80, 0.5);
+        color: z.$z-success;
+      }
     }
 
     &__close {
