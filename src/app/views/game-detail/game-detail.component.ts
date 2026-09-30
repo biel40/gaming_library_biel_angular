@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, signal, computed, WritableSignal } from '
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
+import { SupabaseService, Videogame, HallOfFameFullError, HALL_OF_FAME_MAX } from '../../services/supabase/supabase.service';
 import { NotificationService } from '../../services/notification/notification.service';
 import { SpanishDatePipe } from '../../pipes/spanish-date.pipe';
 
@@ -41,6 +41,7 @@ export class GameDetailComponent implements OnInit, OnDestroy {
   private _isEditingImage = signal<boolean>(false);
   private _editImageUrl: WritableSignal<string> = signal<string>('');
   private _isAdminUser = signal<boolean>(false);
+  private _hallOfFameLoading = signal<boolean>(false);
 
   // Theme
   private _theme = signal<'dark' | 'light'>(
@@ -61,6 +62,10 @@ export class GameDetailComponent implements OnInit, OnDestroy {
   readonly favoriteTitle = computed(() => this._game()?.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos');
   readonly platinumIcon = computed(() => this._game()?.platinum ? 'emoji_events' : 'emoji_events');
   readonly platinumTitle = computed(() => this._game()?.platinum ? 'Quitar Platino' : 'Marcar como Platino');
+  readonly hallOfFameTitle = computed(() =>
+    this._game()?.hall_of_fame ? 'Quitar del Hall de la Fama' : 'Añadir al Hall de la Fama'
+  );
+  readonly hallOfFameLoading = computed(() => this._hallOfFameLoading());
   readonly hoursPlayed = computed(() => this._hoursPlayed());
   readonly isEditingHours = computed(() => this._isEditingHours());
   readonly currentlyPlayingIcon = computed(() => this._game()?.currently_playing ? 'pause' : 'play_arrow');
@@ -157,6 +162,41 @@ export class GameDetailComponent implements OnInit, OnDestroy {
       } catch (err) {
         this.notificationService.error('Error al actualizar favorito');
       }
+    }
+  }
+
+  /**
+   * Add or remove the current game from the Hall of Fame
+   */
+  public async toggleHallOfFame(): Promise<void> {
+    if (this._isReadOnlyUser()) {
+      this.notificationService.info('No tienes permisos para modificar el Hall de la Fama en modo solo lectura');
+      return;
+    }
+
+    const currentGame = this._game();
+    if (!currentGame?.id || this._hallOfFameLoading()) return;
+
+    this._hallOfFameLoading.set(true);
+    try {
+      const updatedGame = await this.supabaseService.toggleHallOfFame(currentGame);
+      this._game.set(updatedGame);
+      this.notificationService.success(
+        updatedGame.hall_of_fame
+          ? `"${currentGame.name}" entra en tu Hall de la Fama`
+          : `"${currentGame.name}" sale de tu Hall de la Fama`
+      );
+    } catch (err) {
+      if (err instanceof HallOfFameFullError) {
+        this.notificationService.error(
+          `Tu Hall de la Fama ya tiene ${HALL_OF_FAME_MAX} juegos. Quita uno antes de añadir otro.`
+        );
+        return;
+      }
+      console.error(err);
+      this.notificationService.error('Error al actualizar el Hall de la Fama');
+    } finally {
+      this._hallOfFameLoading.set(false);
     }
   }
 

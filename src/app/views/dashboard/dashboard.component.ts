@@ -6,7 +6,7 @@ import { RouterLink, Router } from '@angular/router';
 import { User } from '@supabase/supabase-js';
 import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.component';
 import { GameCardComponent } from '../../components/game-card/game-card.component';
-import { SupabaseService, Videogame } from '../../services/supabase/supabase.service';
+import { SupabaseService, Videogame, HALL_OF_FAME_MAX } from '../../services/supabase/supabase.service';
 import { UserService } from '../../services/user/user.service';
 import { GenreNormalizerService } from '../../services/genre-normalizer/genre-normalizer.service';
 import { PlatformNormalizerService } from '../../services/platform-normalizer/platform-normalizer.service';
@@ -47,6 +47,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private _dashboardScrollService: DashboardScrollService = inject(DashboardScrollService);
     private _resizeListener: () => void;
     private _favoriteSubscription: Subscription | null = null;
+    private _hallOfFameSubscription: Subscription | null = null;
 
     // Signals for state management
     public title = signal('Gaming Library');
@@ -209,16 +210,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     // Computed signals
-    public filteredGames = computed(() => {
-        const games = this.games();
+    private _matchesActiveFilters = computed(() => {
         const searchTerm = this._normalizeText(this.searchTerm());
         const activeGenre = this.activeGenre();
         const activePlatform = this.activePlatform();
         const activeCompany = this.activeCompany();
         const activeYear = this.activeYear();
-        const sortMode = this.sortMode();
 
-        let result = games.filter(game => {
+        return (game: Videogame): boolean => {
             const gameName = this._normalizeText(game.name || '');
             const gameDescription = this._normalizeText(game.description || '');
             const normalizedGenre = this._genreNormalizer.normalizeGenre(game.genre);
@@ -232,51 +231,66 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
                 ? this._platformNormalizer.normalizePlatform(game.platform) === activePlatform
                 : activeCompany === 'Todos' || this._platformNormalizer.gameMatchesCompany(game.platform, activeCompany);
             const matchesYear = activeYear === null ||
-                (game.releaseDate && new Date(game.releaseDate).getFullYear() === activeYear);
+                (!!game.releaseDate && new Date(game.releaseDate).getFullYear() === activeYear);
 
-            return matchesSearch && matchesGenre && matchesPlatform && matchesYear && !game.favorite;
-        });
+            return matchesSearch && matchesGenre && matchesPlatform && matchesYear;
+        };
+    });
 
-        if (sortMode === 'best-rated') {
-            result = [...result].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+    private _applySortMode(games: Videogame[]): Videogame[] {
+        if (this.sortMode() === 'best-rated') {
+            return [...games].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
         }
+        return games;
+    }
 
-        return result;
+    public readonly hallOfFameMax = HALL_OF_FAME_MAX;
+
+    private static readonly HALL_OF_FAME_COLLAPSED_KEY = 'gaming-library-hall-of-fame-collapsed';
+
+    public isHallOfFameCollapsed = signal(DashboardComponent._readHallOfFameCollapsed());
+
+    public toggleHallOfFameCollapsed(): void {
+        const collapsed = !this.isHallOfFameCollapsed();
+        this.isHallOfFameCollapsed.set(collapsed);
+        try {
+            localStorage.setItem(DashboardComponent.HALL_OF_FAME_COLLAPSED_KEY, String(collapsed));
+        } catch {}
+    }
+
+    private static _readHallOfFameCollapsed(): boolean {
+        try {
+            return localStorage.getItem(DashboardComponent.HALL_OF_FAME_COLLAPSED_KEY) === 'true';
+        } catch {
+            return false;
+        }
+    }
+
+    public hallOfFameCount = computed(() => this.games().filter(game => game.hall_of_fame).length);
+
+    public hallOfFameGames = computed(() => {
+        const matches = this._matchesActiveFilters();
+        return this.games()
+            .filter(game => game.hall_of_fame && matches(game))
+            .sort((a, b) => this._hallOfFameTime(a) - this._hallOfFameTime(b));
+    });
+
+    public showHallOfFame = computed(() =>
+        this.hallOfFameGames().length > 0 || (!this.isReadOnly() && this.hallOfFameCount() === 0)
+    );
+
+    public filteredGames = computed(() => {
+        const matches = this._matchesActiveFilters();
+        return this._applySortMode(
+            this.games().filter(game => !game.favorite && !game.hall_of_fame && matches(game))
+        );
     });
 
     public favoriteGames = computed(() => {
-        const games = this.games().filter(game => game.favorite);
-        const activeGenre = this.activeGenre();
-        const activePlatform = this.activePlatform();
-        const activeCompany = this.activeCompany();
-        const activeYear = this.activeYear();
-        const searchTerm = this._normalizeText(this.searchTerm());
-        const sortMode = this.sortMode();
-
-        let result = games.filter(game => {
-            const gameName = this._normalizeText(game.name || '');
-            const gameDescription = this._normalizeText(game.description || '');
-            const normalizedGenre = this._genreNormalizer.normalizeGenre(game.genre);
-
-            const matchesSearch = !searchTerm ||
-                gameName.includes(searchTerm) ||
-                gameDescription.includes(searchTerm);
-
-            const matchesGenre = activeGenre === 'Todos' || normalizedGenre === activeGenre;
-            const matchesPlatform = activePlatform !== 'Todos'
-                ? this._platformNormalizer.normalizePlatform(game.platform) === activePlatform
-                : activeCompany === 'Todos' || this._platformNormalizer.gameMatchesCompany(game.platform, activeCompany);
-            const matchesYear = activeYear === null ||
-                (game.releaseDate && new Date(game.releaseDate).getFullYear() === activeYear);
-
-            return matchesSearch && matchesGenre && matchesPlatform && matchesYear;
-        });
-
-        if (sortMode === 'best-rated') {
-            result = [...result].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
-        }
-
-        return result;
+        const matches = this._matchesActiveFilters();
+        return this._applySortMode(
+            this.games().filter(game => game.favorite && !game.hall_of_fame && matches(game))
+        );
     });
 
     public uniqueGenres = computed(() => {
@@ -340,7 +354,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public activeFiltersCount = computed(() => this.activeFilterPills().length);
 
-    public visibleGamesCount = computed(() => this.filteredGames().length + this.favoriteGames().length);
+    public visibleGamesCount = computed(() =>
+        this.filteredGames().length + this.favoriteGames().length + this.hallOfFameGames().length
+    );
 
     // Helper method to normalize genre names
     public getNormalizedGenre(genre: string | undefined): string {
@@ -361,14 +377,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             document.querySelector('.main')?.classList.toggle('light-theme', !isDark);
         });
 
-        document.addEventListener('click', (event) => {
-            const target = event.target as HTMLElement;
-            // Removed user menu close logic as it is now in a separate component
-            if (!target.closest('.mobile-menu') && !target.closest('.hamburger-btn')) {
-                this.showMobileMenu.set(false);
-            }
-        });
+        document.addEventListener('click', this._documentClickListener);
     }
+
+    private readonly _documentClickListener = (event: MouseEvent): void => {
+        const target = event.target as HTMLElement;
+        if (this.showMobileMenu() && !target.closest('.mobile-menu') && !target.closest('.hamburger-btn')) {
+            this.closeMobileMenu();
+        }
+    };
 
     ngOnInit() {
         this.initializeDashboard();
@@ -398,14 +415,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             const games = await this._supabaseService.getVideogames();
             this.games.set(games);
 
-            // Subscribe to favorite changes (only if authenticated)
-            if (this.isAuthenticated()) {
-                this._favoriteSubscription = this._supabaseService.favoriteChanged.subscribe(game => {
-                    this.handleFavoriteChange(game);
-                });
-            }
+            this._favoriteSubscription ??= this._supabaseService.favoriteChanged.subscribe(game => {
+                this.handleFavoriteChange(game);
+            });
+            this._hallOfFameSubscription ??= this._supabaseService.hallOfFameChanged.subscribe(game => {
+                this._handleHallOfFameChange(game);
+            });
         } catch (err) {
-            this.error.set('Error loading games. Please try again later.');
+            console.error('Error loading games:', err);
+            this.error.set('No se pudieron cargar tus juegos. Inténtalo de nuevo más tarde.');
         } finally {
             this.isLoading.set(false);
             if (!this.error()) {
@@ -433,6 +451,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public ngOnDestroy(): void {
         this._dashboardScrollService.capture();
         window.removeEventListener('resize', this._resizeListener);
+        document.removeEventListener('click', this._documentClickListener);
         document.body.style.overflow = '';
         document.body.classList.remove('light-theme');
         document.querySelector('.main')?.classList.remove('light-theme');
@@ -441,6 +460,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             this._favoriteSubscription.unsubscribe();
             this._favoriteSubscription = null;
         }
+
+        this._hallOfFameSubscription?.unsubscribe();
+        this._hallOfFameSubscription = null;
     }
 
     private calculateItemsPerPage() {
@@ -622,6 +644,18 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => {
             this.showNotification.set(false);
         }, 3000);
+    }
+
+    private _handleHallOfFameChange(game: Videogame): void {
+        this.games.update(games => games.map(g =>
+            g.id === game.id
+                ? { ...g, hall_of_fame: game.hall_of_fame, hall_of_fame_date: game.hall_of_fame_date }
+                : g
+        ));
+    }
+
+    private _hallOfFameTime(game: Videogame): number {
+        return game.hall_of_fame_date ? new Date(game.hall_of_fame_date).getTime() : 0;
     }
 
     /**

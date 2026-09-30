@@ -1,0 +1,310 @@
+@use 'variables' as vars;
+@use 'mixins' as mix;
+
+$hall-collapse-duration: 0.4s;
+$hall-collapse-easing: cubic-bezier(0.4, 0, 0.2, 1);
+$hall-padding-x: 1.5rem;
+$hall-padding-x-mobile: 0.75rem;
+
+.hall-of-fame-section {
+  position: relative;
+  margin-bottom: 2.5rem;
+  padding: 1.25rem $hall-padding-x;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(255, 215, 0, 0.14), transparent 70%),
+    linear-gradient(180deg, rgba(255, 179, 0, 0.06), rgba(255, 179, 0, 0.01));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 200, 0.15),
+    0 0 40px rgba(255, 179, 0, 0.08);
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fadeInUp 0.35s ease-out forwards;
+  animation-delay: 0.05s;
+  transition: margin-bottom $hall-collapse-duration $hall-collapse-easing;
+
+  @media (max-width: 767px) {
+    padding: 0.75rem $hall-padding-x-mobile;
+    margin-bottom: 1.75rem;
+    border-radius: 16px;
+    animation-duration: 0.25s;
+  }
+
+  &.collapsed {
+    margin-bottom: 1.5rem;
+  }
+}
+
+// ── Header / toggle ──────────────────────────────────────────────────────────
+.hall-of-fame-heading {
+  margin: 0;
+  font-size: inherit;
+}
+
+.hall-of-fame-toggle {
+  @include mix.flex(row, center, flex-start, 0.6rem);
+  flex-wrap: wrap;
+  width: 100%;
+  min-height: 48px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+
+  &:focus-visible {
+    outline: 2px solid vars.$accent-gold;
+    outline-offset: 6px;
+    border-radius: 12px;
+  }
+
+  &:hover .hall-of-fame-chevron {
+    background: rgba(255, 215, 0, 0.2);
+  }
+
+  &:active .hall-of-fame-chevron {
+    transform: scale(0.92);
+  }
+}
+
+.hall-of-fame-icon {
+  font-size: 1.9rem;
+  color: vars.$accent-gold;
+  filter: drop-shadow(0 0 8px rgba(255, 200, 0, 0.5));
+
+  @media (max-width: 767px) {
+    font-size: 1.6rem;
+  }
+}
+
+.hall-of-fame-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  @include mix.gradient-text(linear-gradient(90deg, #fff3b0, vars.$accent-gold 40%, #ff9f1c));
+  filter: drop-shadow(0 0 10px rgba(255, 200, 0, 0.35));
+
+  @media (max-width: 767px) {
+    font-size: 1.25rem;
+    flex: 1;
+  }
+}
+
+.hall-of-fame-thumbs {
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  animation: hallOfFameThumbsIn 0.35s $hall-collapse-easing both;
+
+  img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid vars.$accent-gold;
+    background: vars.$bg-primary;
+    box-shadow: 0 0 8px rgba(255, 200, 0, 0.45);
+
+    & + img {
+      margin-left: -10px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    order: 10;
+    flex-basis: 100%;
+    margin: 0.35rem 0 0.25rem;
+
+    img {
+      width: 34px;
+      height: 34px;
+    }
+  }
+}
+
+.hall-of-fame-counter {
+  margin-left: auto;
+  padding: 0.25rem 0.75rem;
+  border-radius: vars.$border-radius-xl;
+  border: 1px solid rgba(255, 215, 0, 0.45);
+  background: vars.$gold-10;
+  color: vars.$accent-gold;
+  font-weight: 700;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+
+  @media (max-width: 767px) {
+    margin-left: 0;
+  }
+}
+
+.hall-of-fame-chevron {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  background: vars.$gold-10;
+  color: vars.$accent-gold;
+  font-size: 1.6rem;
+  transform: rotate(180deg);
+  transition:
+    transform $hall-collapse-duration $hall-collapse-easing,
+    background 0.2s ease;
+
+  .collapsed & {
+    transform: rotate(0deg);
+  }
+}
+
+// ── Collapsible content ──────────────────────────────────────────────────────
+.hall-of-fame-content {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition:
+    grid-template-rows $hall-collapse-duration $hall-collapse-easing,
+    opacity $hall-collapse-duration $hall-collapse-easing,
+    visibility 0s linear 0s;
+
+  .collapsed & {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      grid-template-rows $hall-collapse-duration $hall-collapse-easing,
+      opacity 0.25s ease,
+      visibility 0s linear $hall-collapse-duration;
+  }
+}
+
+.hall-of-fame-content-inner {
+  min-height: 0;
+  overflow: hidden;
+  margin: 0 (-$hall-padding-x);
+  padding: 0 $hall-padding-x;
+
+  @media (max-width: 767px) {
+    margin: 0 (-$hall-padding-x-mobile);
+    padding: 0 $hall-padding-x-mobile;
+  }
+}
+
+.hall-of-fame-grid.favorites-grid {
+  margin-bottom: 0;
+  padding: 1.25rem 0 0.75rem;
+
+  @media (max-width: 767px) {
+    display: flex;
+    gap: 0.875rem;
+    margin: 0 (-$hall-padding-x-mobile);
+    padding: 1rem $hall-padding-x-mobile 1.25rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: $hall-padding-x-mobile;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    app-game-card {
+      flex: 0 0 min(80vw, 300px);
+      max-width: none;
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+
+      &:only-child {
+        margin-inline: auto;
+      }
+    }
+  }
+}
+
+.hall-of-fame-empty {
+  padding: 1.5rem 1rem 1.25rem;
+
+  .material-icons {
+    color: rgba(255, 215, 0, 0.6);
+  }
+
+  p {
+    max-width: 520px;
+    margin: 0;
+  }
+}
+
+@keyframes hallOfFameThumbsIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hall-of-fame-section,
+  .hall-of-fame-content,
+  .hall-of-fame-chevron,
+  .hall-of-fame-thumbs {
+    transition: none !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+// ── Light theme ──────────────────────────────────────────────────────────────
+.dashboard.light-theme {
+  .hall-of-fame-section {
+    border-color: rgba(200, 150, 10, 0.35);
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 0%, rgba(255, 200, 0, 0.18), transparent 70%),
+      linear-gradient(180deg, #fffaf0, rgba(255, 250, 240, 0.4));
+    box-shadow: 0 6px 24px rgba(200, 150, 10, 0.12);
+  }
+
+  .hall-of-fame-icon {
+    color: #c8960a;
+    filter: none;
+  }
+
+  .hall-of-fame-title {
+    @include mix.gradient-text(linear-gradient(90deg, #a67c00, #c8960a 45%, #d97706));
+    filter: none;
+  }
+
+  .hall-of-fame-thumbs img {
+    border-color: #e6b800;
+    background: #fffdf5;
+    box-shadow: 0 2px 6px rgba(200, 150, 10, 0.35);
+  }
+
+  .hall-of-fame-counter,
+  .hall-of-fame-chevron {
+    border-color: rgba(200, 150, 10, 0.45);
+    background: rgba(200, 150, 10, 0.1);
+    color: #8a6a00;
+  }
+
+  .hall-of-fame-toggle:focus-visible {
+    outline-color: #c8960a;
+  }
+
+  .hall-of-fame-empty .material-icons {
+    color: rgba(200, 150, 10, 0.6);
+  }
+}

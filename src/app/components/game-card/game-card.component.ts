@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, signal, computed, inject } from "@angular/core";
-import { Videogame, SupabaseService } from "../../services/supabase/supabase.service";
+import { Videogame, SupabaseService, HallOfFameFullError, HALL_OF_FAME_MAX } from "../../services/supabase/supabase.service";
 import { NotificationService } from "../../services/notification/notification.service";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
@@ -47,6 +47,13 @@ export class GameCardComponent {
   readonly platinumTargetTitle = computed(() => 
     this.isPlatinumTarget() ? 'Quitar como objetivo de platino' : 'Marcar como objetivo de platino'
   );
+  readonly isHallOfFame = computed(() => this._game()?.hall_of_fame || false);
+  readonly hallOfFameTitle = computed(() =>
+    this.isHallOfFame() ? 'Quitar del Hall de la Fama' : 'Añadir al Hall de la Fama'
+  );
+
+  private _hallOfFameLoading = signal(false);
+  readonly hallOfFameLoading = computed(() => this._hallOfFameLoading());
 
   private _supabaseService: SupabaseService = inject(SupabaseService);
   private _notificationService: NotificationService = inject(NotificationService);
@@ -91,6 +98,45 @@ export class GameCardComponent {
       } catch (err) {
         this._notificationService.error('Error al actualizar favorito');
       }
+    }
+  }
+
+  /**
+   * Add or remove this game from the Hall of Fame
+   * @param event The click event
+   */
+  public async toggleHallOfFame(event: MouseEvent): Promise<void> {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (this.isReadOnly) {
+      this._notificationService.info('No tienes permisos para modificar el Hall de la Fama en modo solo lectura.');
+      return;
+    }
+
+    const currentGame = this._game();
+    if (!currentGame?.id || this._hallOfFameLoading()) return;
+
+    this._hallOfFameLoading.set(true);
+    try {
+      const updatedGame = await this._supabaseService.toggleHallOfFame(currentGame);
+      this._game.set(updatedGame);
+      this._notificationService.success(
+        updatedGame.hall_of_fame
+          ? `"${currentGame.name}" entra en tu Hall de la Fama`
+          : `"${currentGame.name}" sale de tu Hall de la Fama`
+      );
+    } catch (error) {
+      if (error instanceof HallOfFameFullError) {
+        this._notificationService.error(
+          `Tu Hall de la Fama ya tiene ${HALL_OF_FAME_MAX} juegos. Quita uno antes de añadir otro.`
+        );
+        return;
+      }
+      console.error('Error toggling hall of fame:', error);
+      this._notificationService.error('Error al actualizar el Hall de la Fama');
+    } finally {
+      this._hallOfFameLoading.set(false);
     }
   }
 

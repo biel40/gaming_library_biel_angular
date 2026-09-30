@@ -46,6 +46,14 @@
                 <span class="material-icons platinum-icon">{{platinumIcon()}}</span>
               </button>
             </div>
+            <div class="hall-of-fame-container" [class.is-hall-of-fame]="game()?.hall_of_fame">
+              <button type="button" class="hall-of-fame-button" (click)="toggleHallOfFame()"
+                [attr.aria-label]="hallOfFameTitle()" [attr.title]="hallOfFameTitle()"
+                [attr.aria-pressed]="!!game()?.hall_of_fame"
+                [disabled]="isReadOnlyUser() || hallOfFameLoading()" [class.disabled]="isReadOnlyUser()">
+                <span class="material-icons hall-of-fame-icon">workspace_premium</span>
+              </button>
+            </div>
           </div>
         </div>
         <div class="game-metadata">

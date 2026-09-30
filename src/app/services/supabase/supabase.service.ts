@@ -34,6 +34,17 @@ export interface Videogame {
   platinum_target?: boolean
   currently_playing?: boolean
   hours_played?: number
+  hall_of_fame?: boolean
+  hall_of_fame_date?: Date
+}
+
+export const HALL_OF_FAME_MAX = 6;
+
+export class HallOfFameFullError extends Error {
+  constructor() {
+    super(`El Hall de la Fama ya tiene ${HALL_OF_FAME_MAX} juegos`);
+    this.name = 'HallOfFameFullError';
+  }
 }
 
 export interface EdgeFunctionResponse<T> {
@@ -59,6 +70,7 @@ export class SupabaseService {
 
   // Event emitter for favorite changes
   public favoriteChanged = new EventEmitter<Videogame>();
+  public hallOfFameChanged = new EventEmitter<Videogame>();
 
   constructor() {
     if (!environment.supabaseUrl || !environment.supabaseKey) {
@@ -298,6 +310,7 @@ export class SupabaseService {
       .select(this.LIBRARY_SELECT)
       .eq('user_id', effectiveUserId);
 
+    if (error) throw error;
     if (!data) {
       this._videogames.set([]);
       return [];
@@ -359,6 +372,7 @@ export class SupabaseService {
       const games: Videogame[] = parsed.data.map((item: any) => ({
         ...item,
         releaseDate: item.releaseDate ? new Date(item.releaseDate) : undefined,
+        hall_of_fame_date: item.hall_of_fame_date ? new Date(item.hall_of_fame_date) : undefined,
         favorite: this.isFavorite(item.id)
       }));
       this._cacheTimestamp = parsed.timestamp;
@@ -381,6 +395,7 @@ export class SupabaseService {
       .eq('game_id', id)
       .single();
 
+    if (error && error.code !== 'PGRST116') throw error;
     if (!data) return null;
 
     return this._mapLibraryEntry(data);
@@ -692,11 +707,13 @@ export class SupabaseService {
     const session = await this.getSession();
     if (!session) throw new Error('No hay sesión activa');
 
-    await this._supabaseClient
+    const { error: clearError } = await this._supabaseClient
       .from('user_game_library')
       .update({ platinum_target: false })
       .eq('user_id', session.user.id)
       .neq('game_id', gameId);
+
+    if (clearError) throw clearError;
 
     const { error } = await this._supabaseClient
       .from('user_game_library')
@@ -715,9 +732,20 @@ export class SupabaseService {
     }
     this.invalidateCache();
 
-    const updatedGame = this._videogames().find(g => g.id === gameId);
-    if (!updatedGame) throw new Error('Juego no encontrado');
-    return updatedGame;
+    return this._getUpdatedGame(gameId);
+  }
+
+  /**
+   * Returns the updated game from the local signal, falling back to the database
+   * when the library has not been loaded (e.g. the page was opened directly)
+   */
+  private async _getUpdatedGame(gameId: string): Promise<Videogame> {
+    const localGame = this._videogames().find(g => g.id === gameId);
+    if (localGame) return localGame;
+
+    const remoteGame = await this.getVideogameDetails(gameId);
+    if (!remoteGame) throw new Error('Juego no encontrado');
+    return remoteGame;
   }
 
   /**
@@ -739,9 +767,7 @@ export class SupabaseService {
 
     this._syncAfterUpdate(gameId, { platinum_target: false });
 
-    const updatedGame = this._videogames().find(g => g.id === gameId);
-    if (!updatedGame) throw new Error('Juego no encontrado');
-    return updatedGame;
+    return this._getUpdatedGame(gameId);
   }
 
   /**
@@ -765,6 +791,56 @@ export class SupabaseService {
     if (!data) return null;
 
     return this._mapLibraryEntry(data);
+  }
+
+  /**
+   * Add or remove a game from the Hall of Fame (max HALL_OF_FAME_MAX games)
+   * @param game The game to toggle
+   * @returns Promise<Videogame> - the updated game
+   * @throws HallOfFameFullError when adding a game to a full Hall of Fame
+   */
+  public async toggleHallOfFame(game: Videogame): Promise<Videogame> {
+    if (!game.id) throw new Error('Juego no encontrado');
+
+    const session = await this.getSession();
+    if (!session) throw new Error('No hay sesión activa');
+
+    const joining = !game.hall_of_fame;
+    if (joining && await this._getHallOfFameCount(session.user.id) >= HALL_OF_FAME_MAX) {
+      throw new HallOfFameFullError();
+    }
+
+    const hallOfFameDate = joining ? new Date() : undefined;
+    const { error } = await this._supabaseClient
+      .from('user_game_library')
+      .update({
+        hall_of_fame: joining,
+        hall_of_fame_date: hallOfFameDate?.toISOString() ?? null
+      })
+      .eq('user_id', session.user.id)
+      .eq('game_id', game.id);
+
+    if (error) {
+      throw error.message?.includes('HALL_OF_FAME_FULL') ? new HallOfFameFullError() : error;
+    }
+
+    const changes: Partial<Videogame> = { hall_of_fame: joining, hall_of_fame_date: hallOfFameDate };
+    this._syncAfterUpdate(game.id, changes);
+
+    const updatedGame = { ...game, ...changes };
+    this.hallOfFameChanged.emit(updatedGame);
+    return updatedGame;
+  }
+
+  private async _getHallOfFameCount(userId: string): Promise<number> {
+    const { count, error } = await this._supabaseClient
+      .from('user_game_library')
+      .select('game_id', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('hall_of_fame', true);
+
+    if (error) throw error;
+    return count ?? 0;
   }
 
   public async loadFavorites(): Promise<void> {
@@ -848,7 +924,7 @@ export class SupabaseService {
     this._videogames.set(updatedGames);
   }
 
-  private readonly LIBRARY_SELECT = `score, review, platinum, platinum_date, platinum_target, currently_playing, hours_played, videogames ( id, name, description, image_url, genre, release_date, platform )`;
+  private readonly LIBRARY_SELECT = `score, review, platinum, platinum_date, platinum_target, currently_playing, hours_played, hall_of_fame, hall_of_fame_date, videogames ( id, name, description, image_url, genre, release_date, platform )`;
 
   private async _getEffectiveUserId(session: AuthSession): Promise<string> {
     const isReadOnly = await this.isReadOnlyUser();
@@ -872,6 +948,8 @@ export class SupabaseService {
       platinum_target: item.platinum_target || false,
       currently_playing: item.currently_playing || false,
       hours_played: item.hours_played || 0,
+      hall_of_fame: item.hall_of_fame || false,
+      hall_of_fame_date: item.hall_of_fame_date ? new Date(item.hall_of_fame_date) : undefined,
       favorite: this.isFavorite(String(game.id))
     };
   }
@@ -918,7 +996,8 @@ export class SupabaseService {
       platinum: false,
       platinum_target: false,
       currently_playing: false,
-      hours_played: 0
+      hours_played: 0,
+      hall_of_fame: false
     };
   }
 
@@ -1027,9 +1106,7 @@ export class SupabaseService {
       platinum_date: newPlatinumStatus ? new Date() : undefined
     });
 
-    const updatedGame = this._videogames().find(g => g.id === gameId);
-    if (!updatedGame) throw new Error('Juego no encontrado');
-    return updatedGame;
+    return this._getUpdatedGame(gameId);
   }
 
   /**
@@ -1074,9 +1151,7 @@ export class SupabaseService {
 
     this._syncAfterUpdate(gameId, { platinum_date: date });
 
-    const updatedGame = this._videogames().find(g => g.id === gameId);
-    if (!updatedGame) throw new Error('Juego no encontrado');
-    return updatedGame;
+    return this._getUpdatedGame(gameId);
   }
 
   public async getAllProfiles(): Promise<Profile[]> {

@@ -55,6 +55,11 @@ import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.co
 - `toggleFavorite()` is `async` — it does an `INSERT` or `DELETE` on `user_favorites`. Components must `await` it and handle errors with try/catch.
 - On `signOut()`, `_favorites`, `_favoritesLoaded`, and `_cachedReadOnly` are all reset.
 
+### Hall of Fame Architecture
+- Stored as `hall_of_fame` / `hall_of_fame_date` columns on `user_game_library` (scripts: `database/scripts/2026-09-30_hall_of_fame*.sql`).
+- Max `HALL_OF_FAME_MAX` (6) games per user, enforced twice: `SupabaseService.toggleHallOfFame()` checks the count and throws `HallOfFameFullError`, and the DB trigger `enforce_hall_of_fame_limit` raises `HALL_OF_FAME_FULL`.
+- `toggleHallOfFame()` emits `hallOfFameChanged`; the dashboard subscribes to it to move cards into/out of the Hall section. Hall games are excluded from the favorites and "Todos los juegos" sections.
+
 ### Type Safety & Clean Code
 - **Strict Typing**: Avoid `any`. Define interfaces or types for all data structures.
 - **Immutability**: Treat signal values as immutable. Use spread operators for updates.
@@ -117,6 +122,15 @@ import { UserAvatarComponent } from '../../components/user-avatar/user-avatar.co
 - **Read-only user**: `test@testuser.com` - check via `isReadOnlyUser()` method
 - Protected routes via `authGuard` functional guard
 - Session management through SupabaseService signals
+
+### Database Changes Workflow (CRITICAL)
+- All production PostgreSQL changes are applied **manually** by the project owner from the Supabase portal SQL Editor. Do NOT use or propose the Supabase CLI, `supabase/migrations/`, `db pull`/`db push` or any automated migration pipeline.
+- Every schema change ships as a standalone, idempotent SQL script in `database/scripts/`, named `YYYY-MM-DD_short_description.sql`, kept as the historical record of what was run in production.
+- A script must be run in production **before** deploying frontend code that depends on it (e.g. new columns in `LIBRARY_SELECT`); otherwise queries fail. Always state this dependency explicitly when delivering a script.
+- See `database/scripts/README.md` for the full process and the status of each script.
+
+## Git Workflow
+- Never create commits or push. The project owner commits manually. Only commit when explicitly asked to in that moment.
 
 ## Component Patterns
 

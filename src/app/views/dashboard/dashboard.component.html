@@ -424,6 +424,49 @@
     </section>
     }
 
+    <!-- Hall of Fame section -->
+    @if (!selectMode() && showHallOfFame()) {
+    <section class="hall-of-fame-section" [class.collapsed]="isHallOfFameCollapsed()"
+        aria-labelledby="hall-of-fame-title">
+        <h2 class="hall-of-fame-heading" id="hall-of-fame-title">
+            <button type="button" class="hall-of-fame-toggle" (click)="toggleHallOfFameCollapsed()"
+                [attr.aria-expanded]="!isHallOfFameCollapsed()" aria-controls="hall-of-fame-content"
+                [title]="isHallOfFameCollapsed() ? 'Mostrar el Hall de la Fama' : 'Ocultar el Hall de la Fama'">
+                <span class="material-icons hall-of-fame-icon" aria-hidden="true">workspace_premium</span>
+                <span class="hall-of-fame-title">Hall de la Fama</span>
+                @if (isHallOfFameCollapsed() && hallOfFameGames().length > 0) {
+                <span class="hall-of-fame-thumbs" aria-hidden="true">
+                    @for (game of hallOfFameGames(); track game.id) {
+                    <img [src]="game.image_url" alt="" loading="lazy" decoding="async">
+                    }
+                </span>
+                }
+                <span class="hall-of-fame-counter">{{ hallOfFameCount() }}/{{ hallOfFameMax }}</span>
+                <span class="material-icons hall-of-fame-chevron" aria-hidden="true">expand_more</span>
+            </button>
+        </h2>
+
+        <div id="hall-of-fame-content" class="hall-of-fame-content"
+            [attr.inert]="isHallOfFameCollapsed() ? '' : null">
+            <div class="hall-of-fame-content-inner">
+                @if (hallOfFameGames().length > 0) {
+                <div class="favorites-grid hall-of-fame-grid">
+                    @for (game of hallOfFameGames(); track game.id) {
+                    <app-game-card [game]="game" [selectMode]="selectMode()" [isReadOnly]="isReadOnly()"
+                        [theme]="theme()" (click)="saveScrollPosition()"></app-game-card>
+                    }
+                </div>
+                } @else {
+                <div class="empty-state hall-of-fame-empty">
+                    <span class="material-icons">workspace_premium</span>
+                    <p>Tu Hall de la Fama está vacío!</p>
+                </div>
+                }
+            </div>
+        </div>
+    </section>
+    }
+
     <!-- Favorites section -->
     @if (!selectMode()) {
     <section class="favorites">

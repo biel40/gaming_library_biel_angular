@@ -1098,6 +1098,74 @@
       }
     }
   }
+
+  .hall-of-fame-container {
+    margin-left: 1rem;
+
+    @media (max-width: 767px) {
+      margin-left: 0;
+    }
+
+    &.is-hall-of-fame {
+      .hall-of-fame-button {
+        background: linear-gradient(135deg, #fff3b0, #ffd700 45%, #ff9f1c);
+        border-color: #ffd700;
+        color: #3b2a00;
+        box-shadow: 0 0 16px rgba(255, 200, 0, 0.55);
+
+        .hall-of-fame-icon {
+          color: #3b2a00;
+          transform: scale(1.1);
+        }
+
+        &:hover:not(:disabled) {
+          box-shadow: 0 0 22px rgba(255, 200, 0, 0.75);
+        }
+      }
+    }
+
+    .hall-of-fame-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 179, 0, 0.35);
+      border-radius: 30px;
+      padding: 0.5rem 1rem;
+      color: rgba(255, 193, 7, 0.85);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      -webkit-appearance: none;
+      appearance: none;
+      -webkit-tap-highlight-color: transparent;
+
+      @media (max-width: 767px) {
+        width: 48px;
+        height: 48px;
+        padding: 0;
+        justify-content: center;
+      }
+
+      &:hover:not(:disabled) {
+        background-color: rgba(255, 179, 0, 0.12);
+        color: #ffc107;
+        border-color: #ffc107;
+        transform: translateY(-2px);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .hall-of-fame-icon {
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+    }
+  }
 }
 
 // Read-only user styles
@@ -1707,6 +1775,16 @@ textarea:disabled {
     &:hover {
       background-color: rgba(76, 175, 80, 0.1);
       border-color: #4caf50;
+    }
+  }
+
+  .hall-of-fame-container:not(.is-hall-of-fame) .hall-of-fame-button {
+    background-color: rgba(0, 0, 0, 0.06);
+    border-color: rgba(200, 150, 10, 0.35);
+    color: #b45309;
+    &:hover:not(:disabled) {
+      background-color: rgba(200, 150, 10, 0.1);
+      border-color: #c8960a;
     }
   }
 

@@ -1,6 +1,12 @@
 /* Import Material Icons */
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
+@property --hall-of-fame-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
 /* CSS reset */
 *, *::before, *::after {
     box-sizing: border-box;

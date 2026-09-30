@@ -22,6 +22,36 @@
     }
 }
 
+@keyframes hallOfFameBorderSpin {
+    to {
+        --hall-of-fame-angle: 360deg;
+    }
+}
+
+@keyframes hallOfFameGlow {
+    0%, 100% {
+        box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.35),
+            0 0 16px rgba(255, 200, 0, 0.35),
+            0 0 32px rgba(255, 159, 28, 0.15);
+    }
+    50% {
+        box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.35),
+            0 0 28px rgba(255, 215, 0, 0.65),
+            0 0 60px rgba(255, 159, 28, 0.3);
+    }
+}
+
+@keyframes hallOfFameSweep {
+    0%, 55% {
+        transform: translateX(-120%);
+    }
+    100% {
+        transform: translateX(120%);
+    }
+}
+
 @keyframes pulseGlow {
     0%, 100% {
         box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
@@ -142,10 +172,96 @@
         }
     }
 
-    .platinum-target-badge {
+    .hall-of-fame-button {
+        position: absolute;
+        top: 12px;
+        right: 100px;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(5px);
+
+        &:hover:not(:disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 4px 14px rgba(255, 179, 0, 0.5);
+        }
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: progress;
+        }
+
+        &.active {
+            background: linear-gradient(135deg, #fff3b0, #ffd700 45%, #ff9f1c);
+            border-color: #ffd700;
+            box-shadow: 0 0 14px rgba(255, 200, 0, 0.7);
+
+            .material-icons {
+                color: #3b2a00;
+            }
+        }
+
+        .material-icons {
+            font-size: 22px;
+            color: #ffc107;
+            transition: color 0.3s ease;
+        }
+    }
+
+    .card-badges {
         position: absolute;
         top: 8px;
         left: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        z-index: 10;
+    }
+
+    .hall-of-fame-badge {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #fff3b0, #ffd700 40%, #ff9f1c);
+        color: #3b2a00;
+        padding: 4px 10px 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 0 12px rgba(255, 200, 0, 0.6);
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.8) 50%, transparent 70%);
+            transform: translateX(-120%);
+            animation: hallOfFameSweep 3.5s ease-in-out infinite;
+        }
+
+        .material-icons {
+            font-size: 15px;
+        }
+
+        .badge-text {
+            white-space: nowrap;
+        }
+    }
+
+    .platinum-target-badge {
         background: linear-gradient(135deg, #ffd700, #ffed4e);
         color: #1a1a2e;
         padding: 4px 8px;
@@ -155,7 +271,6 @@
         display: flex;
         align-items: center;
         gap: 4px;
-        z-index: 10;
         box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
         animation: pulseGlow 2s ease-in-out infinite;
 
@@ -201,6 +316,86 @@
                 .card-platform,
                 .card-release-date {
                     color: rgba(255, 255, 255, 0.75);
+                }
+            }
+        }
+    }
+
+    // Hall of Fame card styling
+    &.hall-of-fame {
+        border: 2px solid transparent;
+        background:
+            linear-gradient(#14141e, #14141e) padding-box,
+            conic-gradient(
+                from var(--hall-of-fame-angle),
+                #ffd700,
+                #fff6c2,
+                #ff9f1c,
+                #b8860b,
+                #ffd700,
+                #fff6c2,
+                #ff9f1c,
+                #ffd700
+            ) border-box;
+        animation:
+            hallOfFameBorderSpin 5s linear infinite,
+            hallOfFameGlow 2.8s ease-in-out infinite;
+
+        &:hover {
+            border-color: transparent;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                115deg,
+                transparent 35%,
+                rgba(255, 244, 200, 0.05) 42%,
+                rgba(255, 244, 200, 0.45) 50%,
+                rgba(255, 244, 200, 0.05) 58%,
+                transparent 65%
+            );
+            transform: translateX(-120%);
+            animation: hallOfFameSweep 4.5s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .card-body {
+            background: linear-gradient(180deg, rgba(48, 36, 8, 0.96) 0%, rgba(20, 20, 30, 0.96) 55%);
+            border-top: 1px solid rgba(255, 215, 0, 0.5);
+
+            .card-title {
+                background: linear-gradient(90deg, #fff3b0, #ffd700 40%, #ffb300);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                font-weight: 700;
+                text-shadow: none;
+                filter: drop-shadow(0 0 6px rgba(255, 200, 0, 0.35));
+            }
+
+            .card-description {
+                color: rgba(255, 255, 255, 0.9);
+            }
+
+            .card-info {
+                .card-genre,
+                .card-platform,
+                .card-release-date {
+                    color: rgba(255, 236, 179, 0.8);
+                }
+            }
+
+            .btn {
+                background: linear-gradient(135deg, #ffd700, #ff9f1c);
+                color: #2b1f00;
+                font-weight: 600;
+
+                &:hover {
+                    background: linear-gradient(135deg, #ffe34d, #ffb300);
                 }
             }
         }
@@ -426,7 +621,18 @@
             }
         }
 
-        .platinum-target-badge {
+        .hall-of-fame-button {
+            right: 92px;
+            width: 32px;
+            height: 32px;
+
+            .material-icons {
+                font-size: 18px;
+            }
+        }
+
+        .platinum-target-badge,
+        .hall-of-fame-badge {
             padding: 3px 6px;
             font-size: 0.7rem;
 
@@ -515,6 +721,16 @@
         }
     }
 
+    .hall-of-fame-button:not(.active) {
+        background: rgba(0, 0, 0, 0.06);
+        border-color: rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+        .material-icons {
+            color: #c8960a;
+        }
+    }
+
     // Platinum target card in light theme
     &.platinum-target {
         border-color: rgba(200, 150, 10, 0.45);
@@ -542,5 +758,77 @@
                 }
             }
         }
+    }
+
+    // Hall of Fame card in light theme
+    &.hall-of-fame {
+        border-color: transparent;
+        background:
+            linear-gradient(#fffdf5, #fffdf5) padding-box,
+            conic-gradient(
+                from var(--hall-of-fame-angle),
+                #e6b800,
+                #fff1a8,
+                #e08600,
+                #a67c00,
+                #e6b800,
+                #fff1a8,
+                #e08600,
+                #e6b800
+            ) border-box;
+
+        &:hover {
+            border-color: transparent;
+        }
+
+        .card-body {
+            background: linear-gradient(180deg, #fff4d1 0%, #fffdf5 55%);
+            border-top-color: rgba(200, 150, 10, 0.4);
+
+            .card-title {
+                background: linear-gradient(90deg, #a67c00, #c8960a 45%, #d97706);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+                filter: none;
+            }
+
+            .card-description {
+                color: rgba(0, 0, 0, 0.65);
+            }
+
+            .card-info {
+                .card-genre,
+                .card-platform,
+                .card-release-date {
+                    color: rgba(90, 64, 0, 0.75);
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .card.hall-of-fame {
+        animation: hallOfFameBorderSpin 6s linear infinite;
+        box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.35),
+            0 0 22px rgba(255, 200, 0, 0.5);
+
+        &:hover {
+            transform: none;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card.hall-of-fame,
+    .card.hall-of-fame::after,
+    .card .hall-of-fame-badge::after {
+        animation: none;
+    }
+
+    .card.hall-of-fame {
+        box-shadow: 0 0 24px rgba(255, 215, 0, 0.5);
     }
 }
